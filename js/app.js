@@ -145,6 +145,64 @@ const DATA = {
     }
   ],
 
+  integrations: [
+    { id:1, name:'Jira', category:'Project Tracking', icon:'J', color:'#0052cc', bg:'#e6f0ff', status:'connected', syncedAt:'2026-06-20 08:14', records:2340, description:'Sync issues and epics as tasks and milestones.' },
+    { id:2, name:'GitHub', category:'Engineering', icon:'G', color:'#24292e', bg:'#f0f0f0', status:'connected', syncedAt:'2026-06-20 09:02', records:876, description:'Link pull requests and commits to project tasks.' },
+    { id:3, name:'Slack', category:'Communication', icon:'S', color:'#4a154b', bg:'#f3ecf4', status:'connected', syncedAt:'2026-06-20 07:50', records:0, description:'Send notifications and approval requests to channels.' },
+    { id:4, name:'Salesforce', category:'CRM', icon:'SF', color:'#00a1e0', bg:'#e6f5fb', status:'disconnected', syncedAt:null, records:0, description:'Pull account and opportunity data into project context.' },
+    { id:5, name:'Google Sheets', category:'Spreadsheet', icon:'GS', color:'#34a853', bg:'#eaf6ed', status:'disconnected', syncedAt:null, records:0, description:'Import/export project data to spreadsheets.' },
+    { id:6, name:'Notion', category:'Documentation', icon:'N', color:'#000000', bg:'#f5f5f5', status:'disconnected', syncedAt:null, records:0, description:'Sync pages and databases as project documents.' },
+    { id:7, name:'Zapier', category:'Automation', icon:'Z', color:'#ff4a00', bg:'#fff0eb', status:'disconnected', syncedAt:null, records:0, description:'Connect to 5,000+ apps via automation workflows.' },
+    { id:8, name:'REST API', category:'Custom', icon:'API', color:'#6366f1', bg:'#eef2ff', status:'connected', syncedAt:'2026-06-19 18:30', records:512, description:'Custom endpoint — push or pull data via webhook.' }
+  ],
+
+  rawData: [
+    { id:1, source:'Jira', type:'Issue', externalId:'ALPHA-142', name:'API rate limiting implementation', field1:'In Progress', field2:'Sam Rivera', field3:'2026-07-15', linkedProject:'Alpha Launch', importedAt:'2026-06-20 08:14' },
+    { id:2, source:'Jira', type:'Issue', externalId:'ALPHA-139', name:'OAuth token refresh bug', field1:'Done', field2:'Alex Morgan', field3:'2026-06-18', linkedProject:'Alpha Launch', importedAt:'2026-06-20 08:14' },
+    { id:3, source:'Jira', type:'Epic', externalId:'BRAND-12', name:'Brand visual identity system', field1:'In Progress', field2:'Jordan Davis', field3:'2026-07-30', linkedProject:'Brand Refresh', importedAt:'2026-06-20 08:14' },
+    { id:4, source:'GitHub', type:'Pull Request', externalId:'#284', name:'feat: add offline sync mode', field1:'Open', field2:'Taylor Kim', field3:'2026-06-21', linkedProject:'Mobile App v2', importedAt:'2026-06-20 09:02' },
+    { id:5, source:'GitHub', type:'Pull Request', externalId:'#281', name:'fix: memory leak in list renderer', field1:'Merged', field2:'Sam Rivera', field3:'2026-06-19', linkedProject:'Mobile App v2', importedAt:'2026-06-20 09:02' },
+    { id:6, source:'GitHub', type:'Commit', externalId:'a3f9c12', name:'refactor: extract auth middleware', field1:'Merged', field2:'Alex Morgan', field3:'2026-06-18', linkedProject:'Alpha Launch', importedAt:'2026-06-20 09:02' },
+    { id:7, source:'REST API', type:'Webhook', externalId:'WH-0091', name:'Budget approval received from Finance', field1:'Processed', field2:'System', field3:'2026-06-19', linkedProject:'Data Platform', importedAt:'2026-06-19 18:30' },
+    { id:8, source:'REST API', type:'Webhook', externalId:'WH-0088', name:'Stakeholder sign-off on scope doc', field1:'Processed', field2:'System', field3:'2026-06-17', linkedProject:'Alpha Launch', importedAt:'2026-06-19 18:30' },
+    { id:9, source:'Jira', type:'Issue', externalId:'DATA-04', name:'Schema migration for user events', field1:'To Do', field2:'Sam Rivera', field3:'2026-08-01', linkedProject:'Data Platform', importedAt:'2026-06-20 08:14' },
+    { id:10, source:'GitHub', type:'Pull Request', externalId:'#112', name:'chore: upgrade to Node 22', field1:'Open', field2:'Taylor Kim', field3:'2026-06-22', linkedProject:'Partner Portal', importedAt:'2026-06-20 09:02' }
+  ],
+
+  customViews: [
+    { id:1, name:'At-Risk Projects', description:'Projects with health below 60 or status At Risk', icon:'alertTriangle', color:'#ef4444', filters:[{field:'health',op:'<',value:'60'},{field:'status',op:'=',value:'at-risk'}], columns:['name','health','status','pm','due'], createdBy:'AM', createdAt:'2026-06-10', lastRun:'2026-06-20', rows:2 },
+    { id:2, name:'Open Approvals by Priority', description:'All pending approvals sorted by priority and age', icon:'check', color:'#f59e0b', filters:[{field:'approvalStatus',op:'=',value:'pending'}], columns:['title','project','priority','requestedBy','createdAt'], createdBy:'AM', createdAt:'2026-06-12', lastRun:'2026-06-20', rows:4 },
+    { id:3, name:'Engineering Milestones Q3', description:'All milestones for Engineering projects due in Q3 2026', icon:'flag', color:'#6366f1', filters:[{field:'type',op:'=',value:'Engineering'},{field:'dueDate',op:'between',value:'2026-07-01,2026-09-30'}], columns:['milestone','project','dueDate','status','owner'], createdBy:'SR', createdAt:'2026-06-14', lastRun:'2026-06-19', rows:5 },
+    { id:4, name:'Budget Overrun Watch', description:'Projects where spend exceeds 80% of budget', icon:'dollar', color:'#dc2626', filters:[{field:'budgetUsed',op:'>',value:'80'}], columns:['name','budget','spent','budgetPct','pm','status'], createdBy:'LM', createdAt:'2026-06-01', lastRun:'2026-06-18', rows:3 },
+    { id:5, name:'Team Workload Summary', description:'Tasks per team member across all active projects', icon:'users', color:'#8b5cf6', filters:[{field:'status',op:'=',value:'active'}], columns:['member','openTasks','overdueTasks','projects','capacity'], createdBy:'AM', createdAt:'2026-05-28', lastRun:'2026-06-20', rows:5 }
+  ],
+
+  customFields: [
+    { id:1, name:'Client Name', type:'text', appliesTo:'Project', required:false, description:'External client or stakeholder organisation name', usedIn:4, createdBy:'AM', createdAt:'2026-05-15' },
+    { id:2, name:'Contract Value', type:'currency', appliesTo:'Project', required:false, description:'Total contract value associated with this project', usedIn:3, createdBy:'LM', createdAt:'2026-05-20' },
+    { id:3, name:'Regulatory Flag', type:'boolean', appliesTo:'Project', required:false, description:'Whether this project falls under regulatory compliance requirements', usedIn:2, createdBy:'LM', createdAt:'2026-06-01' },
+    { id:4, name:'External Ticket ID', type:'text', appliesTo:'Task', required:false, description:'Linked ticket ID from Jira or GitHub', usedIn:18, createdBy:'SR', createdAt:'2026-05-10' },
+    { id:5, name:'Review Notes', type:'long text', appliesTo:'Approval', required:true, description:'Mandatory notes field for approval decisions', usedIn:7, createdBy:'AM', createdAt:'2026-06-05' },
+    { id:6, name:'Phase Gate Score', type:'number', appliesTo:'Milestone', required:false, description:'Numeric quality gate score (0–100) assessed at milestone review', usedIn:5, createdBy:'AM', createdAt:'2026-06-08' },
+    { id:7, name:'Vendor', type:'select', appliesTo:'Task', required:false, description:'Third-party vendor responsible for this deliverable', usedIn:6, createdBy:'JD', createdAt:'2026-06-12' },
+    { id:8, name:'Risk Category', type:'select', appliesTo:'Risk', required:true, description:'Classification: Technical / Financial / Operational / Reputational', usedIn:9, createdBy:'LM', createdAt:'2026-05-22' }
+  ],
+
+  oobViews: [
+    { id:1,  category:'Projects',  name:'All Projects Overview',       icon:'folder',        color:'#6366f1', description:'Every project with status, health score, PM, progress and due date.', columns:['name','type','status','health','progress','pm','due'], previewRows:[['Alpha Launch','Engineering','Active','82','67%','AM','Aug 15'],['Brand Refresh','Marketing','At Risk','54','41%','JD','Jul 30'],['Data Platform','Engineering','Planning','–','8%','SR','Dec 01']], tags:['projects','overview'] },
+    { id:2,  category:'Projects',  name:'At-Risk & Overdue Projects',  icon:'alertTriangle', color:'#ef4444', description:'Projects flagged At Risk or with health below 60 and overdue tasks.', columns:['name','status','health','overdueTasks','budget','pm'], previewRows:[['Brand Refresh','At Risk','54','4','$45k','JD'],['Partner Portal','On Hold','38','5','$60k','JD']], tags:['risk','health'] },
+    { id:3,  category:'Projects',  name:'Budget Burn by Project',      icon:'dollar',        color:'#f59e0b', description:'Budget, spend, remaining and burn rate for every project.', columns:['name','budget','spent','remaining','burnPct','status'], previewRows:[['Alpha Launch','$120k','$74k','$46k','62%','Active'],['Brand Refresh','$45k','$28k','$17k','62%','At Risk'],['Compliance Audit','$30k','$28.5k','$1.5k','95%','Completed']], tags:['budget','finance'] },
+    { id:4,  category:'Tasks',     name:'Overdue Tasks Across All Projects', icon:'clock',   color:'#dc2626', description:'All tasks past their due date, grouped by project and assignee.', columns:['task','project','assignee','dueDate','priority','daysOverdue'], previewRows:[['OAuth token refresh bug','Alpha Launch','AM','Jun 10','High','10d'],['Logo design v2','Brand Refresh','JD','Jun 15','High','5d'],['Partner API contract','Partner Portal','JD','May 30','Medium','21d']], tags:['tasks','overdue'] },
+    { id:5,  category:'Tasks',     name:'My Open Tasks',               icon:'checkSquare',   color:'#6366f1', description:'All tasks assigned to the current user that are not yet done.', columns:['task','project','status','priority','due'], previewRows:[['Define project scope','Alpha Launch','In Progress','High','Jun 25'],['Architecture review','Data Platform','Todo','Critical','Jul 01']], tags:['tasks','personal'] },
+    { id:6,  category:'Tasks',     name:'High Priority Task Queue',    icon:'zap',           color:'#f59e0b', description:'Open tasks across all projects ranked Critical or High priority.', columns:['task','project','assignee','priority','due','status'], previewRows:[['API rate limiting','Alpha Launch','SR','High','Jul 15','In Progress'],['Schema migration','Data Platform','SR','Critical','Aug 01','Todo']], tags:['tasks','priority'] },
+    { id:7,  category:'Approvals', name:'Pending Approvals Queue',     icon:'check',         color:'#0891b2', description:'All open approval requests with requester, age and priority.', columns:['title','project','requestedBy','priority','created','age'], previewRows:[['Launch go/no-go','Alpha Launch','AM','Critical','Jun 18','2d'],['Scope change','Brand Refresh','JD','High','Jun 16','4d']], tags:['approvals'] },
+    { id:8,  category:'Approvals', name:'Approval History (30 days)',  icon:'history',       color:'#6b7280', description:'All decisions made in the last 30 days with outcome and reviewer.', columns:['title','project','decision','reviewer','decidedAt'], previewRows:[['Q2 budget increase','Data Platform','Approved','AM','Jun 12'],['Vendor NDA','Partner Portal','Rejected','LM','Jun 05']], tags:['approvals','history'] },
+    { id:9,  category:'Team',      name:'Team Workload Heatmap',       icon:'users',         color:'#8b5cf6', description:'Open and overdue task counts per team member across active projects.', columns:['member','role','openTasks','overdueTasks','projects','capacity'], previewRows:[['Alex Morgan','PM','12','1','4','85%'],['Sam Rivera','Engineer','18','2','3','110%'],['Taylor Kim','Engineer','15','1','3','92%']], tags:['team','capacity'] },
+    { id:10, category:'Team',      name:'Milestone Calendar',          icon:'calendar',      color:'#16a34a', description:'All upcoming milestones across projects in chronological order.', columns:['milestone','project','dueDate','owner','status'], previewRows:[['Beta release','Alpha Launch','Jul 20','AM','Active'],['Logo final','Brand Refresh','Jul 01','JD','Active'],['Beta build','Mobile App v2','Aug 01','TK','Active']], tags:['milestones','timeline'] },
+    { id:11, category:'Health',    name:'Health Score Breakdown',      icon:'chart',         color:'#10b981', description:'Per-project health score with component breakdown: tasks, milestones, budget, risk.', columns:['project','health','taskScore','milestoneScore','budgetScore','riskScore'], previewRows:[['Alpha Launch','82','88','75','85','80'],['Brand Refresh','54','52','60','70','35'],['Mobile App v2','76','80','72','78','74']], tags:['health','analytics'] },
+    { id:12, category:'Health',    name:'Risk Register',               icon:'alertTriangle', color:'#f59e0b', description:'All open risks across projects with severity, owner and mitigation status.', columns:['risk','project','severity','owner','open','mitigation'], previewRows:[['API dependency delay','Alpha Launch','High','JD','Yes','—'],['Stakeholder alignment','Brand Refresh','High','JD','Yes','—'],['Budget freeze','Partner Portal','High','JD','Yes','—']], tags:['risk'] }
+  ],
+
   activity: [
     { type:'task', icon:'✓', color:'#10b981', bg:'#ecfdf5', text:'<strong>Sam Rivera</strong> completed "API authentication module" on <strong>Alpha Launch</strong>', time:'10 min ago' },
     { type:'approval', icon:'⚡', color:'#f59e0b', bg:'#fffbeb', text:'Policy <strong>Milestone Slip</strong> triggered approval request on <strong>Brand Refresh</strong>', time:'2h ago' },
@@ -165,7 +223,12 @@ const STATE = {
   wizardStep: 1,
   walkthroughStep: 1,
   walkthroughActive: false,
-  wizardData: {}
+  wizardData: {},
+  dsTab: 'integrations',
+  dsViewBuilder: false,
+  dsViewFilters: null,
+  dsFieldBuilder: false,
+  oobCategory: 'All'
 };
 
 // --- ICONS (inline SVG helpers) ---
@@ -205,7 +268,15 @@ const I = {
   checkSquare: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
   fileText: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
   flag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
-  thumbsUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`
+  thumbsUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`,
+  database: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  plug: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M7 6h10v10"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="6" r="2"/></svg>`,
+  link: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  table2: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>`,
+  layers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+  sliders: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+  refreshCw: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`
 };
 
 // Sized icon wrapper — prevents bare SVGs from expanding
@@ -284,7 +355,8 @@ function renderSidebar() {
     { id:'policies', label:'Policies', icon:I.zap },
     { id:'workflows', label:'Workflows', icon:I.workflow },
     { id:'team', label:'Team', icon:I.users },
-    { id:'analytics', label:'Analytics', icon:I.chart }
+    { id:'analytics', label:'Analytics', icon:I.chart },
+    { id:'data-sources', label:'Data Sources', icon:I.database }
   ];
   document.getElementById('sidebar').innerHTML = `
     <div class="sidebar-logo">
@@ -359,6 +431,7 @@ function render() {
     case 'team': renderTeam(); break;
     case 'analytics': renderAnalytics(); break;
     case 'workflows': renderWorkflows(); break;
+    case 'data-sources': renderDataSources(); break;
     case 'workflow-builder': renderWorkflowBuilder(); break;
     default: renderDashboard();
   }
@@ -1511,6 +1584,549 @@ function renderWalkthroughStep(s, p) {
         </div>`).join('')}
       <button class="btn btn-ghost btn-sm mt-2">${I.plus} Add custom task</button>`;
   }
+}
+
+// --- DATA SOURCES ---
+function renderDataSources() {
+  if (!STATE.dsTab) STATE.dsTab = 'integrations';
+  renderTopbar([{label:'Data Sources'}]);
+  const el = document.getElementById('content');
+
+  const tabs = [
+    { id:'integrations', label:'Integrations', icon:I.plug },
+    { id:'raw-data',     label:'Raw Data',     icon:I.table2 },
+    { id:'views',        label:'Custom Views', icon:I.eye },
+    { id:'fields',       label:'Custom Fields',icon:I.sliders },
+    { id:'oob-views',   label:'Built-in Views', icon:I.layers }
+  ];
+
+  const connected = DATA.integrations.filter(i=>i.status==='connected').length;
+  const totalRecords = DATA.integrations.reduce((s,i)=>s+i.records,0);
+
+  el.innerHTML = `
+    <div class="page-content">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4)">
+        <div>
+          <h1 class="page-title">Data Sources</h1>
+          <p class="page-subtitle">${connected} connected · ${totalRecords.toLocaleString()} records synced · ${DATA.customViews.length} custom views · ${DATA.customFields.length} custom fields</p>
+        </div>
+      </div>
+      <div class="ds-tabs">
+        ${tabs.map(t=>`<div class="ds-tab ${STATE.dsTab===t.id?'active':''}" data-dstab="${t.id}">${t.icon}${t.label}</div>`).join('')}
+      </div>
+      <div id="ds-tab-body">${renderDsTabBody()}</div>
+    </div>`;
+
+  el.querySelectorAll('[data-dstab]').forEach(t=>{
+    t.addEventListener('click',()=>{ STATE.dsTab=t.dataset.dstab; renderDataSources(); });
+  });
+  bindDsTab();
+}
+
+function renderDsTabBody() {
+  switch(STATE.dsTab) {
+    case 'integrations': return renderDsIntegrations();
+    case 'raw-data':     return renderDsRawData();
+    case 'views':        return renderDsViews();
+    case 'fields':       return renderDsFields();
+    case 'oob-views':   return renderDsOobViews();
+    default: return '';
+  }
+}
+
+function bindDsTab() {
+  switch(STATE.dsTab) {
+    case 'integrations': bindDsIntegrations(); break;
+    case 'raw-data':     bindDsRawData(); break;
+    case 'views':        bindDsViews(); break;
+    case 'fields':       bindDsFields(); break;
+    case 'oob-views':   bindDsOobViews(); break;
+  }
+}
+
+/* ---- Integrations tab ---- */
+function renderDsIntegrations() {
+  const sourceBadgeColor = { 'Project Tracking':'#0052cc','Engineering':'#24292e','Communication':'#4a154b','CRM':'#00a1e0','Spreadsheet':'#34a853','Documentation':'#000','Automation':'#ff4a00','Custom':'#6366f1' };
+  return `
+    <div class="integration-grid">
+      ${DATA.integrations.map(intg=>`
+        <div class="integration-card ${intg.status==='connected'?'connected':''}">
+          <div class="integration-header">
+            <div class="integration-icon" style="background:${intg.bg};color:${intg.color}">${intg.icon}</div>
+            <div style="flex:1">
+              <div class="integration-name">${intg.name}</div>
+              <div class="integration-category">${intg.category}</div>
+            </div>
+            ${intg.status==='connected'
+              ? `<span class="badge" style="background:#f0fdf4;color:#16a34a;font-size:10px">${ico(I.checkCircle,10)} Connected</span>`
+              : `<span class="badge badge-gray" style="font-size:10px">Disconnected</span>`}
+          </div>
+          <div class="integration-desc">${intg.description}</div>
+          ${intg.status==='connected' ? `
+            <div class="integration-meta">
+              ${ico(I.database,11)} ${intg.records.toLocaleString()} records
+              &nbsp;·&nbsp;
+              ${ico(I.clock,11)} Synced ${intg.syncedAt}
+            </div>` : ''}
+          <div class="integration-footer">
+            <label class="toggle">
+              <input type="checkbox" class="intg-toggle" data-intg="${intg.id}" ${intg.status==='connected'?'checked':''}>
+              <span class="toggle-track"></span>
+              <span style="font-size:12px;font-weight:500;color:var(--c-text-2)">${intg.status==='connected'?'Enabled':'Enable'}</span>
+            </label>
+            ${intg.status==='connected'
+              ? `<button class="btn btn-secondary btn-sm intg-sync-btn" data-intg="${intg.id}">${ico(I.refreshCw,12)} Sync now</button>`
+              : `<button class="btn btn-ghost btn-sm" style="font-size:12px">View docs ${ico(I.link,12)}</button>`}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function bindDsIntegrations() {
+  document.querySelectorAll('.intg-toggle').forEach(chk=>{
+    chk.addEventListener('change',()=>{
+      const intg = DATA.integrations.find(i=>i.id===+chk.dataset.intg);
+      if(!intg) return;
+      intg.status = chk.checked ? 'connected' : 'disconnected';
+      if(chk.checked) intg.syncedAt = new Date().toISOString().slice(0,16).replace('T',' ');
+      toast(chk.checked ? `${intg.name} connected` : `${intg.name} disconnected`, chk.checked?'success':'info');
+      renderDataSources();
+    });
+  });
+  document.querySelectorAll('.intg-sync-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const intg = DATA.integrations.find(i=>i.id===+btn.dataset.intg);
+      if(!intg) return;
+      intg.syncedAt = new Date().toISOString().slice(0,16).replace('T',' ');
+      toast(`${intg.name} synced`, 'success');
+      renderDataSources();
+    });
+  });
+}
+
+/* ---- Raw Data tab ---- */
+function renderDsRawData() {
+  const sourceColors = { Jira:'#0052cc', GitHub:'#24292e', 'REST API':'#6366f1', Slack:'#4a154b' };
+  const statusColors = { Done:'#16a34a', Merged:'#16a34a', Processed:'#6366f1', 'In Progress':'#d97706', Open:'#2563eb', 'To Do':'#94a3b8' };
+  return `
+    <div style="display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4)">
+      <select class="input select" style="width:160px" id="ds-source-filter">
+        <option value="">All sources</option>
+        ${[...new Set(DATA.rawData.map(r=>r.source))].map(s=>`<option>${s}</option>`).join('')}
+      </select>
+      <select class="input select" style="width:140px" id="ds-type-filter">
+        <option value="">All types</option>
+        ${[...new Set(DATA.rawData.map(r=>r.type))].map(t=>`<option>${t}</option>`).join('')}
+      </select>
+      <select class="input select" style="width:180px" id="ds-project-filter">
+        <option value="">All projects</option>
+        ${[...new Set(DATA.rawData.map(r=>r.linkedProject))].map(p=>`<option>${p}</option>`).join('')}
+      </select>
+      <span style="font-size:12px;color:var(--c-text-3);margin-left:auto">${DATA.rawData.length} records</span>
+    </div>
+    <div style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)">
+      <table class="table" id="raw-data-table">
+        <thead><tr>
+          <th>Source</th><th>Type</th><th>External ID</th><th>Name</th>
+          <th>Status</th><th>Assignee</th><th>Linked Project</th><th>Imported</th>
+        </tr></thead>
+        <tbody id="raw-data-body">
+          ${DATA.rawData.map(r=>`
+            <tr>
+              <td><span class="ds-source-badge" style="background:${sourceColors[r.source]||'#6b7280'}20;color:${sourceColors[r.source]||'#6b7280'}">${r.source}</span></td>
+              <td style="font-size:11px;color:var(--c-text-3);font-weight:500">${r.type}</td>
+              <td><code style="font-size:11px;background:#f1f5f9;padding:1px 6px;border-radius:4px;color:#475569">${r.externalId}</code></td>
+              <td style="max-width:220px;font-size:13px">${r.name}</td>
+              <td><span style="font-size:11px;font-weight:600;color:${statusColors[r.field1]||'#6b7280'}">${r.field1}</span></td>
+              <td style="font-size:12px">${r.field2}</td>
+              <td><span class="badge badge-active" style="font-size:10px">${r.linkedProject}</span></td>
+              <td style="font-size:11px;color:var(--c-text-3)">${r.importedAt}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function bindDsRawData() {
+  function applyFilters() {
+    const src = document.getElementById('ds-source-filter')?.value || '';
+    const typ = document.getElementById('ds-type-filter')?.value || '';
+    const prj = document.getElementById('ds-project-filter')?.value || '';
+    const sourceColors = { Jira:'#0052cc', GitHub:'#24292e', 'REST API':'#6366f1', Slack:'#4a154b' };
+    const statusColors = { Done:'#16a34a', Merged:'#16a34a', Processed:'#6366f1', 'In Progress':'#d97706', Open:'#2563eb', 'To Do':'#94a3b8' };
+    const filtered = DATA.rawData.filter(r=>
+      (!src || r.source===src) && (!typ || r.type===typ) && (!prj || r.linkedProject===prj)
+    );
+    const body = document.getElementById('raw-data-body');
+    if(body) body.innerHTML = filtered.map(r=>`
+      <tr>
+        <td><span class="ds-source-badge" style="background:${sourceColors[r.source]||'#6b7280'}20;color:${sourceColors[r.source]||'#6b7280'}">${r.source}</span></td>
+        <td style="font-size:11px;color:var(--c-text-3);font-weight:500">${r.type}</td>
+        <td><code style="font-size:11px;background:#f1f5f9;padding:1px 6px;border-radius:4px;color:#475569">${r.externalId}</code></td>
+        <td style="max-width:220px;font-size:13px">${r.name}</td>
+        <td><span style="font-size:11px;font-weight:600;color:${statusColors[r.field1]||'#6b7280'}">${r.field1}</span></td>
+        <td style="font-size:12px">${r.field2}</td>
+        <td><span class="badge badge-active" style="font-size:10px">${r.linkedProject}</span></td>
+        <td style="font-size:11px;color:var(--c-text-3)">${r.importedAt}</td>
+      </tr>`).join('');
+  }
+  ['ds-source-filter','ds-type-filter','ds-project-filter'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change', applyFilters);
+  });
+}
+
+/* ---- Custom Views tab ---- */
+function renderDsViews() {
+  if(STATE.dsViewBuilder) return renderDsViewBuilder();
+  return `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:var(--sp-4)">
+      <button class="btn btn-primary" id="new-view-btn">${ico(I.plus)} New View</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--sp-4)">
+      ${DATA.customViews.map(v=>`
+        <div class="view-card" data-view="${v.id}">
+          <div class="view-card-icon" style="background:${v.color}18;color:${v.color}">${I[v.icon]||I.eye}</div>
+          <div class="view-card-name">${v.name}</div>
+          <div class="view-card-desc">${v.description}</div>
+          <div class="view-columns">
+            ${v.columns.map(c=>`<span class="view-col-chip">${c}</span>`).join('')}
+          </div>
+          <div class="view-card-meta" style="margin-top:var(--sp-3)">
+            <span>${ico(I.users,11)} ${v.createdBy}</span>
+            <span>${ico(I.clock,11)} Last run ${v.lastRun}</span>
+            <span>${ico(I.database,11)} ${v.rows} rows</span>
+          </div>
+        </div>`).join('')}
+      <div class="view-card" id="empty-view-card" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;color:var(--c-text-3);gap:var(--sp-2)">
+        <div style="width:36px;height:36px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center">${ico(I.plus,18)}</div>
+        <div style="font-size:13px;font-weight:600">Create a view</div>
+        <div style="font-size:12px;text-align:center;max-width:200px">Filter, sort and select columns to build a reusable data view</div>
+      </div>
+    </div>`;
+}
+
+function renderDsViewBuilder() {
+  const fieldOptions = ['name','status','health','priority','pm','budget','spent','budgetPct','due','type','progress'];
+  const opOptions = ['=','!=','>','<','>=','<=','contains','between'];
+  const filters = STATE.dsViewFilters || [{ field:'status', op:'=', value:'' }];
+  return `
+    <div class="ds-builder">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-5)">
+        <h3 style="font-size:15px;font-weight:700">${ico(I.eye)} New Custom View</h3>
+        <button class="btn-icon" id="view-builder-close">${I.x}</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)">
+        <div>
+          <div class="form-group mb-4">
+            <label class="form-label">View name <span>*</span></label>
+            <input class="input" id="vb-name" placeholder="e.g. Q3 Engineering Milestones">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Description</label>
+            <textarea class="textarea" id="vb-desc" placeholder="What does this view show?"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Accent color</label>
+            <div style="display:flex;gap:var(--sp-2)">
+              ${['#6366f1','#ef4444','#f59e0b','#16a34a','#0891b2','#8b5cf6'].map(c=>`
+                <div class="vb-color" data-color="${c}" style="width:24px;height:24px;border-radius:50%;background:${c};cursor:pointer;border:2px solid transparent;transition:border-color .15s"></div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="form-group mb-4">
+            <label class="form-label">Filters</label>
+            <div id="vb-filters">
+              ${filters.map((_,i)=>`
+                <div class="filter-row">
+                  <select class="input select vb-filter-field">${fieldOptions.map(f=>`<option>${f}</option>`).join('')}</select>
+                  <select class="input select vb-filter-op" style="width:90px">${opOptions.map(o=>`<option>${o}</option>`).join('')}</select>
+                  <input class="input vb-filter-val" placeholder="value">
+                  <button class="btn-icon btn-sm vb-remove-filter" data-i="${i}">${I.x}</button>
+                </div>`).join('')}
+            </div>
+            <button class="btn btn-ghost btn-sm mt-2" id="vb-add-filter">${ico(I.plus)} Add filter</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Columns to show</label>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2)" id="vb-columns">
+              ${fieldOptions.map(f=>`
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+                  <input type="checkbox" class="vb-col" value="${f}" style="accent-color:#6366f1" checked> ${f}
+                </label>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--sp-3);margin-top:var(--sp-5);padding-top:var(--sp-4);border-top:1px solid var(--c-border)">
+        <button class="btn btn-secondary" id="view-builder-cancel">Cancel</button>
+        <button class="btn btn-primary" id="view-builder-save">${ico(I.checkCircle)} Save View</button>
+      </div>
+    </div>`;
+}
+
+function bindDsViews() {
+  if(STATE.dsViewBuilder) {
+    let selectedColor = '#6366f1';
+    document.querySelectorAll('.vb-color').forEach(c=>{
+      c.addEventListener('click',()=>{ selectedColor=c.dataset.color; document.querySelectorAll('.vb-color').forEach(x=>x.style.borderColor='transparent'); c.style.borderColor='#1e293b'; });
+    });
+    document.getElementById('vb-add-filter')?.addEventListener('click',()=>{
+      STATE.dsViewFilters = (STATE.dsViewFilters||[{ field:'status',op:'=',value:'' }]).concat([{ field:'name',op:'contains',value:'' }]);
+      renderDataSources();
+    });
+    document.querySelectorAll('.vb-remove-filter').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        STATE.dsViewFilters = (STATE.dsViewFilters||[]).filter((_,i)=>i!==+btn.dataset.i);
+        renderDataSources();
+      });
+    });
+    document.getElementById('view-builder-close')?.addEventListener('click',()=>{ STATE.dsViewBuilder=false; STATE.dsViewFilters=null; renderDataSources(); });
+    document.getElementById('view-builder-cancel')?.addEventListener('click',()=>{ STATE.dsViewBuilder=false; STATE.dsViewFilters=null; renderDataSources(); });
+    document.getElementById('view-builder-save')?.addEventListener('click',()=>{
+      const name = document.getElementById('vb-name')?.value.trim();
+      if(!name){ toast('View name is required','error'); return; }
+      const cols = [...document.querySelectorAll('.vb-col:checked')].map(c=>c.value);
+      DATA.customViews.push({
+        id: DATA.customViews.length+1, name, color:selectedColor, icon:'eye',
+        description: document.getElementById('vb-desc')?.value.trim()||'',
+        filters: STATE.dsViewFilters||[], columns:cols.length?cols:['name','status'],
+        createdBy:'AM', createdAt:new Date().toISOString().slice(0,10), lastRun:'—', rows:0
+      });
+      STATE.dsViewBuilder=false; STATE.dsViewFilters=null;
+      toast(`View "${name}" saved`,'success');
+      renderDataSources();
+    });
+    return;
+  }
+  document.getElementById('new-view-btn')?.addEventListener('click',()=>{ STATE.dsViewBuilder=true; renderDataSources(); });
+  document.getElementById('empty-view-card')?.addEventListener('click',()=>{ STATE.dsViewBuilder=true; renderDataSources(); });
+  document.querySelectorAll('.view-card[data-view]').forEach(card=>{
+    card.addEventListener('click',()=>{ toast('View opened — data would render here','info'); });
+  });
+}
+
+/* ---- Custom Fields tab ---- */
+function renderDsFields() {
+  if(STATE.dsFieldBuilder) return renderDsFieldBuilder() + renderFieldsTable();
+  return `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:var(--sp-4)">
+      <button class="btn btn-primary" id="new-field-btn">${ico(I.plus)} New Field</button>
+    </div>` + renderFieldsTable();
+}
+
+function renderFieldsTable() {
+  const typeClass = { text:'text', number:'number', currency:'currency', boolean:'boolean', select:'select', 'long text':'longtext', date:'date' };
+  return `
+    <div style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)">
+      <table class="table">
+        <thead><tr>
+          <th>Field name</th><th>Type</th><th>Applies to</th><th>Description</th>
+          <th>Required</th><th>Used in</th><th>Created</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${DATA.customFields.map(f=>`
+            <tr>
+              <td style="font-weight:600;font-size:13px">${f.name}</td>
+              <td><span class="field-type field-type-${typeClass[f.type]||'text'}">${f.type}</span></td>
+              <td style="font-size:12px;color:var(--c-text-2)">${f.appliesTo}</td>
+              <td style="font-size:12px;color:var(--c-text-2);max-width:240px">${f.description}</td>
+              <td style="text-align:center">${f.required ? `<span style="color:#16a34a;font-size:16px">✓</span>` : `<span style="color:#d1d5db;font-size:16px">–</span>`}</td>
+              <td style="font-size:12px;color:var(--c-text-2)">${f.usedIn} records</td>
+              <td style="font-size:11px;color:var(--c-text-3)">${f.createdAt}</td>
+              <td>
+                <button class="btn-icon btn-sm field-delete-btn" data-fid="${f.id}" title="Delete field">${I.trash}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderDsFieldBuilder() {
+  const types = ['text','number','currency','boolean','select','long text','date'];
+  const targets = ['Project','Task','Milestone','Approval','Risk'];
+  return `
+    <div class="ds-builder">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-5)">
+        <h3 style="font-size:15px;font-weight:700">${ico(I.sliders)} New Custom Field</h3>
+        <button class="btn-icon" id="field-builder-close">${I.x}</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)">
+        <div>
+          <div class="form-group mb-4">
+            <label class="form-label">Field name <span>*</span></label>
+            <input class="input" id="fb-name" placeholder="e.g. Client Name">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Field type</label>
+            <select class="input select" id="fb-type">
+              ${types.map(t=>`<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Applies to</label>
+            <select class="input select" id="fb-target">
+              ${targets.map(t=>`<option>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="form-group mb-4">
+            <label class="form-label">Description</label>
+            <textarea class="textarea" id="fb-desc" placeholder="What is this field used for?"></textarea>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:var(--sp-2);cursor:pointer">
+              <input type="checkbox" id="fb-required" style="accent-color:#6366f1">
+              <span class="form-label" style="margin:0">Required</span>
+            </label>
+            <div style="font-size:11px;color:var(--c-text-3);margin-top:4px">Users must fill this field before submitting</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--sp-3);margin-top:var(--sp-5);padding-top:var(--sp-4);border-top:1px solid var(--c-border)">
+        <button class="btn btn-secondary" id="field-builder-cancel">Cancel</button>
+        <button class="btn btn-primary" id="field-builder-save">${ico(I.checkCircle)} Save Field</button>
+      </div>
+    </div>`;
+}
+
+function bindDsFields() {
+  if(STATE.dsFieldBuilder) {
+    document.getElementById('field-builder-close')?.addEventListener('click',()=>{ STATE.dsFieldBuilder=false; renderDataSources(); });
+    document.getElementById('field-builder-cancel')?.addEventListener('click',()=>{ STATE.dsFieldBuilder=false; renderDataSources(); });
+    document.getElementById('field-builder-save')?.addEventListener('click',()=>{
+      const name = document.getElementById('fb-name')?.value.trim();
+      if(!name){ toast('Field name is required','error'); return; }
+      DATA.customFields.push({
+        id: DATA.customFields.length+1, name,
+        type: document.getElementById('fb-type')?.value||'text',
+        appliesTo: document.getElementById('fb-target')?.value||'Project',
+        description: document.getElementById('fb-desc')?.value.trim()||'',
+        required: document.getElementById('fb-required')?.checked||false,
+        usedIn:0, createdBy:'AM', createdAt:new Date().toISOString().slice(0,10)
+      });
+      STATE.dsFieldBuilder=false;
+      toast(`Field "${name}" created`,'success');
+      renderDataSources();
+    });
+  } else {
+    document.getElementById('new-field-btn')?.addEventListener('click',()=>{ STATE.dsFieldBuilder=true; renderDataSources(); });
+  }
+  document.querySelectorAll('.field-delete-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const f = DATA.customFields.find(x=>x.id===+btn.dataset.fid);
+      DATA.customFields = DATA.customFields.filter(x=>x.id!==+btn.dataset.fid);
+      toast(`Field "${f?.name}" deleted`,'info');
+      renderDataSources();
+    });
+  });
+}
+
+/* ---- Out-of-the-box Views tab ---- */
+function renderDsOobViews() {
+  const categories = [...new Set(DATA.oobViews.map(v=>v.category))];
+  const active = STATE.oobCategory || 'All';
+
+  const catCounts = { All: DATA.oobViews.length };
+  categories.forEach(c => { catCounts[c] = DATA.oobViews.filter(v=>v.category===c).length; });
+  const allCats = ['All', ...categories];
+
+  const filtered = active==='All' ? DATA.oobViews : DATA.oobViews.filter(v=>v.category===active);
+
+  return `
+    <div style="display:flex;gap:var(--sp-6)">
+      <!-- Category sidebar -->
+      <div style="width:160px;flex-shrink:0">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text-3);margin-bottom:var(--sp-3)">Category</div>
+        ${allCats.map(c=>`
+          <div class="oob-cat-item ${active===c?'active':''}" data-cat="${c}">
+            <span>${c}</span>
+            <span class="oob-cat-count">${catCounts[c]}</span>
+          </div>`).join('')}
+      </div>
+      <!-- View cards -->
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4)">
+          <div style="font-size:13px;color:var(--c-text-3)">${filtered.length} view${filtered.length!==1?'s':''}</div>
+          <div style="display:flex;align-items:center;gap:var(--sp-2)">
+            <div style="position:relative">
+              <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none">${ico(I.search,13)}</span>
+              <input class="input" id="oob-search" placeholder="Search views…" style="padding-left:30px;width:200px;height:30px;font-size:12px">
+            </div>
+          </div>
+        </div>
+        <div id="oob-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--sp-4)">
+          ${filtered.map(v => renderOobCard(v)).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderOobCard(v) {
+  return `
+    <div class="oob-card" data-oob="${v.id}">
+      <div class="oob-card-top">
+        <div class="oob-card-icon" style="background:${v.color}18;color:${v.color}">${I[v.icon]||I.eye}</div>
+        <div style="flex:1">
+          <div class="oob-card-name">${v.name}</div>
+          <div class="oob-cat-pill">${v.category}</div>
+        </div>
+        <span class="oob-builtin-badge">${ico(I.lock,10)} Built-in</span>
+      </div>
+      <div class="oob-card-desc">${v.description}</div>
+      <div class="oob-preview-table">
+        <div class="oob-preview-head">
+          ${v.columns.map(c=>`<span>${c}</span>`).join('')}
+        </div>
+        ${v.previewRows.map(row=>`
+          <div class="oob-preview-row">
+            ${row.map((cell,i)=>`<span style="${i===0?'font-weight:600':''}">${cell}</span>`).join('')}
+          </div>`).join('')}
+      </div>
+      <div class="oob-card-footer">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${v.tags.map(t=>`<span class="oob-tag">#${t}</span>`).join('')}
+        </div>
+        <div style="display:flex;gap:var(--sp-2)">
+          <button class="btn btn-ghost btn-sm oob-clone-btn" data-oob="${v.id}">${ico(I.copy,12)} Clone</button>
+          <button class="btn btn-primary btn-sm oob-open-btn" data-oob="${v.id}">${ico(I.eye,12)} Open</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bindDsOobViews() {
+  document.querySelectorAll('.oob-cat-item[data-cat]').forEach(el=>{
+    el.addEventListener('click',()=>{ STATE.oobCategory=el.dataset.cat; renderDataSources(); });
+  });
+
+  document.getElementById('oob-search')?.addEventListener('input', e=>{
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('.oob-card[data-oob]').forEach(card=>{
+      const v = DATA.oobViews.find(x=>x.id===+card.dataset.oob);
+      const match = !q || v.name.toLowerCase().includes(q) || v.description.toLowerCase().includes(q) || v.tags.some(t=>t.includes(q));
+      card.style.display = match ? '' : 'none';
+    });
+  });
+
+  document.querySelectorAll('.oob-open-btn[data-oob]').forEach(btn=>{
+    btn.addEventListener('click', e=>{ e.stopPropagation(); const v=DATA.oobViews.find(x=>x.id===+btn.dataset.oob); toast(`Opening "${v.name}"…`,'info'); });
+  });
+
+  document.querySelectorAll('.oob-clone-btn[data-oob]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const v = DATA.oobViews.find(x=>x.id===+btn.dataset.oob);
+      DATA.customViews.push({
+        id: DATA.customViews.length+1, name:`${v.name} (copy)`, color:v.color, icon:v.icon,
+        description: v.description, filters:[], columns:[...v.columns],
+        createdBy:'AM', createdAt:new Date().toISOString().slice(0,10), lastRun:'—', rows:0
+      });
+      toast(`"${v.name}" cloned to Custom Views`,'success');
+    });
+  });
 }
 
 // --- WORKFLOWS ---

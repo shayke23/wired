@@ -18,8 +18,10 @@ Add workflows implementation to main menu. main attributes
 
 add integrations section
 add data sources section
-
-
+    ability to integrate
+    ability to view raw data
+    ability to create custom views
+    ability to create custom data fields
 
 
 ------
