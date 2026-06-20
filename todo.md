@@ -16,6 +16,11 @@ Add workflows implementation to main menu. main attributes
     provide interactive visual with 2 levels - phase, actions
 
 
+add integrations section
+add data sources section
+
+
+
 
 ------
 

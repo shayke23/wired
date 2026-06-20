@@ -7,12 +7,12 @@ const DATA = {
   user: { name: 'Alex Morgan', role: 'Project Manager', initials: 'AM', color: '#6366f1' },
 
   projects: [
-    { id: 1, name: 'Alpha Launch', type: 'Engineering', status: 'active', priority: 'high', health: 82, progress: 67, pm: 'AM', pmColor: '#6366f1', due: '2026-08-15', budget: 120000, spent: 74000, tasks: { total: 34, done: 23, overdue: 2 }, team: ['AM','JD','SR','TK'], description: 'Full platform launch for Q3 including API, frontend and DevOps pipeline.', startDate: '2026-04-01', milestones: [ { id:1, name:'API complete', date:'2026-06-30', status:'done' }, { id:2, name:'Beta release', date:'2026-07-20', status:'active' }, { id:3, name:'Launch', date:'2026-08-15', status:'upcoming' } ], risks: [ { id:1, desc:'Third-party API dependency delay', severity:'high', owner:'JD', open:true }, { id:2, desc:'Performance under load', severity:'medium', owner:'SR', open:true } ] },
-    { id: 2, name: 'Brand Refresh', type: 'Marketing', status: 'at-risk', priority: 'medium', health: 54, progress: 41, pm: 'JD', pmColor: '#f59e0b', due: '2026-07-30', budget: 45000, spent: 28000, tasks: { total: 18, done: 7, overdue: 4 }, team: ['JD','LM'], description: 'Visual identity overhaul across all digital and print touchpoints.', startDate: '2026-05-01', milestones: [ { id:4, name:'Moodboard approved', date:'2026-05-31', status:'done' }, { id:5, name:'Logo final', date:'2026-07-01', status:'active' } ], risks: [ { id:3, desc:'Stakeholder alignment on direction', severity:'high', owner:'JD', open:true } ] },
-    { id: 3, name: 'Data Platform', type: 'Engineering', status: 'planning', priority: 'critical', health: null, progress: 8, pm: 'SR', pmColor: '#10b981', due: '2026-12-01', budget: 200000, spent: 5000, tasks: { total: 6, done: 0, overdue: 0 }, team: ['SR','TK','AM'], description: 'Unified data warehouse and analytics platform migration.', startDate: '2026-06-15', milestones: [], risks: [] },
-    { id: 4, name: 'Mobile App v2', type: 'Engineering', status: 'active', priority: 'high', health: 76, progress: 55, pm: 'TK', pmColor: '#8b5cf6', due: '2026-09-30', budget: 95000, spent: 48000, tasks: { total: 41, done: 22, overdue: 1 }, team: ['TK','AM','JD'], description: 'Major version update with redesigned UI and offline mode.', startDate: '2026-03-15', milestones: [ { id:6, name:'UX design done', date:'2026-05-15', status:'done' }, { id:7, name:'Beta build', date:'2026-08-01', status:'active' }, { id:8, name:'App store release', date:'2026-09-30', status:'upcoming' } ], risks: [] },
-    { id: 5, name: 'Compliance Audit', type: 'Operations', status: 'completed', priority: 'critical', health: 91, progress: 100, pm: 'LM', pmColor: '#06b6d4', due: '2026-05-31', budget: 30000, spent: 28500, tasks: { total: 22, done: 22, overdue: 0 }, team: ['LM','AM'], description: 'Annual SOC2 compliance audit and remediation.', startDate: '2026-03-01', milestones: [], risks: [] },
-    { id: 6, name: 'Partner Portal', type: 'Engineering', status: 'on-hold', priority: 'low', health: 38, progress: 22, pm: 'JD', pmColor: '#f59e0b', due: '2026-11-15', budget: 60000, spent: 14000, tasks: { total: 28, done: 6, overdue: 5 }, team: ['JD','SR'], description: 'Self-service portal for external partners.', startDate: '2026-02-01', milestones: [], risks: [ { id:4, desc:'Budget freeze pending executive review', severity:'high', owner:'JD', open:true } ] }
+    { id: 1, name: 'Alpha Launch', type: 'Engineering', workflowId: 1, status: 'active', priority: 'high', health: 82, progress: 67, pm: 'AM', pmColor: '#6366f1', due: '2026-08-15', budget: 120000, spent: 74000, tasks: { total: 34, done: 23, overdue: 2 }, team: ['AM','JD','SR','TK'], description: 'Full platform launch for Q3 including API, frontend and DevOps pipeline.', startDate: '2026-04-01', milestones: [ { id:1, name:'API complete', date:'2026-06-30', status:'done' }, { id:2, name:'Beta release', date:'2026-07-20', status:'active' }, { id:3, name:'Launch', date:'2026-08-15', status:'upcoming' } ], risks: [ { id:1, desc:'Third-party API dependency delay', severity:'high', owner:'JD', open:true }, { id:2, desc:'Performance under load', severity:'medium', owner:'SR', open:true } ] },
+    { id: 2, name: 'Brand Refresh', type: 'Marketing', workflowId: 2, status: 'at-risk', priority: 'medium', health: 54, progress: 41, pm: 'JD', pmColor: '#f59e0b', due: '2026-07-30', budget: 45000, spent: 28000, tasks: { total: 18, done: 7, overdue: 4 }, team: ['JD','LM'], description: 'Visual identity overhaul across all digital and print touchpoints.', startDate: '2026-05-01', milestones: [ { id:4, name:'Moodboard approved', date:'2026-05-31', status:'done' }, { id:5, name:'Logo final', date:'2026-07-01', status:'active' } ], risks: [ { id:3, desc:'Stakeholder alignment on direction', severity:'high', owner:'JD', open:true } ] },
+    { id: 3, name: 'Data Platform', type: 'Engineering', workflowId: 1, status: 'planning', priority: 'critical', health: null, progress: 8, pm: 'SR', pmColor: '#10b981', due: '2026-12-01', budget: 200000, spent: 5000, tasks: { total: 6, done: 0, overdue: 0 }, team: ['SR','TK','AM'], description: 'Unified data warehouse and analytics platform migration.', startDate: '2026-06-15', milestones: [], risks: [] },
+    { id: 4, name: 'Mobile App v2', type: 'Engineering', workflowId: 1, status: 'active', priority: 'high', health: 76, progress: 55, pm: 'TK', pmColor: '#8b5cf6', due: '2026-09-30', budget: 95000, spent: 48000, tasks: { total: 41, done: 22, overdue: 1 }, team: ['TK','AM','JD'], description: 'Major version update with redesigned UI and offline mode.', startDate: '2026-03-15', milestones: [ { id:6, name:'UX design done', date:'2026-05-15', status:'done' }, { id:7, name:'Beta build', date:'2026-08-01', status:'active' }, { id:8, name:'App store release', date:'2026-09-30', status:'upcoming' } ], risks: [] },
+    { id: 5, name: 'Compliance Audit', type: 'Operations', workflowId: 3, status: 'completed', priority: 'critical', health: 91, progress: 100, pm: 'LM', pmColor: '#06b6d4', due: '2026-05-31', budget: 30000, spent: 28500, tasks: { total: 22, done: 22, overdue: 0 }, team: ['LM','AM'], description: 'Annual SOC2 compliance audit and remediation.', startDate: '2026-03-01', milestones: [], risks: [] },
+    { id: 6, name: 'Partner Portal', type: 'Engineering', workflowId: null, status: 'on-hold', priority: 'low', health: 38, progress: 22, pm: 'JD', pmColor: '#f59e0b', due: '2026-11-15', budget: 60000, spent: 14000, tasks: { total: 28, done: 6, overdue: 5 }, team: ['JD','SR'], description: 'Self-service portal for external partners.', startDate: '2026-02-01', milestones: [], risks: [ { id:4, desc:'Budget freeze pending executive review', severity:'high', owner:'JD', open:true } ] }
   ],
 
   approvals: [
@@ -61,6 +61,89 @@ const DATA = {
       { id:9, name:'Brand guidelines doc', assignee:'LM', assigneeColor:'#06b6d4', status:'todo', priority:'medium', due:'2026-07-20' }
     ]
   },
+
+  workflows: [
+    {
+      id: 1, name: 'Software Delivery', description: 'Standard engineering project lifecycle from discovery to production.', projectType: 'Engineering', color: '#6366f1',
+      phases: [
+        { id: 1, name: 'Discovery', color: '#6366f1', actions: [
+          { id: 1, name: 'Define project scope', type: 'document', required: true, desc: 'Document goals, constraints, and success criteria' },
+          { id: 2, name: 'Stakeholder interviews', type: 'meeting', required: true, desc: 'Align with all key stakeholders on expectations' },
+          { id: 3, name: 'Technical feasibility', type: 'review', required: false, desc: 'Assess technical risks and dependencies' }
+        ]},
+        { id: 2, name: 'Design', color: '#8b5cf6', actions: [
+          { id: 4, name: 'Architecture design', type: 'document', required: true, desc: 'System design document and data model' },
+          { id: 5, name: 'UX wireframes', type: 'task', required: true, desc: 'Low-fidelity wireframes for all key screens' },
+          { id: 6, name: 'Design review', type: 'approval', required: true, desc: 'Sign-off from PM and tech lead' }
+        ]},
+        { id: 3, name: 'Build', color: '#0891b2', actions: [
+          { id: 7, name: 'Sprint planning', type: 'meeting', required: true, desc: 'Break work into sprints with story points' },
+          { id: 8, name: 'Development', type: 'task', required: true, desc: 'Core feature implementation' },
+          { id: 9, name: 'Code review', type: 'review', required: true, desc: 'Peer review for all PRs before merge' },
+          { id: 10, name: 'Unit tests', type: 'task', required: true, desc: 'Minimum 80% coverage' }
+        ]},
+        { id: 4, name: 'Test', color: '#d97706', actions: [
+          { id: 11, name: 'QA testing', type: 'task', required: true, desc: 'Manual and automated test execution' },
+          { id: 12, name: 'Performance testing', type: 'task', required: false, desc: 'Load and stress testing' },
+          { id: 13, name: 'Stakeholder UAT', type: 'review', required: true, desc: 'User acceptance testing sign-off' }
+        ]},
+        { id: 5, name: 'Launch', color: '#16a34a', actions: [
+          { id: 14, name: 'Deployment plan', type: 'document', required: true, desc: 'Runbook for production deployment' },
+          { id: 15, name: 'Go/No-go approval', type: 'approval', required: true, desc: 'Final launch sign-off from sponsor' },
+          { id: 16, name: 'Deploy to production', type: 'milestone', required: true, desc: 'Production release' },
+          { id: 17, name: 'Post-launch review', type: 'meeting', required: false, desc: 'Retrospective and lessons learned' }
+        ]}
+      ]
+    },
+    {
+      id: 2, name: 'Campaign Launch', description: 'Marketing campaign lifecycle from brief to results analysis.', projectType: 'Marketing', color: '#f59e0b',
+      phases: [
+        { id: 6, name: 'Brief', color: '#f59e0b', actions: [
+          { id: 18, name: 'Creative brief', type: 'document', required: true, desc: 'Goals, audience, messaging, and budget' },
+          { id: 19, name: 'Brief approval', type: 'approval', required: true, desc: 'Stakeholder sign-off on brief' }
+        ]},
+        { id: 7, name: 'Creative', color: '#ec4899', actions: [
+          { id: 20, name: 'Concept development', type: 'task', required: true, desc: 'Initial creative concepts and moodboards' },
+          { id: 21, name: 'Creative review', type: 'review', required: true, desc: 'Internal creative review' },
+          { id: 22, name: 'Client approval', type: 'approval', required: true, desc: 'Client sign-off on creative direction' },
+          { id: 23, name: 'Asset production', type: 'task', required: true, desc: 'Produce all final assets' }
+        ]},
+        { id: 8, name: 'Launch', color: '#16a34a', actions: [
+          { id: 24, name: 'Channel setup', type: 'task', required: true, desc: 'Configure all campaign channels' },
+          { id: 25, name: 'Launch review', type: 'approval', required: true, desc: 'Final pre-launch check' },
+          { id: 26, name: 'Go live', type: 'milestone', required: true, desc: 'Campaign goes live' }
+        ]},
+        { id: 9, name: 'Measure', color: '#6366f1', actions: [
+          { id: 27, name: 'Performance tracking', type: 'task', required: true, desc: 'Monitor KPIs daily' },
+          { id: 28, name: 'Results report', type: 'document', required: true, desc: 'Post-campaign analysis and ROI' }
+        ]}
+      ]
+    },
+    {
+      id: 3, name: 'Compliance & Audit', description: 'Structured audit workflow with mandatory approval gates.', projectType: 'Operations', color: '#06b6d4',
+      phases: [
+        { id: 10, name: 'Preparation', color: '#06b6d4', actions: [
+          { id: 29, name: 'Scope definition', type: 'document', required: true, desc: 'Define audit scope and objectives' },
+          { id: 30, name: 'Evidence gathering', type: 'task', required: true, desc: 'Collect required documentation' }
+        ]},
+        { id: 11, name: 'Assessment', color: '#8b5cf6', actions: [
+          { id: 31, name: 'Control testing', type: 'task', required: true, desc: 'Test all in-scope controls' },
+          { id: 32, name: 'Gap analysis', type: 'review', required: true, desc: 'Identify and document gaps' },
+          { id: 33, name: 'Findings review', type: 'meeting', required: true, desc: 'Review findings with team' }
+        ]},
+        { id: 12, name: 'Remediation', color: '#d97706', actions: [
+          { id: 34, name: 'Remediation plan', type: 'document', required: true, desc: 'Plan to address all findings' },
+          { id: 35, name: 'Remediation execution', type: 'task', required: true, desc: 'Implement fixes' },
+          { id: 36, name: 'Re-testing', type: 'review', required: true, desc: 'Verify remediation is effective' }
+        ]},
+        { id: 13, name: 'Sign-off', color: '#16a34a', actions: [
+          { id: 37, name: 'Final report', type: 'document', required: true, desc: 'Auditor final report' },
+          { id: 38, name: 'Executive sign-off', type: 'approval', required: true, desc: 'Leadership approval of findings' },
+          { id: 39, name: 'Audit closed', type: 'milestone', required: true, desc: 'Formal audit closure' }
+        ]}
+      ]
+    }
+  ],
 
   activity: [
     { type:'task', icon:'✓', color:'#10b981', bg:'#ecfdf5', text:'<strong>Sam Rivera</strong> completed "API authentication module" on <strong>Alpha Launch</strong>', time:'10 min ago' },
@@ -116,7 +199,13 @@ const I = {
   list: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
   grid: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
   filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
-  history: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.71L1 10"/></svg>`
+  history: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.71L1 10"/></svg>`,
+  workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><line x1="5" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="12" y2="11"/><line x1="19" y1="7" x2="19" y2="11"/><line x1="5" y1="12" x2="12" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  gitBranch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>`,
+  checkSquare: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+  fileText: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  flag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
+  thumbsUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`
 };
 
 // Sized icon wrapper — prevents bare SVGs from expanding
@@ -193,6 +282,7 @@ function renderSidebar() {
     { id:'projects', label:'Projects', icon:I.folder },
     { id:'approvals', label:'Approvals', icon:I.check, badge: DATA.approvals.length },
     { id:'policies', label:'Policies', icon:I.zap },
+    { id:'workflows', label:'Workflows', icon:I.workflow },
     { id:'team', label:'Team', icon:I.users },
     { id:'analytics', label:'Analytics', icon:I.chart }
   ];
@@ -268,6 +358,8 @@ function render() {
     case 'policies': renderPolicies(); break;
     case 'team': renderTeam(); break;
     case 'analytics': renderAnalytics(); break;
+    case 'workflows': renderWorkflows(); break;
+    case 'workflow-builder': renderWorkflowBuilder(); break;
     default: renderDashboard();
   }
 }
@@ -1419,6 +1511,309 @@ function renderWalkthroughStep(s, p) {
         </div>`).join('')}
       <button class="btn btn-ghost btn-sm mt-2">${I.plus} Add custom task</button>`;
   }
+}
+
+// --- WORKFLOWS ---
+function renderWorkflows() {
+  const wflows = DATA.workflows;
+  const actionTypeColor = { document:'#6366f1', meeting:'#0891b2', review:'#d97706', task:'#16a34a', approval:'#dc2626', milestone:'#7c3aed' };
+
+  function phaseCount(w) { return w.phases.length; }
+  function actionCount(w) { return w.phases.reduce((s,p)=>s+p.actions.length,0); }
+  function projectsUsing(w) { return DATA.projects.filter(p=>p.workflowId===w.id); }
+
+  renderTopbar([{label:'Workflows'}]);
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="page-content">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-6)">
+        <div>
+          <h1 class="page-title">Workflows</h1>
+          <p class="page-subtitle">Define reusable project templates with phases and actions</p>
+        </div>
+        <button class="btn btn-primary" id="new-workflow-btn">${I.plus} New Workflow</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--sp-5)">
+        ${wflows.map(w => {
+          const projs = projectsUsing(w);
+          return `
+          <div class="workflow-card" data-wf="${w.id}">
+            <div class="workflow-card-accent" style="background:${w.color}"></div>
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--sp-2)">
+              <div class="workflow-card-name">${w.name}</div>
+              <span class="badge" style="background:#f1f5f9;color:#64748b;font-size:11px">${w.projectType}</span>
+            </div>
+            <div class="workflow-card-desc">${w.description}</div>
+            <div class="workflow-card-stats">
+              <span>${ico(I.gitBranch)} ${phaseCount(w)} phases</span>
+              <span>${ico(I.checkSquare)} ${actionCount(w)} actions</span>
+              <span>${ico(I.folder)} ${projs.length} project${projs.length!==1?'s':''}</span>
+            </div>
+            <div class="workflow-card-phases mt-3">
+              ${w.phases.map(ph=>`<span class="workflow-phase-pip" style="background:${ph.color}22;color:${ph.color}">${ph.name}</span>`).join('')}
+            </div>
+          </div>`;
+        }).join('')}
+        <div class="workflow-card" id="empty-wf-card" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;cursor:pointer;color:var(--c-text-3);gap:var(--sp-3)">
+          <div style="width:44px;height:44px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center">${ico(I.plus,24)}</div>
+          <div style="font-size:14px;font-weight:600">Create new workflow</div>
+          <div style="font-size:12px;text-align:center;max-width:220px">Define phases and actions to standardize how projects run</div>
+        </div>
+      </div>
+    </div>`;
+
+  el.querySelectorAll('.workflow-card[data-wf]').forEach(card => {
+    card.addEventListener('click', () => {
+      const wf = DATA.workflows.find(w=>w.id===+card.dataset.wf);
+      STATE.currentWorkflow = wf;
+      renderWorkflowBuilder(wf);
+    });
+  });
+  document.getElementById('new-workflow-btn')?.addEventListener('click', () => {
+    const newWf = {
+      id: DATA.workflows.length + 1,
+      name: 'New Workflow',
+      description: 'Describe this workflow…',
+      projectType: 'General',
+      color: '#6366f1',
+      phases: []
+    };
+    DATA.workflows.push(newWf);
+    STATE.currentWorkflow = newWf;
+    renderWorkflowBuilder(newWf);
+  });
+  document.getElementById('empty-wf-card')?.addEventListener('click', () => {
+    document.getElementById('new-workflow-btn')?.click();
+  });
+}
+
+function renderWorkflowBuilder(wf) {
+  const actionTypeColor = { document:'#6366f1', meeting:'#0891b2', review:'#d97706', task:'#16a34a', approval:'#dc2626', milestone:'#7c3aed' };
+  const actionTypeIcon  = { document:I.fileText, meeting:I.users, review:I.checkSquare, task:I.checkCircle, approval:I.thumbsUp, milestone:I.flag };
+  const actionTypes = ['document','meeting','review','task','approval','milestone'];
+  let selectedAction = null; // { phaseId, actionId }
+
+  const shell = document.createElement('div');
+  shell.className = 'wf-builder-shell';
+  shell.id = 'wf-builder-shell';
+  document.body.appendChild(shell);
+
+  function projs() { return DATA.projects.filter(p=>p.workflowId===wf.id); }
+
+  function buildDetailPanel() {
+    if (!selectedAction) return `<div style="padding:var(--sp-6);text-align:center;color:var(--c-text-3);margin-top:60px"><div style="font-size:13px">Select an action to view or edit its details</div></div>`;
+    const phase = wf.phases.find(p=>p.id===selectedAction.phaseId);
+    const action = phase?.actions.find(a=>a.id===selectedAction.actionId);
+    if (!action) return '';
+    const color = actionTypeColor[action.type] || '#6366f1';
+    return `
+      <div class="wf-detail-header">
+        <div style="display:flex;align-items:center;gap:var(--sp-3)">
+          <div class="wf-action-icon" style="background:${color}22;width:32px;height:32px">${ico(actionTypeIcon[action.type]||I.checkSquare,16)}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700">${action.name}</div>
+            <div style="font-size:11px;color:var(--c-text-3)">${phase.name}</div>
+          </div>
+        </div>
+        <button class="btn-icon btn-sm" id="detail-close" title="Close">${I.x}</button>
+      </div>
+      <div class="wf-detail-body">
+        <div class="form-group">
+          <label class="form-label">Action name</label>
+          <input class="input" id="det-name" value="${action.name}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="textarea" id="det-desc" style="min-height:72px">${action.desc||''}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Action type</label>
+          <div class="action-type-grid">
+            ${actionTypes.map(t=>`
+              <div class="action-type-btn ${action.type===t?'active':''}" data-type="${t}">
+                ${ico(actionTypeIcon[t]||I.checkSquare,16)}
+                <span>${t.charAt(0).toUpperCase()+t.slice(1)}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:var(--sp-2)">
+            <input type="checkbox" ${action.required?'checked':''} id="det-required" style="accent-color:#6366f1">
+            Required action
+          </label>
+          <div style="font-size:11px;color:var(--c-text-3);margin-top:4px">Required actions must be completed before the phase can close</div>
+        </div>
+        <button class="btn btn-danger btn-sm w-full" id="det-delete" style="margin-top:auto">${I.trash} Delete action</button>
+      </div>`;
+  }
+
+  function buildCanvas() {
+    return wf.phases.map((phase, pi) => {
+      const c = phase.color || '#6366f1';
+      const actionCards = phase.actions.map(action => {
+        const tc = actionTypeColor[action.type] || '#6366f1';
+        const isSelected = selectedAction?.phaseId===phase.id && selectedAction?.actionId===action.id;
+        return `<div class="wf-action ${isSelected?'selected':''}" data-pid="${phase.id}" data-aid="${action.id}">
+          ${action.required?'<div class="wf-action-required" title="Required"></div>':''}
+          <div class="wf-action-header">
+            <div class="wf-action-icon" style="background:${tc}22">${ico(actionTypeIcon[action.type]||I.checkSquare,12)}</div>
+            <div class="wf-action-name">${action.name}</div>
+          </div>
+          <div class="wf-action-type" style="color:${tc}">${action.type}</div>
+        </div>`;
+      }).join('');
+
+      const col = `
+        <div class="wf-phase" data-phaseid="${phase.id}">
+          <div class="wf-phase-header">
+            <div class="wf-phase-header-bg" style="background:${c}"></div>
+            <div class="wf-phase-name" data-phasename="${phase.id}">${phase.name}</div>
+            <span class="wf-phase-count" style="background:${c}22;color:${c}">${phase.actions.length}</span>
+            <button class="btn-icon btn-sm wf-phase-del" data-delphase="${phase.id}" title="Delete phase" style="position:relative;z-index:1;margin-left:4px">${I.x}</button>
+          </div>
+          <div class="wf-actions">${actionCards}</div>
+          <div class="wf-add-action" data-addaction="${phase.id}">+ Add action</div>
+        </div>`;
+
+      const connector = pi < wf.phases.length - 1
+        ? `<div class="wf-connector"><div class="wf-connector-line" style="background:#cbd5e1"></div><svg width="8" height="8" viewBox="0 0 8 8" style="flex-shrink:0"><path d="M0 4h8M5 1l3 3-3 3" stroke="#cbd5e1" stroke-width="1.5" fill="none"/></svg></div>`
+        : '';
+      return col + connector;
+    }).join('') + `
+      <div class="wf-add-phase" id="wf-add-phase-btn">
+        ${ico(I.plus,24)}
+        <div style="font-size:13px;font-weight:600">Add Phase</div>
+      </div>`;
+  }
+
+  function renderAll() {
+    const hasPanel = !!selectedAction;
+    shell.innerHTML = `
+      <div class="wf-builder-topbar">
+        <div class="wf-builder-topbar-left">
+          <button class="btn-icon" id="wf-back-btn" title="Back to workflows">${I.chevronLeft}</button>
+          <div>
+            <div class="wf-builder-title" id="wf-title-label">${wf.name}</div>
+            <div class="wf-builder-subtitle">${wf.projectType} · ${wf.phases.length} phases · ${wf.phases.reduce((s,p)=>s+p.actions.length,0)} actions</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--sp-3)">
+          <span class="badge" style="background:#f0fdf4;color:#16a34a;font-size:11px">${I.check} Auto-saved</span>
+          <button class="btn btn-secondary btn-sm" id="wf-settings-btn">${I.settings} Settings</button>
+        </div>
+      </div>
+      <div style="display:flex;flex:1;overflow:hidden">
+        <div class="wf-builder-body" style="flex:1">
+          <div class="wf-canvas">${buildCanvas()}</div>
+        </div>
+        ${hasPanel ? `<div class="wf-detail-panel">${buildDetailPanel()}</div>` : ''}
+      </div>
+      <div class="wf-projects-bar">
+        <span class="wf-projects-bar-label">Projects using this workflow:</span>
+        ${projs().length
+          ? projs().map(p=>`<span class="badge" style="background:#e0e7ff;color:#4338ca">${p.name}</span>`).join('')
+          : '<span style="color:var(--c-text-3);font-size:12px">None yet — assign projects from the project detail page</span>'}
+      </div>`;
+    bindEvents();
+  }
+
+  function bindEvents() {
+    // Back
+    document.getElementById('wf-back-btn')?.addEventListener('click', () => {
+      shell.remove();
+      navigate('workflows');
+    });
+
+    // Phase name inline edit
+    shell.querySelectorAll('.wf-phase-name[data-phasename]').forEach(el => {
+      el.addEventListener('click', () => {
+        const pid = +el.dataset.phasename;
+        const phase = wf.phases.find(p=>p.id===pid);
+        if(!phase) return;
+        const input = document.createElement('input');
+        input.className = 'wf-phase-name-input';
+        input.value = phase.name;
+        el.replaceWith(input);
+        input.focus(); input.select();
+        const commit = () => {
+          phase.name = input.value.trim() || phase.name;
+          renderAll();
+        };
+        input.onblur = commit;
+        input.onkeydown = e => { if(e.key==='Enter') input.blur(); if(e.key==='Escape'){ input.value=phase.name; input.blur(); } };
+      });
+    });
+
+    // Add phase
+    document.getElementById('wf-add-phase-btn')?.addEventListener('click', () => {
+      const colors = ['#6366f1','#8b5cf6','#0891b2','#d97706','#16a34a','#dc2626','#f59e0b','#06b6d4'];
+      const nextId = Math.max(0,...wf.phases.map(p=>p.id))+1;
+      wf.phases.push({ id:nextId, name:`Phase ${nextId}`, color: colors[(nextId-1)%colors.length], actions:[] });
+      renderAll();
+    });
+
+    // Delete phase
+    shell.querySelectorAll('.wf-phase-del[data-delphase]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const pid = +btn.dataset.delphase;
+        wf.phases = wf.phases.filter(p=>p.id!==pid);
+        if(selectedAction?.phaseId===pid) selectedAction=null;
+        renderAll();
+      });
+    });
+
+    // Add action
+    shell.querySelectorAll('.wf-add-action[data-addaction]').forEach(el => {
+      el.addEventListener('click', () => {
+        const pid = +el.dataset.addaction;
+        const phase = wf.phases.find(p=>p.id===pid);
+        if(!phase) return;
+        const nextId = Math.max(0,...phase.actions.map(a=>a.id),0)+1;
+        const newAction = { id:nextId, name:'New action', type:'task', required:false, desc:'' };
+        phase.actions.push(newAction);
+        selectedAction = { phaseId:pid, actionId:nextId };
+        renderAll();
+      });
+    });
+
+    // Select action
+    shell.querySelectorAll('.wf-action[data-pid]').forEach(el => {
+      el.addEventListener('click', () => {
+        const pid = +el.dataset.pid, aid = +el.dataset.aid;
+        selectedAction = { phaseId:pid, actionId:aid };
+        renderAll();
+      });
+    });
+
+    // Detail panel interactions
+    const detName = document.getElementById('det-name');
+    const detDesc = document.getElementById('det-desc');
+    if(detName && selectedAction) {
+      const phase = wf.phases.find(p=>p.id===selectedAction.phaseId);
+      const action = phase?.actions.find(a=>a.id===selectedAction.actionId);
+      if(action) {
+        detName.onblur = () => { action.name = detName.value.trim() || action.name; renderAll(); };
+        detName.onkeydown = e => { if(e.key==='Enter') detName.blur(); };
+        detDesc.onblur = () => { action.desc = detDesc.value.trim(); };
+
+        document.getElementById('det-required')?.addEventListener('change', e => { action.required = e.target.checked; renderAll(); });
+
+        shell.querySelectorAll('.action-type-btn[data-type]').forEach(btn => {
+          btn.addEventListener('click', () => { action.type = btn.dataset.type; renderAll(); });
+        });
+
+        document.getElementById('det-delete')?.addEventListener('click', () => {
+          phase.actions = phase.actions.filter(a=>a.id!==action.id);
+          selectedAction = null;
+          renderAll();
+        });
+        document.getElementById('detail-close')?.addEventListener('click', () => { selectedAction = null; renderAll(); });
+      }
+    }
+  }
+
+  renderAll();
 }
 
 // --- INIT ---

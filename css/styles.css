@@ -1094,6 +1094,164 @@ tbody tr:hover td { background: #FAFCFF; }
 .cursor-pointer { cursor: pointer; }
 
 /* ============================================================
+   PAGE: WORKFLOWS
+   ============================================================ */
+.workflow-card {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); padding: var(--sp-5);
+  cursor: pointer; transition: box-shadow var(--t), border-color var(--t), transform var(--t);
+  box-shadow: var(--sh-sm);
+}
+.workflow-card:hover { box-shadow: var(--sh-md); border-color: var(--c-border-2); transform: translateY(-1px); }
+.workflow-card-accent { height: 4px; border-radius: var(--r-full); margin-bottom: var(--sp-4); }
+.workflow-card-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.workflow-card-desc { font-size: 12px; color: var(--c-text-2); line-height: 1.5; margin-bottom: var(--sp-4); }
+.workflow-card-stats { display: flex; gap: var(--sp-4); font-size: 12px; color: var(--c-text-3); }
+.workflow-card-phases { display: flex; gap: 4px; flex-wrap: wrap; margin-top: var(--sp-3); }
+.workflow-phase-pip {
+  font-size: 10px; font-weight: 600; padding: 2px 8px;
+  border-radius: var(--r-full); white-space: nowrap;
+}
+
+/* Workflow Builder */
+.wf-builder-shell {
+  position: fixed; inset: 0; z-index: 200;
+  background: #f1f5f9;
+  display: flex; flex-direction: column;
+}
+.wf-builder-topbar {
+  height: var(--topbar-h); background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-6); flex-shrink: 0; gap: var(--sp-4);
+}
+.wf-builder-topbar-left { display: flex; align-items: center; gap: var(--sp-3); }
+.wf-builder-title { font-size: 15px; font-weight: 700; }
+.wf-builder-subtitle { font-size: 12px; color: var(--c-text-3); }
+.wf-builder-body { flex: 1; overflow-x: auto; overflow-y: hidden; padding: var(--sp-6); }
+.wf-canvas { display: flex; gap: var(--sp-4); align-items: flex-start; min-width: max-content; padding-bottom: var(--sp-4); }
+
+/* Phase column */
+.wf-phase {
+  width: 240px; flex-shrink: 0;
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: var(--r-lg); box-shadow: var(--sh-sm);
+  display: flex; flex-direction: column;
+  transition: box-shadow var(--t);
+}
+.wf-phase:hover { box-shadow: var(--sh-md); }
+.wf-phase-header {
+  padding: var(--sp-4); border-radius: var(--r-lg) var(--r-lg) 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--c-border);
+  position: relative; overflow: hidden;
+}
+.wf-phase-header-bg {
+  position: absolute; inset: 0; opacity: 0.08;
+}
+.wf-phase-name {
+  font-size: 13px; font-weight: 700; position: relative; z-index: 1;
+  cursor: text; flex: 1;
+}
+.wf-phase-name-input {
+  font-size: 13px; font-weight: 700; background: transparent;
+  border: none; outline: none; width: 100%; color: var(--c-text);
+}
+.wf-phase-count {
+  font-size: 11px; font-weight: 600; padding: 1px 7px;
+  border-radius: var(--r-full); position: relative; z-index: 1;
+  margin-left: var(--sp-2);
+}
+.wf-phase-menu { position: relative; z-index: 1; }
+
+/* Connector arrow between phases */
+.wf-connector {
+  display: flex; align-items: center; padding-top: 56px;
+  flex-shrink: 0;
+}
+.wf-connector-line {
+  width: 24px; height: 2px;
+  position: relative;
+}
+.wf-connector-line::after {
+  content: ''; position: absolute; right: -5px; top: -4px;
+  border: 5px solid transparent;
+}
+
+/* Action cards */
+.wf-actions { padding: var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-2); flex: 1; }
+.wf-action {
+  background: #f8fafc; border: 1px solid var(--c-border);
+  border-radius: var(--r-md); padding: 10px var(--sp-3);
+  cursor: pointer; transition: background var(--t), border-color var(--t), box-shadow var(--t);
+  position: relative;
+}
+.wf-action:hover { background: var(--c-surface); border-color: var(--c-border-2); box-shadow: var(--sh-sm); }
+.wf-action.selected { border-color: var(--c-primary); background: var(--c-primary-light); box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
+.wf-action-header { display: flex; align-items: flex-start; gap: var(--sp-2); }
+.wf-action-icon { width: 22px; height: 22px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.wf-action-icon svg { width: 12px; height: 12px; }
+.wf-action-name { font-size: 12px; font-weight: 600; color: var(--c-text); line-height: 1.4; flex: 1; }
+.wf-action-desc { font-size: 11px; color: var(--c-text-3); margin-top: 4px; line-height: 1.4; }
+.wf-action-type { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 6px; }
+.wf-action-required { position: absolute; top: 8px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--c-danger); }
+
+.wf-add-action {
+  margin: 0 var(--sp-3) var(--sp-3);
+  border: 1px dashed var(--c-border); border-radius: var(--r-md);
+  padding: 8px; text-align: center; cursor: pointer;
+  font-size: 12px; color: var(--c-text-3);
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+.wf-add-action:hover { border-color: var(--c-primary); color: var(--c-primary); background: var(--c-primary-light); }
+
+.wf-add-phase {
+  width: 200px; flex-shrink: 0;
+  border: 2px dashed var(--c-border); border-radius: var(--r-lg);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: var(--sp-2); cursor: pointer;
+  color: var(--c-text-3); min-height: 160px;
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+.wf-add-phase:hover { border-color: var(--c-primary); color: var(--c-primary); background: var(--c-primary-light); }
+.wf-add-phase svg { width: 24px; height: 24px; }
+
+/* Action detail panel */
+.wf-detail-panel {
+  width: 300px; flex-shrink: 0; background: var(--c-surface);
+  border-left: 1px solid var(--c-border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.wf-detail-header {
+  padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--c-border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wf-detail-body { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); flex: 1; }
+
+/* Projects using this workflow — bottom strip */
+.wf-projects-bar {
+  background: var(--c-surface); border-top: 1px solid var(--c-border);
+  padding: var(--sp-3) var(--sp-6);
+  display: flex; align-items: center; gap: var(--sp-4);
+  font-size: 12px; flex-shrink: 0;
+}
+.wf-projects-bar-label { color: var(--c-text-3); font-weight: 500; }
+
+/* Action type config */
+.action-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+.action-type-btn {
+  border: 1px solid var(--c-border); border-radius: var(--r-md);
+  padding: var(--sp-2) var(--sp-3); cursor: pointer;
+  text-align: center; font-size: 11px; font-weight: 600;
+  transition: all var(--t); display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+}
+.action-type-btn:hover { border-color: var(--c-primary); background: var(--c-primary-light); color: var(--c-primary); }
+.action-type-btn.active { border-color: var(--c-primary); background: var(--c-primary-light); color: var(--c-primary); }
+.action-type-btn svg { width: 16px; height: 16px; }
+
+/* ============================================================
    ANIMATIONS
    ============================================================ */
 @keyframes fadeIn {
