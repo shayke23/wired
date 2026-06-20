@@ -188,6 +188,11 @@ const DATA = {
     { id:8, name:'Risk Category', type:'select', appliesTo:'Risk', required:true, description:'Classification: Technical / Financial / Operational / Reputational', usedIn:9, createdBy:'LM', createdAt:'2026-05-22' }
   ],
 
+  reports: [
+    { id:'cr1', name:'Q3 Engineering Summary', vizType:'bar',   metric:'progress', description:'Progress across all engineering projects in Q3.', createdBy:'AM', createdAt:'2026-06-10', tags:['engineering','q3'] },
+    { id:'cr2', name:'Budget vs Spend — Active', vizType:'bar', metric:'budget',   description:'Budget burn for all currently active projects.', createdBy:'LM', createdAt:'2026-06-14', tags:['budget','finance'] }
+  ],
+
   oobViews: [
     { id:1,  category:'Projects',  name:'All Projects Overview',       icon:'folder',        color:'#6366f1', description:'Every project with status, health score, PM, progress and due date.', columns:['name','type','status','health','progress','pm','due'], previewRows:[['Alpha Launch','Engineering','Active','82','67%','AM','Aug 15'],['Brand Refresh','Marketing','At Risk','54','41%','JD','Jul 30'],['Data Platform','Engineering','Planning','–','8%','SR','Dec 01']], tags:['projects','overview'] },
     { id:2,  category:'Projects',  name:'At-Risk & Overdue Projects',  icon:'alertTriangle', color:'#ef4444', description:'Projects flagged At Risk or with health below 60 and overdue tasks.', columns:['name','status','health','overdueTasks','budget','pm'], previewRows:[['Brand Refresh','At Risk','54','4','$45k','JD'],['Partner Portal','On Hold','38','5','$60k','JD']], tags:['risk','health'] },
@@ -276,7 +281,10 @@ const I = {
   table2: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>`,
   layers: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
   sliders: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
-  refreshCw: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`
+  refreshCw: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`,
+  reports: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17V13"/><path d="M12 17V9"/><path d="M16 17V11"/></svg>`,
+  pieChart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>`,
+  pivot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>`
 };
 
 // Sized icon wrapper — prevents bare SVGs from expanding
@@ -349,15 +357,16 @@ function toast(msg, type='success') {
 // --- SIDEBAR ---
 function renderSidebar() {
   const globalNav = [
-    { id:'dashboard',    label:'Dashboard',    icon:I.dashboard },
-    { id:'team',         label:'Team',         icon:I.users },
-    { id:'analytics',    label:'Analytics',    icon:I.chart },
-    { id:'data-sources', label:'Data Sources', icon:I.database },
+    { id:'dashboard', label:'Dashboard', icon:I.dashboard },
   ];
   const projectScopedNav = STATE.currentProject ? [
-    { id:'approvals', label:'Approvals', icon:I.check,    badge: DATA.approvals.length },
-    { id:'policies',  label:'Policies',  icon:I.zap },
-    { id:'workflows', label:'Workflows', icon:I.workflow },
+    { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
+    { id:'policies',     label:'Policies',     icon:I.zap },
+    { id:'workflows',    label:'Workflows',    icon:I.workflow },
+    { id:'team',         label:'Team',         icon:I.users },
+    { id:'analytics',    label:'Analytics',    icon:I.chart },
+    { id:'reports',      label:'Reports',      icon:I.reports },
+    { id:'data-sources', label:'Data Sources', icon:I.database },
   ] : [];
 
   const navItem = n => `
@@ -499,6 +508,7 @@ function render() {
     case 'analytics': renderAnalytics(); break;
     case 'workflows': renderWorkflows(); break;
     case 'data-sources': renderDataSources(); break;
+    case 'reports': renderReports(); break;
     case 'workflow-builder': renderWorkflowBuilder(); break;
     default: renderDashboard();
   }
@@ -2497,6 +2507,383 @@ function renderWorkflowBuilder(wf) {
   }
 
   renderAll();
+}
+
+// --- REPORTS ---
+function renderReports() {
+  if (!STATE.reportsTab) STATE.reportsTab = 'oob';
+  renderTopbar([{ label: 'Reports' }]);
+
+  const oobReports = [
+    { id:'oob1', name:'Health Score by Project',    vizType:'bar',   icon:'bar',   color:'#6366f1', description:'Current health score for every project.' },
+    { id:'oob2', name:'Budget vs Spend',             vizType:'bar2',  icon:'bar',   color:'#f59e0b', description:'Budget allocated vs actual spend per project.' },
+    { id:'oob3', name:'Task Status Distribution',    vizType:'pie',   icon:'pie',   color:'#10b981', description:'Breakdown of tasks by status across all projects.' },
+    { id:'oob4', name:'Team Workload',               vizType:'bar3',  icon:'bar',   color:'#8b5cf6', description:'Open task count per team member.' },
+    { id:'oob5', name:'Risk Severity Breakdown',     vizType:'pie2',  icon:'pie',   color:'#ef4444', description:'Distribution of open risks by severity level.' },
+    { id:'oob6', name:'Project KPI Summary',         vizType:'pivot', icon:'pivot', color:'#0891b2', description:'Progress, budget burn, tasks and health in one pivot.' },
+  ];
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Reports</h1>
+        <p class="page-sub">Visualise project data with built-in and custom reports</p>
+      </div>
+      <button class="btn btn-primary" id="rpt-new-btn">${I.plus} New Report</button>
+    </div>
+
+    <div class="tab-bar" style="margin-bottom:24px">
+      <div class="tab-item ${STATE.reportsTab==='oob'?'active':''}" data-tab="oob">Built-in Reports</div>
+      <div class="tab-item ${STATE.reportsTab==='custom'?'active':''}" data-tab="custom">Custom Reports</div>
+    </div>
+
+    <div id="rpt-body"></div>
+  `;
+
+  document.querySelectorAll('.tab-item[data-tab]').forEach(el => {
+    el.addEventListener('click', () => { STATE.reportsTab = el.dataset.tab; renderReports(); });
+  });
+  document.getElementById('rpt-new-btn').addEventListener('click', () => openReportModal());
+
+  if (STATE.reportsTab === 'oob') renderOobReports(oobReports);
+  else renderCustomReports();
+}
+
+// ---- chart helpers ----
+function svgBar(values, labels, colors, maxVal) {
+  const W = 340, H = 140, pad = 30, bGap = 8;
+  const n = values.length;
+  const bW = Math.max(12, (W - pad*2 - bGap*(n-1)) / n);
+  const max = maxVal || Math.max(...values, 1);
+  const bars = values.map((v, i) => {
+    const bH = Math.round((v / max) * (H - 28));
+    const x = pad + i * (bW + bGap);
+    const y = H - 18 - bH;
+    const label = labels[i].length > 8 ? labels[i].slice(0,7)+'…' : labels[i];
+    return `
+      <rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="3" fill="${colors[i % colors.length]}" opacity="0.85"/>
+      <text x="${x + bW/2}" y="${H - 4}" text-anchor="middle" font-size="9" fill="#64748B">${label}</text>
+      <text x="${x + bW/2}" y="${y - 4}" text-anchor="middle" font-size="9" fill="#94A3B8">${v}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:140px">${bars}</svg>`;
+}
+
+function svgBar2(valA, valB, labels, colorA, colorB) {
+  const W = 340, H = 140, pad = 30, bGap = 14, pairGap = 4;
+  const n = labels.length;
+  const pairW = (W - pad*2 - bGap*(n-1)) / n;
+  const bW = (pairW - pairGap) / 2;
+  const max = Math.max(...valA, ...valB, 1);
+  const bars = labels.map((lbl, i) => {
+    const x = pad + i * (pairW + bGap);
+    const hA = Math.round((valA[i] / max) * (H - 28));
+    const hB = Math.round((valB[i] / max) * (H - 28));
+    const yA = H - 18 - hA, yB = H - 18 - hB;
+    const label = lbl.length > 8 ? lbl.slice(0,7)+'…' : lbl;
+    return `
+      <rect x="${x}" y="${yA}" width="${bW}" height="${hA}" rx="2" fill="${colorA}" opacity="0.85"/>
+      <rect x="${x+bW+pairGap}" y="${yB}" width="${bW}" height="${hB}" rx="2" fill="${colorB}" opacity="0.85"/>
+      <text x="${x + pairW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="#64748B">${label}</text>`;
+  }).join('');
+  const legend = `
+    <rect x="${pad}" y="2" width="10" height="8" rx="2" fill="${colorA}"/>
+    <text x="${pad+13}" y="10" font-size="9" fill="#94A3B8">Budget</text>
+    <rect x="${pad+60}" y="2" width="10" height="8" rx="2" fill="${colorB}"/>
+    <text x="${pad+73}" y="10" font-size="9" fill="#94A3B8">Spent</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:140px">${legend}${bars}</svg>`;
+}
+
+function svgPie(slices) {
+  // slices: [{label, value, color}]
+  const total = slices.reduce((s,x) => s+x.value, 0) || 1;
+  const cx = 70, cy = 70, r = 58;
+  let angle = -Math.PI / 2;
+  const paths = slices.map(s => {
+    const frac = s.value / total;
+    const a1 = angle, a2 = angle + frac * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    const large = frac > 0.5 ? 1 : 0;
+    angle = a2;
+    if (frac < 0.001) return '';
+    return `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${s.color}" opacity="0.88"/>`;
+  }).join('');
+  const legend = slices.map((s,i) => `
+    <rect x="148" y="${10 + i*20}" width="10" height="10" rx="2" fill="${s.color}"/>
+    <text x="162" y="${19 + i*20}" font-size="10" fill="#94A3B8">${s.label} (${s.value})</text>`).join('');
+  return `<svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:140px">${paths}${legend}</svg>`;
+}
+
+function svgPivot(rows, cols, data) {
+  const cellW = 72, cellH = 28, hdrH = 30, rowLblW = 110;
+  const W = rowLblW + cols.length * cellW + 2;
+  const H = hdrH + rows.length * cellH + 2;
+  let cells = '';
+  cols.forEach((col, ci) => {
+    cells += `<rect x="${rowLblW + ci*cellW}" y="0" width="${cellW}" height="${hdrH}" fill="#1E293B"/>
+    <text x="${rowLblW + ci*cellW + cellW/2}" y="19" text-anchor="middle" font-size="10" font-weight="600" fill="#94A3B8">${col}</text>`;
+  });
+  rows.forEach((row, ri) => {
+    const bg = ri % 2 === 0 ? '#0F172A' : '#162032';
+    cells += `<rect x="0" y="${hdrH + ri*cellH}" width="${W}" height="${cellH}" fill="${bg}"/>
+    <text x="8" y="${hdrH + ri*cellH + 18}" font-size="10" fill="#CBD5E1">${row}</text>`;
+    cols.forEach((col, ci) => {
+      const val = data[ri][ci];
+      const isNum = typeof val === 'number';
+      const color = isNum && val >= 75 ? '#10b981' : isNum && val >= 50 ? '#f59e0b' : '#CBD5E1';
+      cells += `<text x="${rowLblW + ci*cellW + cellW/2}" y="${hdrH + ri*cellH + 18}" text-anchor="middle" font-size="10" fill="${color}">${val}</text>`;
+    });
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:${Math.min(H,180)}px;border-radius:6px;overflow:hidden">${cells}</svg>`;
+}
+
+// --- computed chart data from live DATA ---
+function chartHealthBar() {
+  const ps = DATA.projects.filter(p => p.health != null);
+  return svgBar(ps.map(p=>p.health), ps.map(p=>p.name),
+    ['#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#0891b2'], 100);
+}
+function chartBudgetBar() {
+  const ps = DATA.projects;
+  return svgBar2(ps.map(p=>Math.round(p.budget/1000)), ps.map(p=>Math.round(p.spent/1000)),
+    ps.map(p=>p.name), '#6366f1', '#f59e0b');
+}
+function chartTaskPie() {
+  const all = Object.values(DATA.tasks).flat();
+  const counts = {};
+  all.forEach(t => { counts[t.status] = (counts[t.status]||0)+1; });
+  const palette = { done:'#10b981', 'in-progress':'#6366f1', todo:'#94A3B8', blocked:'#ef4444' };
+  const labels = { done:'Done', 'in-progress':'In Progress', todo:'To Do', blocked:'Blocked' };
+  return svgPie(Object.entries(counts).map(([k,v]) => ({ label: labels[k]||k, value:v, color: palette[k]||'#6366f1' })));
+}
+function chartTeamBar() {
+  const all = Object.values(DATA.tasks).flat().filter(t => t.status !== 'done');
+  const counts = {};
+  DATA.team.forEach(m => { counts[m.initials] = 0; });
+  all.forEach(t => { if (counts[t.assignee] !== undefined) counts[t.assignee]++; });
+  return svgBar(Object.values(counts), DATA.team.map(m=>m.name.split(' ')[0]),
+    DATA.team.map(m=>m.color), null);
+}
+function chartRiskPie() {
+  const risks = DATA.projects.flatMap(p => p.risks||[]).filter(r=>r.open);
+  const counts = { high:0, medium:0, low:0 };
+  risks.forEach(r => { counts[r.severity] = (counts[r.severity]||0)+1; });
+  return svgPie([
+    { label:'High', value:counts.high, color:'#ef4444' },
+    { label:'Medium', value:counts.medium, color:'#f59e0b' },
+    { label:'Low', value:counts.low, color:'#10b981' },
+  ]);
+}
+function chartPivot() {
+  const rows = DATA.projects.map(p=>p.name);
+  const cols = ['Health','Progress','Budget%','Tasks Done'];
+  const data = DATA.projects.map(p => [
+    p.health ?? '—',
+    p.progress,
+    Math.round(p.spent/p.budget*100),
+    p.tasks.done
+  ]);
+  return svgPivot(rows, cols, data);
+}
+
+const OOB_CHARTS = {
+  oob1: chartHealthBar,
+  oob2: chartBudgetBar,
+  oob3: chartTaskPie,
+  oob4: chartTeamBar,
+  oob5: chartRiskPie,
+  oob6: chartPivot,
+};
+
+// metric → live chart for custom reports
+function chartForMetric(metric) {
+  const map = { health: chartHealthBar, budget: chartBudgetBar, tasks: chartTaskPie, team: chartTeamBar, risk: chartRiskPie, pivot: chartPivot };
+  return (map[metric] || chartHealthBar)();
+}
+
+function renderOobReports(oobReports) {
+  const iconMap = {
+    bar: I.reports, pie: I.pieChart, pivot: I.pivot
+  };
+  document.getElementById('rpt-body').innerHTML = `
+    <div class="rpt-grid">
+      ${oobReports.map(r => `
+        <div class="rpt-card">
+          <div class="rpt-card-header">
+            <span class="rpt-card-icon" style="background:${r.color}18;color:${r.color}">${iconMap[r.icon]||I.reports}</span>
+            <div>
+              <div class="rpt-card-name">${r.name}</div>
+              <div class="rpt-card-desc">${r.description}</div>
+            </div>
+          </div>
+          <div class="rpt-chart-area">${OOB_CHARTS[r.id]?.() || ''}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function renderCustomReports() {
+  const reports = DATA.reports;
+  const metricOptions = [
+    { value:'health', label:'Health Scores' },
+    { value:'budget', label:'Budget vs Spend' },
+    { value:'tasks',  label:'Task Distribution' },
+    { value:'team',   label:'Team Workload' },
+    { value:'risk',   label:'Risk Breakdown' },
+    { value:'pivot',  label:'Project KPI Pivot' },
+  ];
+  const vizOptions = [
+    { value:'bar',   label:'Bar Chart' },
+    { value:'pie',   label:'Pie Chart' },
+    { value:'pivot', label:'Pivot Table' },
+  ];
+
+  document.getElementById('rpt-body').innerHTML = `
+    ${reports.length === 0 ? `
+      <div class="empty-state">
+        ${I.reports}
+        <h3>No custom reports yet</h3>
+        <p>Create a report to visualise your project data your way.</p>
+        <button class="btn btn-primary" id="rpt-empty-new">${I.plus} New Report</button>
+      </div>` : `
+      <div class="rpt-grid">
+        ${reports.map(r => `
+          <div class="rpt-card">
+            <div class="rpt-card-header">
+              <span class="rpt-card-icon" style="background:#6366f118;color:#6366f1">${I.reports}</span>
+              <div style="flex:1">
+                <div class="rpt-card-name">${r.name}</div>
+                <div class="rpt-card-desc">${r.description}</div>
+              </div>
+              <div class="rpt-card-actions">
+                <button class="btn-icon rpt-edit-btn" data-id="${r.id}" title="Edit">${I.edit}</button>
+                <button class="btn-icon rpt-del-btn" data-id="${r.id}" title="Delete">${I.trash}</button>
+              </div>
+            </div>
+            <div class="rpt-chart-area">${chartForMetric(r.metric)}</div>
+            <div class="rpt-card-meta">
+              <span>By ${r.createdBy}</span>
+              <span>${r.createdAt}</span>
+              ${r.tags.map(t=>`<span class="rpt-tag">${t}</span>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>`}
+  `;
+
+  document.getElementById('rpt-empty-new')?.addEventListener('click', () => openReportModal());
+  document.querySelectorAll('.rpt-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const r = DATA.reports.find(x => x.id === btn.dataset.id);
+      if (r) openReportModal(r);
+    });
+  });
+  document.querySelectorAll('.rpt-del-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm('Delete this report?')) return;
+      DATA.reports = DATA.reports.filter(x => x.id !== btn.dataset.id);
+      toast('Report deleted');
+      renderReports();
+    });
+  });
+}
+
+function openReportModal(existing) {
+  const isEdit = !!existing;
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>${isEdit ? 'Edit' : 'New'} Report</h3>
+      <button class="btn-icon" id="rpt-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">Report name</label>
+        <input class="form-input" id="rm-name" value="${existing?.name||''}" placeholder="e.g. Q3 Budget Overview"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input class="form-input" id="rm-desc" value="${existing?.description||''}" placeholder="What does this report show?"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Data source</label>
+          <select class="form-select" id="rm-metric">
+            <option value="health" ${existing?.metric==='health'?'selected':''}>Health Scores</option>
+            <option value="budget" ${existing?.metric==='budget'?'selected':''}>Budget vs Spend</option>
+            <option value="tasks"  ${existing?.metric==='tasks' ?'selected':''}>Task Distribution</option>
+            <option value="team"   ${existing?.metric==='team'  ?'selected':''}>Team Workload</option>
+            <option value="risk"   ${existing?.metric==='risk'  ?'selected':''}>Risk Breakdown</option>
+            <option value="pivot"  ${existing?.metric==='pivot' ?'selected':''}>Project KPI Pivot</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Chart type</label>
+          <select class="form-select" id="rm-viztype">
+            <option value="bar"   ${existing?.vizType==='bar'  ?'selected':''}>Bar Chart</option>
+            <option value="pie"   ${existing?.vizType==='pie'  ?'selected':''}>Pie Chart</option>
+            <option value="pivot" ${existing?.vizType==='pivot'?'selected':''}>Pivot Table</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags <span style="color:#64748B;font-weight:400">(comma-separated)</span></label>
+        <input class="form-input" id="rm-tags" value="${(existing?.tags||[]).join(', ')}" placeholder="e.g. budget, q3"/>
+      </div>
+      <div id="rm-preview" style="background:#0F172A;border-radius:8px;padding:12px;margin-top:4px">
+        <div style="font-size:11px;color:#475569;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.6px">Preview</div>
+        ${chartForMetric(existing?.metric||'health')}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="rpt-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="rpt-modal-save">${isEdit ? 'Save changes' : 'Create report'}</button>
+    </div>`;
+
+  const close = () => { overlay.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('rpt-modal-close').addEventListener('click', close);
+  document.getElementById('rpt-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  // Live preview update
+  document.getElementById('rm-metric').addEventListener('change', e => {
+    document.getElementById('rm-preview').innerHTML = `
+      <div style="font-size:11px;color:#475569;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.6px">Preview</div>
+      ${chartForMetric(e.target.value)}`;
+  });
+
+  document.getElementById('rpt-modal-save').addEventListener('click', () => {
+    const name = document.getElementById('rm-name').value.trim();
+    if (!name) { toast('Name is required', 'error'); return; }
+    const tags = document.getElementById('rm-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+    if (isEdit) {
+      Object.assign(existing, {
+        name,
+        description: document.getElementById('rm-desc').value.trim(),
+        metric: document.getElementById('rm-metric').value,
+        vizType: document.getElementById('rm-viztype').value,
+        tags,
+      });
+      toast('Report updated');
+    } else {
+      DATA.reports.push({
+        id: 'cr' + Date.now(),
+        name,
+        description: document.getElementById('rm-desc').value.trim(),
+        metric: document.getElementById('rm-metric').value,
+        vizType: document.getElementById('rm-viztype').value,
+        createdBy: DATA.user.initials,
+        createdAt: new Date().toISOString().slice(0,10),
+        tags,
+      });
+      toast('Report created');
+    }
+    close();
+    STATE.reportsTab = 'custom';
+    renderReports();
+  });
 }
 
 // --- INIT ---

@@ -8,11 +8,11 @@ application main objectives
 I wish to focus over UX design only. no backend implementation at all at this point.
 Please assist creating rich PRD (product requirement definition), then design, then full implementaion of UX only
 
-add reports section
+add reports section to project section
     OOB reports view
     custome reports view
     user able to CRUD reports
-    Provide OOB 
+    Provide OOB visuals for reporting (bar chart, pie chart, pivot...)
 
 ------
 

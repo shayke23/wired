@@ -1501,3 +1501,64 @@ tbody tr:hover td { background: #FAFCFF; }
 .walkthrough-body { padding: var(--sp-6); }
 .walkthrough-footer { padding: var(--sp-4) var(--sp-6); border-top: 1px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; }
 .walkthrough-step-counter { font-size: 12px; color: var(--c-text-3); }
+
+/* ============================================================
+   REPORTS
+   ============================================================ */
+.rpt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: var(--sp-5);
+}
+.rpt-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.rpt-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+.rpt-card-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.rpt-card-icon svg { width: 18px; height: 18px; }
+.rpt-card-name { font-size: 14px; font-weight: 600; color: var(--c-text-1); }
+.rpt-card-desc { font-size: 12px; color: var(--c-text-3); margin-top: 2px; }
+.rpt-chart-area {
+  background: #0F172A;
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
+  overflow: hidden;
+}
+.rpt-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 11px;
+  color: var(--c-text-3);
+}
+.rpt-tag {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  padding: 1px 8px;
+  font-size: 10px;
+  color: var(--c-text-3);
+}
+.rpt-card-actions {
+  display: flex;
+  gap: var(--sp-1);
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity var(--t);
+}
+.rpt-card:hover .rpt-card-actions { opacity: 1; }
