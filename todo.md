@@ -8,21 +8,11 @@ application main objectives
 I wish to focus over UX design only. no backend implementation at all at this point.
 Please assist creating rich PRD (product requirement definition), then design, then full implementaion of UX only
 
-
-
-Add workflows implementation to main menu. main attributes
-    user able to define project workflows
-    each project flow to be assgined to sepecific workflow
-    provide interactive visual with 2 levels - phase, actions
-
-
-add integrations section
-add data sources section
-    ability to integrate
-    ability to view raw data
-    ability to create custom views
-    ability to create custom data fields
-
+add reports section
+    OOB reports view
+    custome reports view
+    user able to CRUD reports
+    Provide OOB 
 
 ------
 

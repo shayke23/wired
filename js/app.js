@@ -348,31 +348,63 @@ function toast(msg, type='success') {
 
 // --- SIDEBAR ---
 function renderSidebar() {
-  const nav = [
-    { id:'dashboard', label:'Dashboard', icon:I.dashboard },
-    { id:'projects', label:'Projects', icon:I.folder },
-    { id:'approvals', label:'Approvals', icon:I.check, badge: DATA.approvals.length },
-    { id:'policies', label:'Policies', icon:I.zap },
-    { id:'workflows', label:'Workflows', icon:I.workflow },
-    { id:'team', label:'Team', icon:I.users },
-    { id:'analytics', label:'Analytics', icon:I.chart },
-    { id:'data-sources', label:'Data Sources', icon:I.database }
+  const globalNav = [
+    { id:'dashboard',    label:'Dashboard',    icon:I.dashboard },
+    { id:'team',         label:'Team',         icon:I.users },
+    { id:'analytics',    label:'Analytics',    icon:I.chart },
+    { id:'data-sources', label:'Data Sources', icon:I.database },
   ];
+  const projectScopedNav = STATE.currentProject ? [
+    { id:'approvals', label:'Approvals', icon:I.check,    badge: DATA.approvals.length },
+    { id:'policies',  label:'Policies',  icon:I.zap },
+    { id:'workflows', label:'Workflows', icon:I.workflow },
+  ] : [];
+
+  const navItem = n => `
+    <div class="nav-item ${STATE.currentPage===n.id?'active':''}" data-page="${n.id}">
+      ${n.icon}<span>${n.label}</span>
+      ${n.badge ? `<span class="nav-badge">${n.badge}</span>` : ''}
+    </div>`;
+
+  const isProjectPage = STATE.currentPage === 'project-detail' || STATE.currentPage === 'projects';
+
   document.getElementById('sidebar').innerHTML = `
     <div class="sidebar-logo">
       <div class="logo-mark">W</div>
       <span class="logo-name">Wired</span>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Main</div>
-      ${nav.map(n=>`
-        <div class="nav-item ${STATE.currentPage===n.id?'active':''}" data-page="${n.id}">
-          ${n.icon}
-          <span>${n.label}</span>
-          ${n.badge ? `<span class="nav-badge">${n.badge}</span>` : ''}
+    <div class="sidebar-body">
+      <nav class="sidebar-nav sidebar-nav--global">
+        <div class="nav-section-label">Global</div>
+        ${globalNav.map(navItem).join('')}
+      </nav>
+      <nav class="sidebar-nav sidebar-nav--project">
+        <div class="nav-section-label">Project</div>
+        <div class="nav-project-picker ${isProjectPage ? 'active' : ''}" id="nav-project-picker">
+          <div class="nav-project-picker-trigger" id="nav-project-trigger">
+            ${I.folder}
+            <span class="nav-project-picker-label">${STATE.currentProject ? STATE.currentProject.name : 'Select project…'}</span>
+            <span class="nav-project-picker-chevron">${I.chevronRight}</span>
+          </div>
+          <div class="nav-project-dropdown" id="nav-project-dropdown">
+            <div class="nav-project-dropdown-header">Switch project</div>
+            ${DATA.projects.map(p => `
+              <div class="nav-project-option ${STATE.currentProject && STATE.currentProject.id===p.id ? 'selected' : ''}" data-project-id="${p.id}">
+                <span class="nav-project-option-dot" style="background:${p.color||'#6366f1'}"></span>
+                <span>${p.name}</span>
+              </div>
+            `).join('')}
+            <div class="nav-project-option nav-project-option--all" data-page="projects">
+              ${I.folder}<span>All projects</span>
+            </div>
+          </div>
         </div>
-      `).join('')}
-    </nav>
+        ${STATE.currentProject ? `
+          <div class="nav-project-context">
+            ${projectScopedNav.map(navItem).join('')}
+          </div>` : ''}
+      </nav>
+    </div>
     <div class="sidebar-footer">
       ${avatar(DATA.user.initials, DATA.user.color, 'sm')}
       <div>
@@ -380,8 +412,43 @@ function renderSidebar() {
         <div class="user-role">${DATA.user.role}</div>
       </div>
     </div>`;
+
   document.querySelectorAll('#sidebar .nav-item[data-page]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.page));
+  });
+
+  // Project picker toggle
+  const trigger = document.getElementById('nav-project-trigger');
+  const dropdown = document.getElementById('nav-project-dropdown');
+  const picker = document.getElementById('nav-project-picker');
+  trigger.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = picker.classList.contains('open');
+    picker.classList.toggle('open');
+    if (!isOpen) {
+      const rect = trigger.getBoundingClientRect();
+      dropdown.style.top = (rect.bottom + 4) + 'px';
+      dropdown.style.left = rect.left + 'px';
+      dropdown.style.width = rect.width + 'px';
+    }
+  });
+  document.querySelectorAll('.nav-project-option[data-project-id]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      picker.classList.remove('open');
+      navigate('project-detail', +el.dataset.projectId);
+    });
+  });
+  document.querySelector('.nav-project-option--all[data-page]')?.addEventListener('click', e => {
+    e.stopPropagation();
+    picker.classList.remove('open');
+    navigate('projects');
+  });
+  document.addEventListener('click', function closePicker(e) {
+    if (!picker.contains(e.target)) {
+      picker.classList.remove('open');
+      document.removeEventListener('click', closePicker);
+    }
   });
 }
 
