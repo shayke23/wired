@@ -22,9 +22,17 @@ const DATA = {
       notifyEmail: true, notifyPush: true, notifyDigest: 'daily',
       notifyApprovals: true, notifyMentions: true, notifyAssignments: true,
       notifyStatusChanges: false, notifyAutomations: true, quietHours: false,
-      autoAssign: true, confirmDestructive: true, showCompletedTasks: false
+      autoAssign: true, confirmDestructive: true, showCompletedTasks: false,
+      showNotes: true
     }
   },
+
+  notes: [
+    { id: 1, title: 'Stakeholder sync — key takeaways', body: 'Sponsor wants weekly status on Alpha Launch. Flag the third-party API risk early. Budget review moved to first week of August.', color: '#fef3c7', pinned: true, updated: '2026-06-26' },
+    { id: 2, title: 'Ideas: automation policies', body: 'Add a policy for stale tasks (no update in 5 days). Consider auto-escalating critical issues that stay open past 48h. Draft a "budget freeze" guard for on-hold projects.', color: '#dbeafe', pinned: false, updated: '2026-06-24' },
+    { id: 3, title: 'Brand Refresh — open questions', body: 'Confirm logo direction with JD. Who signs off on the final palette? Need print specs from the vendor before asset production.', color: '#dcfce7', pinned: false, updated: '2026-06-22' },
+    { id: 4, title: 'Personal todo', body: '· Review Q3 capacity plan\n· Prep retro for Compliance Audit\n· Follow up on Partner Portal budget', color: '#f3e8ff', pinned: false, updated: '2026-06-20' }
+  ],
 
   projects: [
     { id: 1, name: 'Alpha Launch', type: 'Engineering', workflowId: 1, status: 'active', priority: 'high', health: 82, progress: 67, pm: 'AM', pmColor: '#6366f1', due: '2026-08-15', budget: 120000, spent: 74000, tasks: { total: 34, done: 23, overdue: 2 }, team: ['AM','JD','SR','TK'], description: 'Full platform launch for Q3 including API, frontend and DevOps pipeline.', startDate: '2026-04-01', milestones: [ { id:1, name:'API complete', date:'2026-06-30', status:'done' }, { id:2, name:'Beta release', date:'2026-07-20', status:'active' }, { id:3, name:'Launch', date:'2026-08-15', status:'upcoming' } ], risks: [ { id:1, desc:'Third-party API dependency delay', severity:'high', owner:'JD', open:true }, { id:2, desc:'Performance under load', severity:'medium', owner:'SR', open:true } ] },
@@ -59,11 +67,56 @@ const DATA = {
   ],
 
   team: [
-    { id: 1, initials: 'AM', name: 'Alex Morgan', role: 'Project Manager', email: 'alex@wired.io', projects: 3, capacity: 80, color: '#6366f1' },
-    { id: 2, initials: 'JD', name: 'Jordan Davis', role: 'Designer', email: 'jordan@wired.io', projects: 2, capacity: 95, color: '#f59e0b' },
-    { id: 3, initials: 'SR', name: 'Sam Rivera', role: 'Engineer', email: 'sam@wired.io', projects: 2, capacity: 60, color: '#10b981' },
-    { id: 4, initials: 'TK', name: 'Taylor Kim', role: 'Tech Lead', email: 'taylor@wired.io', projects: 2, capacity: 110, color: '#8b5cf6' },
-    { id: 5, initials: 'LM', name: 'Lee Mitchell', role: 'Analyst', email: 'lee@wired.io', projects: 1, capacity: 45, color: '#06b6d4' }
+    { id: 1, initials: 'AM', name: 'Alex Morgan', role: 'Project Manager', email: 'alex@wired.io', projects: 3, capacity: 80, color: '#6366f1', team: 'Core', department: 'Product' },
+    { id: 2, initials: 'JD', name: 'Jordan Davis', role: 'Designer', email: 'jordan@wired.io', projects: 2, capacity: 95, color: '#f59e0b', team: 'Brand', department: 'Design' },
+    { id: 3, initials: 'SR', name: 'Sam Rivera', role: 'Engineer', email: 'sam@wired.io', projects: 2, capacity: 60, color: '#10b981', team: 'Platform', department: 'Engineering' },
+    { id: 4, initials: 'TK', name: 'Taylor Kim', role: 'Tech Lead', email: 'taylor@wired.io', projects: 2, capacity: 110, color: '#8b5cf6', team: 'Infrastructure', department: 'Engineering' },
+    { id: 5, initials: 'LM', name: 'Lee Mitchell', role: 'Analyst', email: 'lee@wired.io', projects: 1, capacity: 45, color: '#06b6d4', team: 'Analytics', department: 'Operations' },
+    { id: 6, initials: 'DC', name: 'Devon Cohen', role: 'QA Engineer', email: 'devon.cohen@wired.io', projects: 2, capacity: 118, color: '#ec4899', team: 'Infrastructure', department: 'Data' },
+    { id: 7, initials: 'LI', name: 'Lane Ivanov', role: 'DevOps Engineer', email: 'lane.ivanov@wired.io', projects: 3, capacity: 51, color: '#14b8a6', team: 'Revenue', department: 'Quality' },
+    { id: 8, initials: 'CT', name: 'Casey Tran', role: 'UX Researcher', email: 'casey.tran@wired.io', projects: 4, capacity: 64, color: '#f97316', team: 'Horizon', department: 'Security' },
+    { id: 9, initials: 'SE', name: 'Skyler Eriksen', role: 'Data Scientist', email: 'skyler.eriksen@wired.io', projects: 5, capacity: 77, color: '#3b82f6', team: 'Pulse', department: 'Customer Success' },
+    { id: 10, initials: 'DJ', name: 'Dakota Johnson', role: 'Scrum Master', email: 'dakota.johnson@wired.io', projects: 1, capacity: 90, color: '#84cc16', team: 'Core', department: 'Engineering' },
+    { id: 11, initials: 'IC', name: 'Indra Cruz', role: 'Solutions Architect', email: 'indra.cruz@wired.io', projects: 2, capacity: 103, color: '#a855f7', team: 'Analytics', department: 'Design' },
+    { id: 12, initials: 'PN', name: 'Phoenix Novak', role: 'Frontend Engineer', email: 'phoenix.novak@wired.io', projects: 3, capacity: 116, color: '#0ea5e9', team: 'Foundations', department: 'Product' },
+    { id: 13, initials: 'BY', name: 'Bellamy Yamada', role: 'Backend Engineer', email: 'bellamy.yamada@wired.io', projects: 4, capacity: 49, color: '#eab308', team: 'Nebula', department: 'Operations' },
+    { id: 14, initials: 'KM', name: 'Kit Mitchell', role: 'Marketing Manager', email: 'kit.mitchell@wired.io', projects: 5, capacity: 62, color: '#6366f1', team: 'Platform', department: 'Marketing' },
+    { id: 15, initials: 'MS', name: 'Morgan Singh', role: 'Account Executive', email: 'morgan.singh@wired.io', projects: 1, capacity: 75, color: '#f59e0b', team: 'Mobile', department: 'Sales' },
+    { id: 16, initials: 'CH', name: 'Cameron Hughes', role: 'Support Lead', email: 'cameron.hughes@wired.io', projects: 2, capacity: 88, color: '#10b981', team: 'Brand', department: 'Data' },
+    { id: 17, initials: 'FS', name: 'Finley Sato', role: 'Security Engineer', email: 'finley.sato@wired.io', projects: 3, capacity: 101, color: '#8b5cf6', team: 'Velocity', department: 'Quality' },
+    { id: 18, initials: 'HD', name: 'Harper Dubois', role: 'Project Manager', email: 'harper.dubois@wired.io', projects: 4, capacity: 114, color: '#06b6d4', team: 'Atlas', department: 'Security' },
+    { id: 19, initials: 'OS', name: 'Oakley Smith', role: 'Designer', email: 'oakley.smith@wired.io', projects: 5, capacity: 47, color: '#ef4444', team: 'Growth', department: 'Customer Success' },
+    { id: 20, initials: 'AB', name: 'Ari Bauer', role: 'Engineer', email: 'ari.bauer@wired.io', projects: 1, capacity: 60, color: '#ec4899', team: 'Infrastructure', department: 'Engineering' },
+    { id: 21, initials: 'JM', name: 'Jess Mehta', role: 'Tech Lead', email: 'jess.mehta@wired.io', projects: 2, capacity: 73, color: '#14b8a6', team: 'Revenue', department: 'Design' },
+    { id: 22, initials: 'LX', name: 'Lee Xu', role: 'Analyst', email: 'lee.xu@wired.io', projects: 3, capacity: 86, color: '#f97316', team: 'Horizon', department: 'Product' },
+    { id: 23, initials: 'DK', name: 'Drew Kim', role: 'Product Manager', email: 'drew.kim@wired.io', projects: 4, capacity: 99, color: '#3b82f6', team: 'Pulse', department: 'Operations' },
+    { id: 24, initials: 'EK', name: 'Emerson Khan', role: 'QA Engineer', email: 'emerson.khan@wired.io', projects: 5, capacity: 112, color: '#84cc16', team: 'Core', department: 'Marketing' },
+    { id: 25, initials: 'FG', name: 'Frankie Gomez', role: 'DevOps Engineer', email: 'frankie.gomez@wired.io', projects: 1, capacity: 45, color: '#a855f7', team: 'Analytics', department: 'Sales' },
+    { id: 26, initials: 'NR', name: 'Noa Rossi', role: 'UX Researcher', email: 'noa.rossi@wired.io', projects: 2, capacity: 58, color: '#0ea5e9', team: 'Foundations', department: 'Data' },
+    { id: 27, initials: 'ZC', name: 'Zion Conti', role: 'Data Scientist', email: 'zion.conti@wired.io', projects: 3, capacity: 71, color: '#eab308', team: 'Nebula', department: 'Quality' },
+    { id: 28, initials: 'IG', name: 'Ira Garcia', role: 'Scrum Master', email: 'ira.garcia@wired.io', projects: 4, capacity: 84, color: '#6366f1', team: 'Platform', department: 'Security' },
+    { id: 29, initials: 'TR', name: 'Taylor Reed', role: 'Solutions Architect', email: 'taylor.reed@wired.io', projects: 5, capacity: 97, color: '#f59e0b', team: 'Mobile', department: 'Customer Success' },
+    { id: 30, initials: 'QL', name: 'Quinn Lima', role: 'Frontend Engineer', email: 'quinn.lima@wired.io', projects: 1, capacity: 110, color: '#10b981', team: 'Brand', department: 'Engineering' },
+    { id: 31, initials: 'RW', name: 'Rowan Wang', role: 'Backend Engineer', email: 'rowan.wang@wired.io', projects: 2, capacity: 43, color: '#8b5cf6', team: 'Velocity', department: 'Design' },
+    { id: 32, initials: 'ER', name: 'Elliot Rivera', role: 'Marketing Manager', email: 'elliot.rivera@wired.io', projects: 3, capacity: 56, color: '#06b6d4', team: 'Atlas', department: 'Product' },
+    { id: 33, initials: 'MW', name: 'Micah Wilson', role: 'Account Executive', email: 'micah.wilson@wired.io', projects: 4, capacity: 69, color: '#ef4444', team: 'Growth', department: 'Operations' },
+    { id: 34, initials: 'WF', name: 'Wren Foster', role: 'Support Lead', email: 'wren.foster@wired.io', projects: 5, capacity: 82, color: '#ec4899', team: 'Infrastructure', department: 'Marketing' },
+    { id: 35, initials: 'HQ', name: 'Hollis Quintero', role: 'Security Engineer', email: 'hollis.quintero@wired.io', projects: 1, capacity: 95, color: '#14b8a6', team: 'Revenue', department: 'Sales' },
+    { id: 36, initials: 'SB', name: 'Sam Berg', role: 'Project Manager', email: 'sam.berg@wired.io', projects: 2, capacity: 108, color: '#f97316', team: 'Horizon', department: 'Data' },
+    { id: 37, initials: 'AC', name: 'Avery Chen', role: 'Designer', email: 'avery.chen@wired.io', projects: 3, capacity: 41, color: '#3b82f6', team: 'Pulse', department: 'Quality' },
+    { id: 38, initials: 'HA', name: 'Hayden Adams', role: 'Engineer', email: 'hayden.adams@wired.io', projects: 4, capacity: 54, color: '#84cc16', team: 'Core', department: 'Security' },
+    { id: 39, initials: 'CK', name: 'Charlie Klein', role: 'Tech Lead', email: 'charlie.klein@wired.io', projects: 5, capacity: 67, color: '#a855f7', team: 'Analytics', department: 'Customer Success' },
+    { id: 40, initials: 'LV', name: 'Lennon Vargas', role: 'Analyst', email: 'lennon.vargas@wired.io', projects: 1, capacity: 80, color: '#0ea5e9', team: 'Foundations', department: 'Engineering' },
+    { id: 41, initials: 'TD', name: 'Tatum Davis', role: 'Product Manager', email: 'tatum.davis@wired.io', projects: 2, capacity: 93, color: '#eab308', team: 'Nebula', department: 'Design' },
+    { id: 42, initials: 'GB', name: 'Gray Brown', role: 'QA Engineer', email: 'gray.brown@wired.io', projects: 3, capacity: 106, color: '#6366f1', team: 'Platform', department: 'Product' },
+    { id: 43, initials: 'JE', name: 'Jordan Evans', role: 'DevOps Engineer', email: 'jordan.evans@wired.io', projects: 4, capacity: 119, color: '#f59e0b', team: 'Mobile', department: 'Operations' },
+    { id: 44, initials: 'JP', name: 'Jamie Park', role: 'UX Researcher', email: 'jamie.park@wired.io', projects: 5, capacity: 52, color: '#10b981', team: 'Brand', department: 'Marketing' },
+    { id: 45, initials: 'PA', name: 'Parker Abbas', role: 'Data Scientist', email: 'parker.abbas@wired.io', projects: 1, capacity: 65, color: '#8b5cf6', team: 'Velocity', department: 'Sales' },
+    { id: 46, initials: 'BP', name: 'Blake Patel', role: 'Scrum Master', email: 'blake.patel@wired.io', projects: 2, capacity: 78, color: '#06b6d4', team: 'Atlas', department: 'Data' },
+    { id: 47, initials: 'KL', name: 'Kai Levi', role: 'Solutions Architect', email: 'kai.levi@wired.io', projects: 3, capacity: 91, color: '#ef4444', team: 'Growth', department: 'Quality' },
+    { id: 48, initials: 'SJ', name: 'Shiloh Jones', role: 'Frontend Engineer', email: 'shiloh.jones@wired.io', projects: 4, capacity: 104, color: '#ec4899', team: 'Infrastructure', department: 'Security' },
+    { id: 49, initials: 'EU', name: 'Eden Ueda', role: 'Backend Engineer', email: 'eden.ueda@wired.io', projects: 5, capacity: 117, color: '#14b8a6', team: 'Revenue', department: 'Customer Success' },
+    { id: 50, initials: 'AD', name: 'Alex Davis', role: 'Marketing Manager', email: 'alex.davis@wired.io', projects: 1, capacity: 50, color: '#f97316', team: 'Horizon', department: 'Engineering' }
   ],
 
   tasks: {
@@ -320,7 +373,8 @@ const STATE = {
   issuesSearch: '',
   issuesCustomViews: [],
   resourceTab: 'overview',
-  commercialTab: 'overview'
+  commercialTab: 'overview',
+  risksFilter: { severity: '', status: '' }
 };
 
 // --- ICONS (inline SVG helpers) ---
@@ -467,10 +521,15 @@ function renderSidebar() {
     { id:'dashboard', label:'Dashboard', icon:I.dashboard },
     { id:'commercial', label:'Commercial', icon:I.trendUp },
   ];
+  if (DATA.user.settings.showNotes) {
+    globalNav.push({ id:'notes', label:'Notes', icon:I.fileText });
+  }
   const criticalIssues = DATA.issues.filter(i => i.priority === 'critical' && i.status !== 'done').length;
   const projectScopedNav = STATE.currentProject ? [
+    { id:'one-pager',    label:'1 Pager',      icon:I.fileText },
     { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
     { id:'issues',       label:'Issues',       icon:I.issues,   badge: criticalIssues || null },
+    { id:'risks',        label:'Risks',        icon:I.shield,   badge: STATE.currentProject.risks.filter(r=>r.open).length || null },
     { id:'actions',      label:'Actions',      icon:I.actions },
     { id:'resources',    label:'Resources',    icon:I.resource },
     { id:'policies',     label:'Policies',     icon:I.zap },
@@ -649,14 +708,21 @@ function restoreLocation() {
 function render() {
   const content = document.getElementById('content');
   content.className = 'page-fade';
+  // If the Notes page is hidden via settings, never land on it.
+  if (STATE.currentPage === 'notes' && !DATA.user.settings.showNotes) {
+    STATE.currentPage = 'dashboard';
+  }
   switch(STATE.currentPage) {
     case 'dashboard': renderDashboard(); break;
+    case 'risks':     renderRisks(); break;
     case 'resources': renderResources(); break;
     case 'commercial': renderCommercial(); break;
+    case 'notes':     renderNotes(); break;
     case 'issues':    renderIssues(); break;
     case 'actions':   renderActions(); break;
     case 'projects': renderProjects(); break;
     case 'project-detail': renderProjectDetail(); break;
+    case 'one-pager': renderOnePager(); break;
     case 'approvals': renderApprovals(); break;
     case 'policies': renderPolicies(); break;
     case 'team': renderTeam(); break;
@@ -1826,6 +1892,10 @@ function renderTeam() {
           ${avatar(m.initials, m.color, 'lg')}
           <div class="member-name">${m.name}</div>
           <div class="member-role">${m.role}</div>
+          <div class="member-meta">
+            <span class="member-team-badge" style="--badge-color:${m.color}">${m.team}</span>
+            <span class="member-dept">${m.department}</span>
+          </div>
           <div class="member-stat">${ico(I.folder)}${m.projects} projects</div>
           <div class="workload-bar w-full">
             <div class="workload-fill ${m.capacity>100?'workload-over':m.capacity>75?'workload-high':'workload-normal'}" style="width:${Math.min(100,m.capacity)}%"></div>
@@ -2184,6 +2254,13 @@ function usPreferencesTab() {
         ${usToggleRow('confirmDestructive','Confirm before destructive actions','Ask before deleting projects, tasks or automations.')}
         ${usToggleRow('showCompletedTasks','Show completed tasks by default','Include done items in task lists without filtering.')}
       </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Navigation</div>
+        <div class="us-section-sub">Show or hide global sections in the sidebar.</div></div>
+      <div class="card us-card us-card--flush">
+        ${usToggleRow('showNotes','Show Notes page','Display the Notes section in the global sidebar navigation.')}
+      </div>
     </div>`;
 }
 
@@ -2198,6 +2275,8 @@ function bindUsTab() {
       const key = inp.dataset.toggle;
       if (key === 'twoFactorToggle') { DATA.user.twoFactor = inp.checked; }
       else { DATA.user.settings[key] = inp.checked; saveUserSettings(); }
+      // Toggling a sidebar section's visibility must refresh the nav immediately.
+      if (key === 'showNotes') renderSidebar();
       toast(inp.checked ? 'Enabled' : 'Disabled', 'success');
     });
   });
@@ -3556,6 +3635,99 @@ function openReportDetail(type, id) {
   renderReports();
 }
 
+function renderOnePager() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  const h = hs(p.health);
+  const budgetPct = p.budget ? Math.round((p.spent / p.budget) * 100) : 0;
+  const openRisks = p.risks.filter(r => r.open);
+
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: '1 Pager' }]);
+
+  const stat = (label, value, sub='') => `
+    <div class="op-stat">
+      <div class="op-stat-label">${label}</div>
+      <div class="op-stat-value">${value}${sub ? `<span class="op-stat-sub">${sub}</span>` : ''}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header op-no-print">
+      <div>
+        <h1 class="page-title">1 Pager</h1>
+        <p class="page-sub">A single-page executive summary of ${p.name}</p>
+      </div>
+      <button class="btn btn-secondary" id="op-print-btn">${I.fileText} Print / PDF</button>
+    </div>
+
+    <div class="card op-sheet">
+      <div class="op-head">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="project-card-type">${p.type}</div>
+            ${statusBadge(p.status)}
+            ${priorityBadge(p.priority)}
+            ${healthBadge(p.health)}
+          </div>
+          <div class="op-title">${p.name}</div>
+        </div>
+        <div class="op-head-meta">
+          <span>${ico(I.users)} PM: ${p.pm}</span>
+          <span>${ico(I.clock)} ${p.startDate} → ${p.due}</span>
+        </div>
+      </div>
+
+      <div class="op-stats">
+        ${stat('Progress', p.progress + '%')}
+        ${stat('Health', p.health == null ? 'N/A' : p.health, p.health == null ? '' : ' / 100')}
+        ${stat('Budget Used', fmt(p.spent), ' of ' + fmt(p.budget) + ` · ${budgetPct}%`)}
+        ${stat('Tasks', `${p.tasks.done}/${p.tasks.total}`, p.tasks.overdue ? ` · ${p.tasks.overdue} overdue` : ' done')}
+        ${stat('Open Risks', openRisks.length)}
+      </div>
+
+      <div class="grid-2 op-body">
+        <div>
+          <div class="op-block">
+            <div class="op-block-title">Summary</div>
+            <p style="font-size:13px;color:#475569;line-height:1.6;margin:0">${p.description}</p>
+          </div>
+          <div class="op-block">
+            <div class="op-block-title">Milestones</div>
+            ${p.milestones.length ? p.milestones.map(m => `
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div style="width:10px;height:10px;background:${m.status==='done'?'#10b981':m.status==='active'?'#6366f1':'#cbd5e1'};border-radius:50%"></div>
+                  <span style="font-size:13px;font-weight:500">${m.name}</span>
+                </div>
+                <span class="text-xs text-muted">${m.date}</span>
+              </div>
+            `).join('') : '<p class="text-muted text-sm">No milestones defined.</p>'}
+          </div>
+        </div>
+        <div>
+          <div class="op-block">
+            <div class="op-block-title">Open Risks</div>
+            ${openRisks.length ? openRisks.map(r => `
+              <div class="risk-row">
+                <div class="risk-severity">${priorityBadge(r.severity)}</div>
+                <div style="flex:1;font-size:13px">${r.desc}</div>
+                <div class="text-xs text-muted">${r.owner}</div>
+              </div>
+            `).join('') : '<p class="text-muted text-sm">No open risks.</p>'}
+          </div>
+          <div class="op-block">
+            <div class="op-block-title">Team</div>
+            <div class="flex items-center gap-3">
+              ${avatarGroup(p.team)}
+              <span class="text-sm text-muted">${p.team.length} members</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('op-print-btn')?.addEventListener('click', () => window.print());
+}
+
 function renderReports() {
   if (!STATE.reportsTab) STATE.reportsTab = 'oob';
 
@@ -4080,9 +4252,6 @@ function renderResourcesOverview(el, totalBudget, totalSpent, totalHeadcount, to
   const remaining = totalBudget - totalSpent;
   const burnPct   = Math.round(totalSpent / totalBudget * 100);
 
-  // project budget breakdown for mini chart
-  const projBudgets = DATA.projects.map(p=>({ name:p.name.split(' ')[0], budget:p.budget, spent:p.spent }));
-
   el.innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px">
       ${resKpi('Total Budget',    resFmt(totalBudget),   '#eef2ff','#6366f1', I.dollar,   `${burnPct}% consumed`)}
@@ -4091,7 +4260,7 @@ function renderResourcesOverview(el, totalBudget, totalSpent, totalHeadcount, to
       ${resKpi('Avg Capacity',    avgCapacity+'%',       avgCapacity>95?'#fef2f2':'#fffbeb', avgCapacity>95?'#ef4444':'#f59e0b', I.chart, avgCapacity>95?'Over capacity':'Utilisation')}
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+    <div style="margin-bottom:28px">
       <div class="card" style="padding:20px">
         <div class="section-title" style="margin-bottom:16px">Budget by Cost Category</div>
         ${DATA.costCategories.map(c=>`
@@ -4101,18 +4270,6 @@ function renderResourcesOverview(el, totalBudget, totalSpent, totalHeadcount, to
               <span style="font-size:12px;color:var(--text-muted)">${resFmt(c.spent)} / ${resFmt(c.budget)}</span>
             </div>
             ${resBudgetBar(c.spent, c.budget, c.color)}
-          </div>`).join('')}
-      </div>
-
-      <div class="card" style="padding:20px">
-        <div class="section-title" style="margin-bottom:16px">Budget by Project</div>
-        ${projBudgets.map(p=>`
-          <div style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="font-size:13px;font-weight:500">${p.name}</span>
-              <span style="font-size:12px;color:var(--text-muted)">${resFmt(p.spent)} / ${resFmt(p.budget)}</span>
-            </div>
-            ${resBudgetBar(p.spent, p.budget, '#6366f1')}
           </div>`).join('')}
       </div>
     </div>
@@ -4147,11 +4304,8 @@ function resKpi(label, value, bg, color, icon, sub) {
 }
 
 function renderResourcesBudget(el) {
-  const totalBudget = DATA.projects.reduce((s,p)=>s+p.budget,0);
-  const totalSpent  = DATA.projects.reduce((s,p)=>s+p.spent,0);
-
   el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+    <div style="margin-bottom:24px">
       <div class="card" style="padding:20px">
         <div class="section-title" style="margin-bottom:16px">Cost Category Breakdown</div>
         <table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -4187,42 +4341,6 @@ function renderResourcesBudget(el) {
               <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.budget,0))}</td>
               <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.spent,0))}</td>
               <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.budget-c.spent,0))}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card" style="padding:20px">
-        <div class="section-title" style="margin-bottom:16px">Budget by Project</div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr style="border-bottom:2px solid var(--border)">
-              <th style="text-align:left;padding:6px 8px;color:var(--text-muted);font-weight:600">Project</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Budget</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Spent</th>
-              <th style="padding:6px 8px;color:var(--text-muted);font-weight:600;width:100px">Burn</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${DATA.projects.map(p=>{
-              const pct = Math.round(p.spent/p.budget*100);
-              const barColor = pct>90?'#ef4444':pct>75?'#f59e0b':'#6366f1';
-              const statusMeta = { active:'#10b981', 'at-risk':'#ef4444', planning:'#64748b', completed:'#06b6d4', 'on-hold':'#94a3b8' };
-              return `<tr style="border-bottom:1px solid var(--border)">
-                <td style="padding:10px 8px">
-                  <div style="font-weight:500">${p.name}</div>
-                  <div style="font-size:11px;color:${statusMeta[p.status]||'#64748b'};text-transform:capitalize">${p.status}</div>
-                </td>
-                <td style="padding:10px 8px;text-align:right">${resFmt(p.budget)}</td>
-                <td style="padding:10px 8px;text-align:right;color:${barColor};font-weight:600">${resFmt(p.spent)}</td>
-                <td style="padding:10px 8px">${resBudgetBar(p.spent,p.budget,'#6366f1')}</td>
-              </tr>`;
-            }).join('')}
-            <tr style="border-top:2px solid var(--border);background:var(--surface)">
-              <td style="padding:10px 8px;font-weight:700">Total</td>
-              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(totalBudget)}</td>
-              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(totalSpent)}</td>
               <td></td>
             </tr>
           </tbody>
@@ -4449,6 +4567,254 @@ function issueBadge(type, val) {
     return `<span style="display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:${m.color}18;color:${m.color}">${m.icon} ${m.label||val}</span>`;
   }
   return val;
+}
+
+// --- RISKS (project-scoped risk register) ---
+const RISK_SEVERITIES = ['low','medium','high','critical'];
+
+function findRisk(projectId, riskId) {
+  const p = DATA.projects.find(x => x.id === projectId);
+  if (!p) return null;
+  return p.risks.find(r => r.id === riskId) || null;
+}
+
+function restoreRisksFilters() {
+  const key = 'risksFilters_' + (STATE.currentProject ? STATE.currentProject.id : 'none');
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  if (saved && Object.keys(saved).length) STATE.risksFilter = { severity:'', status:'', ...saved };
+  else STATE.risksFilter = { severity:'', status:'' };
+}
+
+function renderRisks() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: 'Risks' }]);
+  restoreRisksFilters();
+  const filterKey = 'risksFilters_' + p.id;
+
+  const f = STATE.risksFilter;
+  let rows = [...p.risks];
+  if (f.severity) rows = rows.filter(r => r.severity === f.severity);
+  if (f.status)   rows = rows.filter(r => (f.status === 'open' ? r.open : !r.open));
+
+  const all = p.risks;
+  const open = all.filter(r => r.open).length;
+  const high = all.filter(r => r.open && (r.severity === 'high' || r.severity === 'critical')).length;
+
+  const stat = (val, label, color) => `
+    <div class="card" style="flex:1;padding:16px 18px">
+      <div style="font-size:28px;font-weight:800;color:${color||'var(--text)'};line-height:1">${val}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${label}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Risks</div>
+        <div class="page-subtitle">${p.name} · ${all.length} risk${all.length!==1?'s':''} · ${open} open · ${high} high/critical</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" id="btn-new-risk">${I.plus} New Risk</button>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mb-5">
+      ${stat(all.length, 'Total risks')}
+      ${stat(open, 'Open', '#f59e0b')}
+      ${stat(high, 'High / Critical', '#ef4444')}
+      ${stat(all.length - open, 'Closed', '#10b981')}
+    </div>
+
+    <div class="flex gap-3 mb-4" style="align-items:center">
+      <select class="form-select" id="risk-f-severity" style="max-width:160px">
+        <option value="">All severities</option>
+        ${RISK_SEVERITIES.map(s=>`<option value="${s}" ${f.severity===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      <select class="form-select" id="risk-f-status" style="max-width:140px">
+        <option value="">All statuses</option>
+        <option value="open" ${f.status==='open'?'selected':''}>Open</option>
+        <option value="closed" ${f.status==='closed'?'selected':''}>Closed</option>
+      </select>
+      ${(f.severity||f.status)?`<button class="btn btn-secondary btn-sm" id="risk-f-clear">Clear filters</button>`:''}
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">${rows.length} shown</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      ${rows.length ? `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Risk</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Severity</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Status</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 14px">
+                <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="desc"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.desc||'<span style="color:#bbb">Describe risk…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="risk-sev" data-pid="${p.id}" data-rid="${r.id}" title="Click to change severity"
+                  style="cursor:pointer">${priorityBadge(r.severity)}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="owner"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${r.owner||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="risk-status" data-pid="${p.id}" data-rid="${r.id}" title="Click to toggle"
+                  style="cursor:pointer"><span class="badge ${r.open?'badge-high':'badge-completed'}">${r.open?'Open':'Closed'}</span></span>
+              </td>
+              <td style="padding:10px 14px;text-align:center">
+                <button class="btn-icon risk-del" data-pid="${p.id}" data-rid="${r.id}" title="Delete risk" style="color:#ef4444">${ico(I.trash,15)}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `
+        <div style="text-align:center;padding:60px;color:var(--text-muted)">
+          ${(f.severity||f.status)?'No risks match the current filters.':'No risks logged yet. Click “New Risk” to add one.'}
+        </div>`}
+    </div>
+  `;
+
+  // --- filters ---
+  const setFilter = (key, val) => {
+    STATE.risksFilter[key] = val;
+    localStorage.setItem(filterKey, JSON.stringify(STATE.risksFilter));
+    renderRisks();
+  };
+  document.getElementById('risk-f-severity').addEventListener('change', e => setFilter('severity', e.target.value));
+  document.getElementById('risk-f-status').addEventListener('change', e => setFilter('status', e.target.value));
+  document.getElementById('risk-f-clear')?.addEventListener('click', () => {
+    STATE.risksFilter = { severity:'', status:'' };
+    localStorage.removeItem(filterKey);
+    renderRisks();
+  });
+
+  document.getElementById('btn-new-risk').addEventListener('click', () => openRiskModal());
+
+  // --- inline text edit (desc, owner) ---
+  document.querySelectorAll('.risk-edit').forEach(span => {
+    span.addEventListener('mouseenter', () => { span.style.background = '#f0f7ff'; });
+    span.addEventListener('mouseleave', () => { span.style.background = ''; });
+    span.addEventListener('click', () => {
+      const risk = findRisk(+span.dataset.pid, +span.dataset.rid);
+      if (!risk) return;
+      const field = span.dataset.field;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = risk[field] || '';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + Math.max(120, ((risk[field]||'').length + 2) * 8) + 'px;outline:none';
+      span.replaceWith(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { risk[field] = input.value.trim(); }
+        renderRisks();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- severity badge cycle ---
+  document.querySelectorAll('.risk-sev').forEach(el => {
+    el.addEventListener('click', () => {
+      const risk = findRisk(+el.dataset.pid, +el.dataset.rid);
+      if (!risk) return;
+      const i = RISK_SEVERITIES.indexOf(risk.severity);
+      risk.severity = RISK_SEVERITIES[(i + 1) % RISK_SEVERITIES.length];
+      renderRisks();
+    });
+  });
+
+  // --- status toggle ---
+  document.querySelectorAll('.risk-status').forEach(el => {
+    el.addEventListener('click', () => {
+      const risk = findRisk(+el.dataset.pid, +el.dataset.rid);
+      if (!risk) return;
+      risk.open = !risk.open;
+      renderRisks();
+    });
+  });
+
+  // --- delete ---
+  document.querySelectorAll('.risk-del').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!confirm('Delete this risk?')) return;
+      const p = DATA.projects.find(x => x.id === +el.dataset.pid);
+      if (!p) return;
+      p.risks = p.risks.filter(r => r.id !== +el.dataset.rid);
+      toast('Risk deleted');
+      renderRisks();
+    });
+  });
+}
+
+function openRiskModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>New Risk</h3>
+      <button class="btn-icon" id="risk-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input class="form-input" id="rk-desc" placeholder="e.g. Third-party API dependency delay"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Severity</label>
+          <select class="form-select" id="rk-severity">
+            ${RISK_SEVERITIES.map(s=>`<option value="${s}" ${s==='medium'?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Owner</label>
+          <input class="form-input" id="rk-owner" placeholder="e.g. JD"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="risk-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="risk-modal-save">Add risk</button>
+    </div>`;
+
+  const close = () => { overlay.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('risk-modal-close').addEventListener('click', close);
+  document.getElementById('risk-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  document.getElementById('risk-modal-save').addEventListener('click', () => {
+    const desc = document.getElementById('rk-desc').value.trim();
+    if (!desc) { toast('Risk description is required', 'warning'); return; }
+    const p = STATE.currentProject;
+    if (!p) { toast('No project selected', 'warning'); return; }
+    const maxId = Math.max(0, ...DATA.projects.flatMap(pr => pr.risks.map(r => r.id)));
+    p.risks.push({
+      id: maxId + 1,
+      desc,
+      severity: document.getElementById('rk-severity').value,
+      owner: document.getElementById('rk-owner').value.trim() || '—',
+      open: true
+    });
+    toast('Risk added');
+    close();
+    renderRisks();
+  });
 }
 
 function renderIssues() {
@@ -5182,9 +5548,186 @@ function renderCommercialPositioning(el) {
     </div>`;
 }
 
+// --- NOTES ---
+const NOTE_COLORS = ['#fef3c7','#dbeafe','#dcfce7','#f3e8ff','#fee2e2','#e0f2fe','#ffffff'];
+
+function saveNotes() {
+  try { localStorage.setItem('wiredNotes', JSON.stringify(DATA.notes)); }
+  catch (e) { console.error('[saveNotes]', e); }
+}
+function restoreNotes() {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem('wiredNotes') || 'null'); }
+  catch (e) { return; }
+  if (Array.isArray(saved)) DATA.notes = saved;
+}
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function renderNotes() {
+  renderTopbar([{ label: 'Notes' }]);
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Notes</h1>
+        <p class="page-subtitle">Your personal scratchpad — quick notes, reminders and ideas across the workspace</p>
+      </div>
+      <button class="btn btn-primary" id="notes-add">${ico(I.plus,14)} New note</button>
+    </div>
+    <div id="notes-grid"></div>`;
+  el.querySelector('#notes-add').addEventListener('click', () => {
+    const id = DATA.notes.reduce((m,n)=>Math.max(m,n.id),0) + 1;
+    DATA.notes.unshift({ id, title:'', body:'', color:'#ffffff', pinned:false, updated: todayStr() });
+    saveNotes();
+    renderNotesGrid();
+    toast('Note added', 'success');
+  });
+  renderNotesGrid();
+}
+
+function renderNotesGrid() {
+  const grid = document.getElementById('notes-grid');
+  if (!grid) return;
+  if (!DATA.notes.length) {
+    grid.style.cssText = '';
+    grid.innerHTML = `<div class="card" style="padding:48px;text-align:center;color:var(--c-text-3)">
+      <div style="margin-bottom:8px;display:flex;justify-content:center">${ico(I.fileText,28)}</div>
+      <div style="font-size:14px;font-weight:600;color:var(--c-text-2)">No notes yet</div>
+      <div style="font-size:12px">Click "New note" to jot something down.</div>
+    </div>`;
+    return;
+  }
+  const sorted = [...DATA.notes].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  grid.style.cssText = 'display:flex;flex-direction:column;gap:12px;width:100%';
+  grid.innerHTML = sorted.map(noteCardHtml).join('');
+  grid.querySelectorAll('[data-note-card]').forEach(card => bindNoteCard(card));
+}
+
+function noteCardHtml(n) {
+  return `<div class="card" data-note-card="${n.id}" style="width:100%;padding:16px 18px;background:${n.color};border:1px solid rgba(0,0,0,0.06);border-left:4px solid ${n.pinned?'#f59e0b':'rgba(0,0,0,0.12)'};display:flex;align-items:flex-start;gap:18px">
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+      <div data-note-title style="font-size:15px;font-weight:700;color:#1e293b;cursor:text;min-height:18px;word-break:break-word"></div>
+      <div data-note-body style="font-size:13px;line-height:1.55;color:#334155;cursor:text;white-space:pre-wrap;word-break:break-word;min-height:20px"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <div data-note-colors style="display:flex;gap:5px">
+          ${NOTE_COLORS.map(c=>`<span data-color="${c}" title="Set color" style="width:14px;height:14px;border-radius:50%;background:${c};border:1.5px solid ${c===n.color?'#475569':'rgba(0,0,0,0.12)'};cursor:pointer"></span>`).join('')}
+        </div>
+        <span style="font-size:10.5px;color:#94a3b8">Updated ${n.updated}</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+      <button data-note-pin title="${n.pinned?'Unpin':'Pin'}" style="background:none;border:none;cursor:pointer;padding:4px;color:${n.pinned?'#f59e0b':'#94a3b8'};display:flex">${ico(I.flag,16)}</button>
+      <button data-note-del title="Delete note" style="background:none;border:none;cursor:pointer;padding:4px;color:#94a3b8;display:flex">${ico(I.trash,16)}</button>
+    </div>
+  </div>`;
+}
+
+function bindNoteCard(card) {
+  const id = +card.dataset.noteCard;
+  const note = DATA.notes.find(n => n.id === id);
+  if (!note) return;
+
+  // Inline-editable title & body (global convention: click to edit, Enter/blur saves, Esc cancels)
+  card.querySelector('[data-note-title]').appendChild(
+    makeEditableText(note.title, v => { note.title = v; note.updated = todayStr(); saveNotes(); }, 'Untitled note'));
+  card.querySelector('[data-note-body]').appendChild(
+    makeEditableMultiline(note.body, v => { note.body = v; note.updated = todayStr(); saveNotes(); }, 'Add a note…'));
+
+  card.querySelector('[data-note-pin]').addEventListener('click', () => {
+    note.pinned = !note.pinned;
+    note.updated = todayStr();
+    saveNotes();
+    renderNotesGrid();
+  });
+  card.querySelector('[data-note-del]').addEventListener('click', () => {
+    if (DATA.user.settings.confirmDestructive && !confirm('Delete this note?')) return;
+    DATA.notes = DATA.notes.filter(n => n.id !== id);
+    saveNotes();
+    renderNotesGrid();
+    toast('Note deleted', 'success');
+  });
+  card.querySelectorAll('[data-note-colors] [data-color]').forEach(sw => {
+    sw.addEventListener('click', () => {
+      note.color = sw.dataset.color;
+      note.updated = todayStr();
+      saveNotes();
+      renderNotesGrid();
+    });
+  });
+}
+
+// Inline-editable text (single line) — follows the global data-table editing convention.
+function makeEditableText(value, onSave, placeholder) {
+  const span = document.createElement('span');
+  span.textContent = value || (placeholder || '');
+  span.style.cursor = 'text';
+  span.style.display = 'inline-block';
+  span.style.minWidth = '20px';
+  if (!value) span.style.color = '#94a3b8';
+  span.onclick = (e) => {
+    e.stopPropagation();
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = value;
+    input.style.cssText = 'border:1px solid #6366f1;border-radius:4px;padding:2px 6px;font-size:inherit;font-weight:inherit;width:100%;box-sizing:border-box;outline:none;';
+    span.parentNode.replaceChild(input, span);
+    input.focus(); input.select();
+    const commit = () => {
+      const newVal = input.value.trim();
+      value = newVal;
+      span.textContent = newVal || (placeholder || '');
+      span.style.color = newVal ? '#1e293b' : '#94a3b8';
+      if (input.parentNode) input.parentNode.replaceChild(span, input);
+      onSave(newVal);
+    };
+    input.onblur = commit;
+    input.onkeydown = (ke) => {
+      if (ke.key === 'Enter') { ke.preventDefault(); input.blur(); }
+      if (ke.key === 'Escape') { input.value = value; input.blur(); }
+    };
+  };
+  return span;
+}
+
+// Inline-editable multiline text — same pattern with a textarea.
+function makeEditableMultiline(value, onSave, placeholder) {
+  const span = document.createElement('span');
+  span.style.cssText = 'cursor:text;white-space:pre-wrap;display:block;min-height:18px;';
+  span.textContent = value || (placeholder || '');
+  if (!value) span.style.color = '#94a3b8';
+  span.onclick = (e) => {
+    e.stopPropagation();
+    const ta = document.createElement('textarea');
+    ta.value = value;
+    ta.rows = Math.max(3, (value.match(/\n/g)||[]).length + 2);
+    ta.style.cssText = 'border:1px solid #6366f1;border-radius:4px;padding:6px;font:inherit;line-height:1.5;width:100%;box-sizing:border-box;outline:none;resize:vertical;';
+    span.parentNode.replaceChild(ta, span);
+    ta.focus(); ta.select();
+    const commit = () => {
+      const newVal = ta.value.trim();
+      value = newVal;
+      span.textContent = newVal || (placeholder || '');
+      span.style.color = newVal ? '#334155' : '#94a3b8';
+      if (ta.parentNode) ta.parentNode.replaceChild(span, ta);
+      onSave(newVal);
+    };
+    ta.onblur = commit;
+    ta.onkeydown = (ke) => {
+      // Enter commits; Shift+Enter inserts a newline. Escape cancels.
+      if (ke.key === 'Enter' && !ke.shiftKey) { ke.preventDefault(); ta.blur(); }
+      if (ke.key === 'Escape') { ta.value = value; ta.blur(); }
+    };
+  };
+  return span;
+}
+
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
   restoreUserSettings();
+  restoreNotes();
   restoreLocation();
   renderSidebar();
   render();
