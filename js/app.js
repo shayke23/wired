@@ -4,7 +4,27 @@
 
 // --- MOCK DATA ---
 const DATA = {
-  user: { name: 'Alex Morgan', role: 'Project Manager', initials: 'AM', color: '#6366f1' },
+  user: {
+    name: 'Alex Morgan', role: 'Project Manager', initials: 'AM', color: '#6366f1',
+    email: 'alex.morgan@wired.io', phone: '+1 (415) 555-0142',
+    title: 'Senior Project Manager', department: 'Delivery', location: 'San Francisco, CA',
+    timezone: 'America/Los_Angeles', bio: 'Driving cross-functional delivery for platform & growth initiatives.',
+    twoFactor: true, lastPasswordChange: '2026-04-12',
+    sessions: [
+      { id: 1, device: 'MacBook Pro · Chrome', location: 'San Francisco, CA', current: true,  lastActive: 'Active now' },
+      { id: 2, device: 'iPhone 15 · Wired iOS',  location: 'San Francisco, CA', current: false, lastActive: '2 hours ago' },
+      { id: 3, device: 'Windows · Edge',          location: 'New York, NY',      current: false, lastActive: 'Jun 24, 2026' }
+    ],
+    settings: {
+      theme: 'light', accentColor: '#6366f1', density: 'comfortable', sidebar: 'expanded',
+      language: 'en', dateFormat: 'MMM D, YYYY', timeFormat: '12h', weekStart: 'monday',
+      landingPage: 'dashboard', defaultProjectView: 'overview',
+      notifyEmail: true, notifyPush: true, notifyDigest: 'daily',
+      notifyApprovals: true, notifyMentions: true, notifyAssignments: true,
+      notifyStatusChanges: false, notifyAutomations: true, quietHours: false,
+      autoAssign: true, confirmDestructive: true, showCompletedTasks: false
+    }
+  },
 
   projects: [
     { id: 1, name: 'Alpha Launch', type: 'Engineering', workflowId: 1, status: 'active', priority: 'high', health: 82, progress: 67, pm: 'AM', pmColor: '#6366f1', due: '2026-08-15', budget: 120000, spent: 74000, tasks: { total: 34, done: 23, overdue: 2 }, team: ['AM','JD','SR','TK'], description: 'Full platform launch for Q3 including API, frontend and DevOps pipeline.', startDate: '2026-04-01', milestones: [ { id:1, name:'API complete', date:'2026-06-30', status:'done' }, { id:2, name:'Beta release', date:'2026-07-20', status:'active' }, { id:3, name:'Launch', date:'2026-08-15', status:'upcoming' } ], risks: [ { id:1, desc:'Third-party API dependency delay', severity:'high', owner:'JD', open:true }, { id:2, desc:'Performance under load', severity:'medium', owner:'SR', open:true } ] },
@@ -193,6 +213,65 @@ const DATA = {
     { id:'cr2', name:'Budget vs Spend — Active', vizType:'bar', metric:'budget',   description:'Budget burn for all currently active projects.', createdBy:'LM', createdAt:'2026-06-14', tags:['budget','finance'] }
   ],
 
+  automations: [
+    { id:1, projectId:1, name:'Notify on PR merged', trigger:'pull_request.merged', condition:'branch = main', action:'notify', actionTarget:'AM', actionDetail:'Notify PM when a PR is merged to main', status:'active', lastRun:'2026-06-20 09:02', runCount:14, createdBy:'SR', createdAt:'2026-04-10' },
+    { id:2, projectId:1, name:'Auto-close task on deploy', trigger:'deployment.success', condition:'environment = production', action:'update_task_status', actionTarget:null, actionDetail:'Mark linked task as Done when a deployment to production succeeds', status:'active', lastRun:'2026-06-19 16:45', runCount:6, createdBy:'AM', createdAt:'2026-04-12' },
+    { id:3, projectId:1, name:'Overdue escalation', trigger:'task.overdue', condition:'priority = critical', action:'change_project_status', actionTarget:null, actionDetail:'Set project status to At Risk when a critical task goes overdue', status:'paused', lastRun:'Never', runCount:0, createdBy:'AM', createdAt:'2026-05-01' },
+    { id:4, projectId:2, name:'Slack alert on risk added', trigger:'risk.created', condition:'severity = high', action:'notify', actionTarget:'JD', actionDetail:'Ping PM on Slack when a high-severity risk is logged', status:'active', lastRun:'2026-06-18 11:20', runCount:3, createdBy:'JD', createdAt:'2026-05-05' },
+    { id:5, projectId:4, name:'Beta build reminder', trigger:'milestone.due_in_7d', condition:'', action:'notify', actionTarget:'TK', actionDetail:'Remind Tech Lead 7 days before a milestone is due', status:'active', lastRun:'2026-06-14 08:00', runCount:2, createdBy:'TK', createdAt:'2026-03-20' }
+  ],
+
+  actions: [
+    { id:101, name:'Sync Jira tasks', type:'sync', category:'Integration', project:'Alpha Launch', projectId:1, description:'Pull latest Jira issue statuses into project tasks', lastRun:'2026-06-20 08:14', runCount:31, createdBy:'SR', createdAt:'2026-04-05' },
+    { id:102, name:'Generate health report', type:'report', category:'Reporting', project:'All Projects', projectId:null, description:'Compute and save a health snapshot for every active project', lastRun:'2026-06-19 18:00', runCount:8, createdBy:'AM', createdAt:'2026-05-01' },
+    { id:103, name:'Re-assign overdue tasks', type:'update_task_status', category:'Task Management', project:'Brand Refresh', projectId:2, description:'Bulk-reassign all overdue tasks to PM for triage', lastRun:'2026-06-18 09:30', runCount:3, createdBy:'JD', createdAt:'2026-05-10' },
+    { id:104, name:'Escalate blocked tasks to sponsor', type:'notify', category:'Escalation', project:'Alpha Launch', projectId:1, description:'Send a digest of all blocked tasks to the project sponsor', lastRun:'Never', runCount:0, createdBy:'AM', createdAt:'2026-06-01' },
+    { id:105, name:'Archive completed milestones', type:'update_task_status', category:'Cleanup', project:'All Projects', projectId:null, description:'Move all done milestones to archived state and recalculate progress', lastRun:'2026-06-15 12:00', runCount:5, createdBy:'AM', createdAt:'2026-05-20' },
+    { id:106, name:'Push budget alert to Slack', type:'send_slack', category:'Integration', project:'Partner Portal', projectId:6, description:'Post current budget burn rate to #project-finance Slack channel', lastRun:'2026-06-17 16:00', runCount:2, createdBy:'LM', createdAt:'2026-06-10' }
+  ],
+
+  departments: [
+    { id:1, name:'Engineering',  head:'SR', headName:'Sam Rivera',  headColor:'#10b981', budget:480000, spent:312000, headcount:8,  allocated:7,  color:'#6366f1' },
+    { id:2, name:'Marketing',    head:'JD', headName:'Jordan Davis', headColor:'#f59e0b', budget:120000, spent:72000,  headcount:4,  allocated:3,  color:'#f59e0b' },
+    { id:3, name:'Operations',   head:'LM', headName:'Lee Mitchell', headColor:'#06b6d4', budget:95000,  spent:61000,  headcount:5,  allocated:4,  color:'#10b981' },
+    { id:4, name:'Design',       head:'JD', headName:'Jordan Davis', headColor:'#f59e0b', budget:85000,  spent:44000,  headcount:3,  allocated:3,  color:'#8b5cf6' },
+    { id:5, name:'Product',      head:'AM', headName:'Alex Morgan',  headColor:'#6366f1', budget:140000, spent:89000,  headcount:4,  allocated:4,  color:'#0891b2' },
+  ],
+
+  peopleAllocations: [
+    { memberId:1, initials:'AM', name:'Alex Morgan',   color:'#6366f1', department:'Product',     role:'Project Manager', capacity:100, allocations:[{projectId:1,pct:40},{projectId:3,pct:20},{projectId:4,pct:30}], otherPct:10 },
+    { memberId:2, initials:'JD', name:'Jordan Davis',  color:'#f59e0b', department:'Design',      role:'Designer',        capacity:100, allocations:[{projectId:2,pct:55},{projectId:6,pct:30}], otherPct:15 },
+    { memberId:3, initials:'SR', name:'Sam Rivera',    color:'#10b981', department:'Engineering', role:'Engineer',        capacity:100, allocations:[{projectId:1,pct:50},{projectId:3,pct:35}], otherPct:15 },
+    { memberId:4, initials:'TK', name:'Taylor Kim',    color:'#8b5cf6', department:'Engineering', role:'Tech Lead',       capacity:100, allocations:[{projectId:4,pct:60},{projectId:1,pct:20},{projectId:3,pct:15}], otherPct:5 },
+    { memberId:5, initials:'LM', name:'Lee Mitchell',  color:'#06b6d4', department:'Operations',  role:'Analyst',         capacity:100, allocations:[{projectId:5,pct:70},{projectId:6,pct:15}], otherPct:15 },
+  ],
+
+  costCategories: [
+    { id:1, name:'Labor',          icon:'users',    budget:680000, spent:435000, color:'#6366f1' },
+    { id:2, name:'Tools & Licenses', icon:'cpu',    budget:48000,  spent:31200,  color:'#8b5cf6' },
+    { id:3, name:'Infrastructure', icon:'database', budget:72000,  spent:52000,  color:'#0891b2' },
+    { id:4, name:'Travel',         icon:'flag',     budget:24000,  spent:8500,   color:'#f59e0b' },
+    { id:5, name:'External / Vendors', icon:'link', budget:96000,  spent:51800,  color:'#10b981' },
+  ],
+
+  issues: [
+    { id:1,  title:'Login page crashes on Safari 17',        type:'bug',     status:'open',        priority:'critical', project:'Mobile App v2',    projectId:4, assignee:'TK', assigneeColor:'#8b5cf6', reporter:'AM', created:'2026-06-01', updated:'2026-06-18', due:'2026-06-25', labels:['frontend','auth'],    description:'Users on Safari 17 encounter a white screen on the login page after entering credentials.' },
+    { id:2,  title:'Add SSO support via SAML 2.0',           type:'feature', status:'in-progress', priority:'high',     project:'Alpha Launch',     projectId:1, assignee:'SR', assigneeColor:'#10b981', reporter:'AM', created:'2026-05-20', updated:'2026-06-19', due:'2026-07-10', labels:['auth','backend'],    description:'Enterprise customers require SAML 2.0-based single sign-on to meet their IT policies.' },
+    { id:3,  title:'Dashboard KPI tiles misaligned on 1366px', type:'bug',   status:'in-review',   priority:'medium',   project:'Alpha Launch',     projectId:1, assignee:'JD', assigneeColor:'#f59e0b', reporter:'TK', created:'2026-06-05', updated:'2026-06-20', due:'2026-06-28', labels:['ui','responsive'],  description:'At 1366×768 screen width the KPI tiles wrap incorrectly and overflow the container.' },
+    { id:4,  title:'Export reports to PDF',                  type:'feature', status:'open',        priority:'medium',   project:'Alpha Launch',     projectId:1, assignee:'AM', assigneeColor:'#6366f1', reporter:'LM', created:'2026-06-08', updated:'2026-06-15', due:'2026-07-20', labels:['reports','export'],  description:'PMs need to export the project health report to PDF for weekly stakeholder reviews.' },
+    { id:5,  title:'Brand color tokens not applied in dark mode', type:'bug', status:'open',       priority:'high',     project:'Brand Refresh',    projectId:2, assignee:'JD', assigneeColor:'#f59e0b', reporter:'JD', created:'2026-06-10', updated:'2026-06-17', due:'2026-07-05', labels:['design','dark-mode'], description:'Several semantic color variables fall back to light-mode values in dark-mode context.' },
+    { id:6,  title:'Pipeline fails on Node 20 upgrade',      type:'bug',     status:'in-progress', priority:'critical', project:'Alpha Launch',     projectId:1, assignee:'SR', assigneeColor:'#10b981', reporter:'SR', created:'2026-06-12', updated:'2026-06-20', due:'2026-06-22', labels:['ci','backend'],     description:'CI pipeline throws ENOENT errors after upgrading the base image to Node 20.' },
+    { id:7,  title:'Introduce GraphQL subscriptions for real-time updates', type:'feature', status:'open', priority:'high', project:'Data Platform', projectId:3, assignee:'SR', assigneeColor:'#10b981', reporter:'AM', created:'2026-06-14', updated:'2026-06-14', due:'2026-09-01', labels:['api','backend'],    description:'Real-time push for dashboard widgets to avoid polling overhead.' },
+    { id:8,  title:'SOC2 evidence collection automation',    type:'task',    status:'done',        priority:'critical', project:'Compliance Audit', projectId:5, assignee:'LM', assigneeColor:'#06b6d4', reporter:'LM', created:'2026-04-01', updated:'2026-05-28', due:'2026-05-31', labels:['compliance'],       description:'Script to pull access logs, change records and policy docs into the audit folder.' },
+    { id:9,  title:'Offline mode sync conflict resolution',  type:'feature', status:'in-progress', priority:'high',     project:'Mobile App v2',    projectId:4, assignee:'TK', assigneeColor:'#8b5cf6', reporter:'TK', created:'2026-05-28', updated:'2026-06-19', due:'2026-08-01', labels:['mobile','sync'],    description:'When a device reconnects, conflicting record changes must be merged deterministically.' },
+    { id:10, title:'Partner portal session timeout too short', type:'bug',   status:'open',        priority:'low',      project:'Partner Portal',   projectId:6, assignee:'JD', assigneeColor:'#f59e0b', reporter:'LM', created:'2026-06-02', updated:'2026-06-10', due:'2026-07-15', labels:['auth','ux'],        description:'Session expires after 10 minutes of inactivity; partners want at least 30 minutes.' },
+    { id:11, title:'Milestone progress bar jumps on re-render', type:'bug',  status:'in-review',  priority:'medium',   project:'Mobile App v2',    projectId:4, assignee:'TK', assigneeColor:'#8b5cf6', reporter:'AM', created:'2026-06-09', updated:'2026-06-18', due:'2026-07-12', labels:['ui','animation'],   description:'Progress bar animates from 0% on each component re-render instead of retaining position.' },
+    { id:12, title:'Bulk-assign tasks to team member',       type:'feature', status:'open',        priority:'medium',   project:'Alpha Launch',     projectId:1, assignee:'AM', assigneeColor:'#6366f1', reporter:'AM', created:'2026-06-16', updated:'2026-06-16', due:'2026-07-30', labels:['tasks','ux'],       description:'PMs need to select multiple tasks and reassign them to a team member in one action.' },
+    { id:13, title:'Data warehouse schema migration fails on rollback', type:'bug', status:'open', priority:'critical', project:'Data Platform', projectId:3, assignee:'SR', assigneeColor:'#10b981', reporter:'SR', created:'2026-06-17', updated:'2026-06-20', due:'2026-06-27', labels:['database','backend'], description:'Alembic downgrade fails with FK constraint errors when rolling back the v3 schema.' },
+    { id:14, title:'Add Gantt chart to project timeline tab', type:'feature', status:'open',       priority:'medium',   project:'Alpha Launch',     projectId:1, assignee:'JD', assigneeColor:'#f59e0b', reporter:'TK', created:'2026-06-18', updated:'2026-06-18', due:'2026-08-10', labels:['ui','timeline'],    description:'Project managers want to see task dependencies as a Gantt chart in the timeline tab.' },
+    { id:15, title:'Push notifications not delivered on Android 14', type:'bug', status:'open',   priority:'high',     project:'Mobile App v2',    projectId:4, assignee:'TK', assigneeColor:'#8b5cf6', reporter:'JD', created:'2026-06-19', updated:'2026-06-20', due:'2026-07-08', labels:['mobile','notifications'], description:'Firebase Cloud Messaging tokens are not refreshed after the Android 14 background restriction policy change.' },
+  ],
+
   oobViews: [
     { id:1,  category:'Projects',  name:'All Projects Overview',       icon:'folder',        color:'#6366f1', description:'Every project with status, health score, PM, progress and due date.', columns:['name','type','status','health','progress','pm','due'], previewRows:[['Alpha Launch','Engineering','Active','82','67%','AM','Aug 15'],['Brand Refresh','Marketing','At Risk','54','41%','JD','Jul 30'],['Data Platform','Engineering','Planning','–','8%','SR','Dec 01']], tags:['projects','overview'] },
     { id:2,  category:'Projects',  name:'At-Risk & Overdue Projects',  icon:'alertTriangle', color:'#ef4444', description:'Projects flagged At Risk or with health below 60 and overdue tasks.', columns:['name','status','health','overdueTasks','budget','pm'], previewRows:[['Brand Refresh','At Risk','54','4','$45k','JD'],['Partner Portal','On Hold','38','5','$60k','JD']], tags:['risk','health'] },
@@ -220,7 +299,7 @@ const DATA = {
 // --- STATE ---
 const STATE = {
   currentPage: 'dashboard',
-  currentProject: null,
+  currentProject: DATA.projects.find(p => p.id === 1),
   currentTab: 'overview',
   currentApprovalTab: 'pending',
   selectedApproval: null,
@@ -233,7 +312,15 @@ const STATE = {
   dsViewBuilder: false,
   dsViewFilters: null,
   dsFieldBuilder: false,
-  oobCategory: 'All'
+  oobCategory: 'All',
+  actionsTab: 'all',
+  actionEditingId: null,
+  runningActionId: null,
+  issuesViewId: 'oob-all',
+  issuesSearch: '',
+  issuesCustomViews: [],
+  resourceTab: 'overview',
+  commercialTab: 'overview'
 };
 
 // --- ICONS (inline SVG helpers) ---
@@ -284,7 +371,27 @@ const I = {
   refreshCw: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`,
   reports: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17V13"/><path d="M12 17V9"/><path d="M16 17V11"/></svg>`,
   pieChart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>`,
-  pivot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>`
+  pivot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>`,
+  actions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`,
+  issues: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  kanban: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="18" rx="1"/><rect x="10" y="3" width="4" height="12" rx="1"/><rect x="17" y="3" width="4" height="15" rx="1"/></svg>`,
+  timeline: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/><path d="M5 8l-2 4 2 4"/><path d="M19 8l2 4-2 4"/></svg>`,
+  calendarView: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="7" y="14" width="3" height="3" rx="1" fill="currentColor"/><rect x="14" y="14" width="3" height="3" rx="1" fill="currentColor"/></svg>`,
+  resource: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="19" y1="8" x2="22" y2="8"/><line x1="19" y1="11" x2="22" y2="11"/><line x1="19" y1="14" x2="22" y2="14"/></svg>`,
+  trendUp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  cpu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
+  user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  palette: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>`,
+  key: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>`,
+  camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
+  monitor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+  moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  logOut: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+  smartphone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`
 };
 
 // Sized icon wrapper — prevents bare SVGs from expanding
@@ -358,9 +465,14 @@ function toast(msg, type='success') {
 function renderSidebar() {
   const globalNav = [
     { id:'dashboard', label:'Dashboard', icon:I.dashboard },
+    { id:'commercial', label:'Commercial', icon:I.trendUp },
   ];
+  const criticalIssues = DATA.issues.filter(i => i.priority === 'critical' && i.status !== 'done').length;
   const projectScopedNav = STATE.currentProject ? [
     { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
+    { id:'issues',       label:'Issues',       icon:I.issues,   badge: criticalIssues || null },
+    { id:'actions',      label:'Actions',      icon:I.actions },
+    { id:'resources',    label:'Resources',    icon:I.resource },
     { id:'policies',     label:'Policies',     icon:I.zap },
     { id:'workflows',    label:'Workflows',    icon:I.workflow },
     { id:'team',         label:'Team',         icon:I.users },
@@ -378,6 +490,11 @@ function renderSidebar() {
   const isProjectPage = STATE.currentPage === 'project-detail' || STATE.currentPage === 'projects';
 
   document.getElementById('sidebar').innerHTML = `
+    <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
     <div class="sidebar-logo">
       <div class="logo-mark">W</div>
       <span class="logo-name">Wired</span>
@@ -414,16 +531,24 @@ function renderSidebar() {
           </div>` : ''}
       </nav>
     </div>
-    <div class="sidebar-footer">
+    <div class="sidebar-footer ${STATE.currentPage==='user-settings'?'active':''}" id="sidebar-user" title="Account settings">
       ${avatar(DATA.user.initials, DATA.user.color, 'sm')}
       <div>
         <div class="user-name">${DATA.user.name}</div>
         <div class="user-role">${DATA.user.role}</div>
       </div>
+      <span class="sidebar-user-cog">${I.settings}</span>
     </div>`;
 
   document.querySelectorAll('#sidebar .nav-item[data-page]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.page));
+  });
+  document.getElementById('sidebar-user')?.addEventListener('click', () => navigate('user-settings'));
+
+  document.getElementById('sidebar-toggle').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    STATE.sidebarCollapsed = !STATE.sidebarCollapsed;
+    sidebar.classList.toggle('collapsed', STATE.sidebarCollapsed);
   });
 
   // Project picker toggle
@@ -476,8 +601,8 @@ function renderTopbar(crumbs) {
         ${I.bell}
         <span class="topbar-notif-dot"></span>
       </div>
-      <div class="topbar-icon-btn" title="Settings">${I.settings}</div>
-      <div class="topbar-avatar" title="${DATA.user.name}">${DATA.user.initials}</div>
+      <div class="topbar-icon-btn" title="Settings" data-page="user-settings">${I.settings}</div>
+      <div class="topbar-avatar" title="${DATA.user.name} · Account settings" data-page="user-settings" style="cursor:pointer">${DATA.user.initials}</div>
     </div>`;
   document.querySelectorAll('#topbar [data-page]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.page));
@@ -486,13 +611,39 @@ function renderTopbar(crumbs) {
 
 // --- ROUTER ---
 function navigate(page, projectId) {
+  STATE.openReport = null;
   if (page === 'project-detail' && projectId) {
     STATE.currentProject = DATA.projects.find(p=>p.id===projectId);
     STATE.currentTab = 'overview';
   }
   STATE.currentPage = page;
+  persistLocation();
   renderSidebar();
   render();
+}
+
+// Persist current page/project/tab so the location survives a refresh.
+function persistLocation() {
+  try {
+    localStorage.setItem('wiredLocation', JSON.stringify({
+      page: STATE.currentPage,
+      projectId: STATE.currentProject ? STATE.currentProject.id : null,
+      tab: STATE.currentTab
+    }));
+  } catch (e) { console.error('[persistLocation]', e); }
+}
+
+function restoreLocation() {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem('wiredLocation') || 'null'); }
+  catch (e) { return; }
+  if (!saved || !saved.page) return;
+  if (saved.projectId != null) {
+    const proj = DATA.projects.find(p => p.id === saved.projectId);
+    if (proj) STATE.currentProject = proj;
+  }
+  if (saved.tab) STATE.currentTab = saved.tab;
+  STATE.currentPage = saved.page;
 }
 
 function render() {
@@ -500,6 +651,10 @@ function render() {
   content.className = 'page-fade';
   switch(STATE.currentPage) {
     case 'dashboard': renderDashboard(); break;
+    case 'resources': renderResources(); break;
+    case 'commercial': renderCommercial(); break;
+    case 'issues':    renderIssues(); break;
+    case 'actions':   renderActions(); break;
     case 'projects': renderProjects(); break;
     case 'project-detail': renderProjectDetail(); break;
     case 'approvals': renderApprovals(); break;
@@ -510,11 +665,306 @@ function render() {
     case 'data-sources': renderDataSources(); break;
     case 'reports': renderReports(); break;
     case 'workflow-builder': renderWorkflowBuilder(); break;
+    case 'user-settings': renderUserSettings(); break;
     default: renderDashboard();
   }
 }
 
 // --- DASHBOARD ---
+// --- ACTIONS ---
+const ACTION_TYPES = ['notify','update_task_status','change_project_status','create_task','send_slack','send_email','sync','report'];
+const ACTION_CATEGORIES = ['Integration','Reporting','Task Management','Escalation','Cleanup','Custom'];
+
+function renderActions() {
+  renderTopbar([{label:'Actions'}]);
+  const allActions = buildActionsView();
+  const automated = allActions.filter(a=>a.automationId);
+  const manual = allActions.filter(a=>!a.automationId);
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Actions</div>
+        <div class="page-subtitle">${allActions.length} total · ${automated.length} automated · ${manual.length} manual</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-secondary" id="btn-actions-filter">${I.filter} Filter</button>
+        <button class="btn btn-primary" id="btn-new-action">${I.plus} New Action</button>
+      </div>
+    </div>
+
+    <div class="tabs mb-5">
+      <div class="tab-item ${STATE.actionsTab==='all'?'active':''}" data-atab="all">All (${allActions.length})</div>
+      <div class="tab-item ${STATE.actionsTab==='automated'?'active':''}" data-atab="automated">Automated (${automated.length})</div>
+      <div class="tab-item ${STATE.actionsTab==='manual'?'active':''}" data-atab="manual">Manual only (${manual.length})</div>
+    </div>
+
+    <div id="actions-list"></div>
+
+    <div id="action-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+      <div class="card" style="width:560px;max-width:95vw;padding:28px">
+        <div class="flex items-center justify-between mb-4">
+          <div style="font-weight:700;font-size:16px" id="action-modal-title">New Action</div>
+          <button class="btn btn-secondary btn-sm" id="btn-action-cancel">Cancel</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Name</label>
+            <input id="act-name" type="text" placeholder="e.g. Escalate blocked tasks" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Type</label>
+              <select id="act-type" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+                ${ACTION_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Category</label>
+              <select id="act-category" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+                ${ACTION_CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Project</label>
+            <select id="act-project" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+              <option value="">All Projects</option>
+              ${DATA.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Description</label>
+            <textarea id="act-desc" rows="2" placeholder="What does this action do?" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-5" style="justify-content:flex-end">
+          <button class="btn btn-secondary" id="btn-action-cancel2">Cancel</button>
+          <button class="btn btn-primary" id="btn-action-save">Save Action</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="run-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+      <div class="card" style="width:440px;max-width:95vw;padding:28px">
+        <div style="font-weight:700;font-size:16px;margin-bottom:8px" id="run-modal-title">Run Action</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="run-modal-desc"></div>
+        <div style="background:#f8fafc;border-radius:8px;padding:14px;margin-bottom:20px;font-size:13px">
+          <div class="flex items-center gap-2 mb-2" style="font-weight:600">${ico(I.alertTriangle,14)} This will run immediately</div>
+          <div style="color:#64748b">The action will execute against live project data. This cannot be undone.</div>
+        </div>
+        <div class="flex gap-3" style="justify-content:flex-end">
+          <button class="btn btn-secondary" id="btn-run-cancel">Cancel</button>
+          <button class="btn btn-primary" id="btn-run-confirm" style="background:#6366f1">${ico(I.play,13)} Run Now</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll('[data-atab]').forEach(el => {
+    el.addEventListener('click', () => {
+      STATE.actionsTab = el.dataset.atab;
+      document.querySelectorAll('[data-atab]').forEach(t=>t.classList.remove('active'));
+      el.classList.add('active');
+      renderActionsList();
+    });
+  });
+
+  document.getElementById('btn-new-action').addEventListener('click', () => openActionModal(null));
+  document.getElementById('btn-action-cancel').addEventListener('click', closeActionModal);
+  document.getElementById('btn-action-cancel2').addEventListener('click', closeActionModal);
+  document.getElementById('btn-run-cancel').addEventListener('click', () => { document.getElementById('run-modal').style.display='none'; });
+
+  document.getElementById('btn-action-save').addEventListener('click', () => {
+    const name = document.getElementById('act-name').value.trim();
+    if (!name) { toast('Name is required', 'warning'); return; }
+    const pid = document.getElementById('act-project').value;
+    const proj = pid ? DATA.projects.find(p=>p.id===+pid) : null;
+    if (STATE.actionEditingId) {
+      const a = DATA.actions.find(x=>x.id===STATE.actionEditingId);
+      if (a) {
+        a.name = name;
+        a.type = document.getElementById('act-type').value;
+        a.category = document.getElementById('act-category').value;
+        a.project = proj ? proj.name : 'All Projects';
+        a.projectId = proj ? proj.id : null;
+        a.description = document.getElementById('act-desc').value.trim();
+      }
+      toast('Action updated', 'success');
+    } else {
+      DATA.actions.push({
+        id: Date.now(),
+        name,
+        type: document.getElementById('act-type').value,
+        category: document.getElementById('act-category').value,
+        project: proj ? proj.name : 'All Projects',
+        projectId: proj ? proj.id : null,
+        description: document.getElementById('act-desc').value.trim(),
+        lastRun: 'Never', runCount: 0,
+        createdBy: DATA.user.initials, createdAt: '2026-06-20'
+      });
+      toast('Action created', 'success');
+    }
+    closeActionModal();
+    renderActionsList();
+  });
+
+  document.getElementById('btn-run-confirm').addEventListener('click', () => {
+    const id = STATE.runningActionId;
+    document.getElementById('run-modal').style.display = 'none';
+    const a = DATA.actions.find(x=>x.id===id) || (() => {
+      const auto = DATA.automations.find(x=>x.id===id);
+      return auto ? { name: auto.name } : null;
+    })();
+    if (a) {
+      if (DATA.actions.find(x=>x.id===id)) {
+        const act = DATA.actions.find(x=>x.id===id);
+        act.lastRun = '2026-06-20 (just now)';
+        act.runCount++;
+      }
+      toast(`Running: ${a.name}`, 'info');
+      setTimeout(() => toast(`Completed: ${a.name}`, 'success'), 1800);
+      renderActionsList();
+    }
+  });
+
+  renderActionsList();
+}
+
+function buildActionsView() {
+  const manual = DATA.actions.map(a => ({ ...a, automationId: null, trigger: null }));
+  const automated = DATA.automations.map(a => {
+    const proj = DATA.projects.find(p=>p.id===a.projectId);
+    return {
+      id: a.id + 10000,
+      name: a.name,
+      type: a.action,
+      category: 'Automation',
+      project: proj ? proj.name : 'Unknown',
+      projectId: a.projectId,
+      description: a.actionDetail,
+      lastRun: a.lastRun,
+      runCount: a.runCount,
+      createdBy: a.createdBy,
+      createdAt: a.createdAt,
+      automationId: a.id,
+      trigger: a.trigger,
+      automationStatus: a.status
+    };
+  });
+  return [...manual, ...automated];
+}
+
+function renderActionsList() {
+  const all = buildActionsView();
+  const tab = STATE.actionsTab || 'all';
+  const items = tab === 'automated' ? all.filter(a=>a.automationId)
+              : tab === 'manual'    ? all.filter(a=>!a.automationId)
+              : all;
+
+  const categoryColors = {
+    'Integration': '#6366f1', 'Reporting': '#10b981', 'Task Management': '#f59e0b',
+    'Escalation': '#ef4444', 'Cleanup': '#64748b', 'Custom': '#8b5cf6', 'Automation': '#0891b2'
+  };
+
+  document.getElementById('actions-list').innerHTML = items.length ? `
+    <div class="card p-0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid #e2e8f0">
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Name</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Type / Category</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Project</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Mode</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Last Run</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Runs</th>
+            <th style="padding:10px 16px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(a => {
+            const catColor = categoryColors[a.category] || '#64748b';
+            const isAuto = !!a.automationId;
+            return `
+            <tr style="border-bottom:1px solid #f1f5f9" data-action-id="${a.id}">
+              <td style="padding:12px 16px">
+                <div style="font-size:13px;font-weight:500">${a.name}</div>
+                <div style="font-size:12px;color:#94a3b8;margin-top:2px">${a.description}</div>
+              </td>
+              <td style="padding:12px 16px">
+                <div style="font-size:12px;background:#f1f5f9;display:inline-block;padding:2px 8px;border-radius:4px;font-family:monospace;margin-bottom:4px">${a.type}</div>
+                <div><span style="font-size:11px;background:${catColor}18;color:${catColor};padding:1px 7px;border-radius:10px;font-weight:600">${a.category}</span></div>
+              </td>
+              <td style="padding:12px 16px;font-size:13px;color:#475569">${a.project}</td>
+              <td style="padding:12px 16px">
+                ${isAuto
+                  ? `<div style="display:flex;flex-direction:column;gap:4px">
+                      <span style="font-size:11px;background:#0891b218;color:#0891b2;padding:2px 8px;border-radius:10px;font-weight:600">${ico(I.zap,11)} Automated</span>
+                      <span style="font-size:11px;color:#94a3b8;font-family:monospace">${a.trigger}</span>
+                     </div>`
+                  : `<span style="font-size:11px;background:#f1f5f9;color:#475569;padding:2px 8px;border-radius:10px;font-weight:600">${ico(I.play,11)} Manual</span>`}
+              </td>
+              <td style="padding:12px 16px;font-size:12px;color:#64748b">${a.lastRun}</td>
+              <td style="padding:12px 16px;font-size:12px;color:#64748b">${a.runCount}</td>
+              <td style="padding:12px 16px;text-align:right;white-space:nowrap">
+                <button class="btn btn-primary btn-sm btn-run-action" data-id="${a.id}" data-name="${a.name}" data-desc="${a.description}" style="margin-right:4px">${ico(I.play,12)} Run</button>
+                ${!isAuto ? `
+                  <button class="btn btn-secondary btn-sm btn-edit-action" data-id="${a.id}" style="margin-right:4px">Edit</button>
+                  <button class="btn btn-secondary btn-sm btn-delete-action" data-id="${a.id}" style="color:#ef4444">Delete</button>
+                ` : `
+                  <button class="btn btn-secondary btn-sm" onclick="navigate('project-detail',${a.projectId});STATE.currentTab='automations';renderTabContent(STATE.currentProject)" style="font-size:11px">${ico(I.zap,11)} View Automation</button>
+                `}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>` : `
+    <div class="card" style="text-align:center;padding:40px 20px;color:#94a3b8">
+      <div style="font-size:32px;margin-bottom:8px">⚡</div>
+      <div style="font-weight:600;margin-bottom:4px">No actions here</div>
+      <div style="font-size:13px">Switch tabs or create a new action.</div>
+    </div>`;
+
+  document.querySelectorAll('.btn-run-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      STATE.runningActionId = +btn.dataset.id;
+      document.getElementById('run-modal-title').textContent = `Run: ${btn.dataset.name}`;
+      document.getElementById('run-modal-desc').textContent = btn.dataset.desc;
+      document.getElementById('run-modal').style.display = 'flex';
+    });
+  });
+
+  document.querySelectorAll('.btn-edit-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const a = DATA.actions.find(x=>x.id===+btn.dataset.id);
+      if (a) openActionModal(a);
+    });
+  });
+
+  document.querySelectorAll('.btn-delete-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      DATA.actions = DATA.actions.filter(x=>x.id!==+btn.dataset.id);
+      toast('Action deleted', 'warning');
+      renderActionsList();
+    });
+  });
+}
+
+function openActionModal(a) {
+  STATE.actionEditingId = a ? a.id : null;
+  document.getElementById('action-modal-title').textContent = a ? 'Edit Action' : 'New Action';
+  document.getElementById('act-name').value = a ? a.name : '';
+  document.getElementById('act-type').value = a ? a.type : ACTION_TYPES[0];
+  document.getElementById('act-category').value = a ? a.category : ACTION_CATEGORIES[0];
+  document.getElementById('act-project').value = a && a.projectId ? a.projectId : '';
+  document.getElementById('act-desc').value = a ? a.description : '';
+  document.getElementById('action-modal').style.display = 'flex';
+}
+
+function closeActionModal() {
+  document.getElementById('action-modal').style.display = 'none';
+}
+
 function renderDashboard() {
   renderTopbar([{label:'Dashboard'}]);
   const active = DATA.projects.filter(p=>p.status==='active').length;
@@ -693,7 +1143,7 @@ function renderProjectDetail() {
     {label:p.name}
   ]);
 
-  const tabs = ['overview','tasks','timeline','budget','team','policies','activity'];
+  const tabs = ['overview','tasks','timeline','budget','team','policies','automations','activity'];
   document.getElementById('content').innerHTML = `
     <div class="project-detail-header">
       <div class="flex items-center justify-between">
@@ -748,6 +1198,7 @@ function renderProjectDetail() {
   document.querySelectorAll('.tab-item[data-tab]').forEach(el => {
     el.addEventListener('click', () => {
       STATE.currentTab = el.dataset.tab;
+      persistLocation();
       document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
       el.classList.add('active');
       renderTabContent(p);
@@ -765,8 +1216,9 @@ function renderTabContent(p) {
     case 'timeline':  el.innerHTML = renderTimelineTab(p); break;
     case 'budget':    el.innerHTML = renderBudgetTab(p); break;
     case 'team':      el.innerHTML = renderTeamTab(p); break;
-    case 'policies':  el.innerHTML = renderPoliciesTab(p); break;
-    case 'activity':  el.innerHTML = renderActivityTab(p); break;
+    case 'policies':     el.innerHTML = renderPoliciesTab(p); break;
+    case 'automations':  el.innerHTML = renderAutomationsTab(p); bindAutomationsTab(p); return;
+    case 'activity':     el.innerHTML = renderActivityTab(p); break;
   }
 }
 
@@ -957,6 +1409,185 @@ function renderPoliciesTab(p) {
     ${proj.map(pol=>policyCard(pol)).join('')}
     <div class="section-title mt-4">Inherited (Global)</div>
     ${global.map(pol=>policyCard(pol,true)).join('')}`;
+}
+
+const AUTOMATION_TRIGGERS = ['task.overdue','task.created','task.status_changed','pull_request.merged','deployment.success','milestone.due_in_7d','milestone.missed','risk.created','budget.threshold_80'];
+const AUTOMATION_ACTIONS  = ['notify','update_task_status','change_project_status','create_task','send_slack','send_email'];
+
+function renderAutomationsTab(p) {
+  const autos = DATA.automations.filter(a=>a.projectId===p.id);
+  const activeCount = autos.filter(a=>a.status==='active').length;
+  return `
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-sm text-secondary">${autos.length} automation${autos.length!==1?'s':''} · ${activeCount} active</span>
+      <button class="btn btn-primary btn-sm" id="btn-new-automation">${I.plus} New Automation</button>
+    </div>
+    ${autos.length ? `
+    <div class="card p-0">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid #e2e8f0">
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Name</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Trigger</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Action</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Status</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Last Run</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em">Runs</th>
+            <th style="padding:10px 16px"></th>
+          </tr>
+        </thead>
+        <tbody id="automations-tbody">
+          ${autos.map(a => automationRow(a)).join('')}
+        </tbody>
+      </table>
+    </div>` : `
+    <div class="card" style="text-align:center;padding:40px 20px;color:#94a3b8">
+      <div style="font-size:32px;margin-bottom:8px">⚡</div>
+      <div style="font-weight:600;margin-bottom:4px">No automations yet</div>
+      <div style="font-size:13px">Create your first automation to reduce manual work.</div>
+    </div>`}
+    <div id="automation-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center">
+      <div class="card" style="width:520px;max-width:95vw;padding:28px">
+        <div class="flex items-center justify-between mb-4">
+          <div style="font-weight:700;font-size:16px" id="automation-modal-title">New Automation</div>
+          <button class="btn btn-secondary btn-sm" id="btn-automation-cancel">Cancel</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Name</label>
+            <input id="auto-name" type="text" placeholder="e.g. Notify on PR merged" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Trigger</label>
+            <select id="auto-trigger" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+              ${AUTOMATION_TRIGGERS.map(t=>`<option value="${t}">${t}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Condition <span style="font-weight:400;color:#94a3b8">(optional)</span></label>
+            <input id="auto-condition" type="text" placeholder="e.g. priority = critical" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Action</label>
+            <select id="auto-action" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;box-sizing:border-box">
+              ${AUTOMATION_ACTIONS.map(a=>`<option value="${a}">${a}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px">Description</label>
+            <textarea id="auto-detail" rows="2" placeholder="What does this automation do?" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-5" style="justify-content:flex-end">
+          <button class="btn btn-secondary" id="btn-automation-cancel2">Cancel</button>
+          <button class="btn btn-primary" id="btn-automation-save">Save Automation</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function automationRow(a) {
+  const statusColor = a.status==='active' ? '#10b981' : '#94a3b8';
+  return `
+    <tr data-auto-id="${a.id}" style="border-bottom:1px solid #f1f5f9">
+      <td style="padding:12px 16px;font-size:13px;font-weight:500">${a.name}</td>
+      <td style="padding:12px 16px"><span style="font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px;font-family:monospace">${a.trigger}</span></td>
+      <td style="padding:12px 16px"><span style="font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px;font-family:monospace">${a.action}</span></td>
+      <td style="padding:12px 16px">
+        <span class="auto-status-badge" style="font-size:12px;background:${statusColor}18;color:${statusColor};padding:2px 10px;border-radius:12px;font-weight:600;cursor:pointer" data-auto-id="${a.id}">${a.status}</span>
+      </td>
+      <td style="padding:12px 16px;font-size:12px;color:#64748b">${a.lastRun}</td>
+      <td style="padding:12px 16px;font-size:12px;color:#64748b">${a.runCount}</td>
+      <td style="padding:12px 16px;text-align:right">
+        <button class="btn btn-secondary btn-sm btn-edit-auto" data-auto-id="${a.id}" style="margin-right:4px">Edit</button>
+        <button class="btn btn-secondary btn-sm btn-delete-auto" data-auto-id="${a.id}" style="color:#ef4444">Delete</button>
+      </td>
+    </tr>`;
+}
+
+function bindAutomationsTab(p) {
+  let editingId = null;
+
+  function openModal(auto) {
+    editingId = auto ? auto.id : null;
+    document.getElementById('automation-modal-title').textContent = auto ? 'Edit Automation' : 'New Automation';
+    document.getElementById('auto-name').value = auto ? auto.name : '';
+    document.getElementById('auto-trigger').value = auto ? auto.trigger : AUTOMATION_TRIGGERS[0];
+    document.getElementById('auto-condition').value = auto ? auto.condition : '';
+    document.getElementById('auto-action').value = auto ? auto.action : AUTOMATION_ACTIONS[0];
+    document.getElementById('auto-detail').value = auto ? auto.actionDetail : '';
+    document.getElementById('automation-modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('automation-modal').style.display = 'none';
+  }
+
+  function refreshTable() {
+    const autos = DATA.automations.filter(a=>a.projectId===p.id);
+    const tbody = document.getElementById('automations-tbody');
+    if (tbody) tbody.innerHTML = autos.map(a=>automationRow(a)).join('');
+    rebindRows();
+  }
+
+  function rebindRows() {
+    document.querySelectorAll('.auto-status-badge').forEach(el => {
+      el.onclick = () => {
+        const id = +el.dataset.autoId;
+        const a = DATA.automations.find(x=>x.id===id);
+        if (a) { a.status = a.status==='active' ? 'paused' : 'active'; refreshTable(); }
+      };
+    });
+    document.querySelectorAll('.btn-edit-auto').forEach(el => {
+      el.onclick = () => { const a = DATA.automations.find(x=>x.id===+el.dataset.autoId); openModal(a); };
+    });
+    document.querySelectorAll('.btn-delete-auto').forEach(el => {
+      el.onclick = () => {
+        const id = +el.dataset.autoId;
+        DATA.automations = DATA.automations.filter(x=>x.id!==id);
+        refreshTable();
+        toast('Automation deleted', 'warning');
+      };
+    });
+  }
+
+  document.getElementById('btn-new-automation')?.addEventListener('click', () => openModal(null));
+  document.getElementById('btn-automation-cancel')?.addEventListener('click', closeModal);
+  document.getElementById('btn-automation-cancel2')?.addEventListener('click', closeModal);
+
+  document.getElementById('btn-automation-save')?.addEventListener('click', () => {
+    const name = document.getElementById('auto-name').value.trim();
+    if (!name) { toast('Name is required', 'warning'); return; }
+    if (editingId) {
+      const a = DATA.automations.find(x=>x.id===editingId);
+      if (a) {
+        a.name = name;
+        a.trigger = document.getElementById('auto-trigger').value;
+        a.condition = document.getElementById('auto-condition').value.trim();
+        a.action = document.getElementById('auto-action').value;
+        a.actionDetail = document.getElementById('auto-detail').value.trim();
+      }
+      toast('Automation updated', 'success');
+    } else {
+      const newAuto = {
+        id: Date.now(), projectId: p.id,
+        name,
+        trigger: document.getElementById('auto-trigger').value,
+        condition: document.getElementById('auto-condition').value.trim(),
+        action: document.getElementById('auto-action').value,
+        actionTarget: null,
+        actionDetail: document.getElementById('auto-detail').value.trim(),
+        status: 'active', lastRun: 'Never', runCount: 0,
+        createdBy: DATA.user.initials, createdAt: '2026-06-20'
+      };
+      DATA.automations.push(newAuto);
+      toast('Automation created', 'success');
+    }
+    closeModal();
+    refreshTable();
+  });
+
+  rebindRows();
 }
 
 function renderActivityTab(p) {
@@ -1257,6 +1888,388 @@ function renderAnalytics() {
         <div class="analytics-chart-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Velocity chart — Phase 2</span></div>
       </div>
     </div>`;
+}
+
+// --- USER SETTINGS ---
+function saveUserSettings() {
+  try { localStorage.setItem('wiredUserSettings', JSON.stringify(DATA.user.settings)); }
+  catch (e) { console.error('[saveUserSettings]', e); }
+}
+function restoreUserSettings() {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem('wiredUserSettings') || 'null'); }
+  catch (e) { return; }
+  if (saved && typeof saved === 'object') DATA.user.settings = { ...DATA.user.settings, ...saved };
+}
+
+const US_TABS = [
+  { id:'profile',       label:'Profile',            icon:I.user },
+  { id:'security',      label:'Account & Security', icon:I.shield },
+  { id:'notifications', label:'Notifications',      icon:I.bell },
+  { id:'appearance',    label:'Appearance',         icon:I.palette },
+  { id:'preferences',   label:'Preferences',        icon:I.sliders }
+];
+
+const US_ACCENTS = ['#6366f1','#8b5cf6','#ec4899','#ef4444','#f59e0b','#10b981','#06b6d4','#3b82f6'];
+
+function renderUserSettings() {
+  if (!STATE.settingsTab) STATE.settingsTab = 'profile';
+  renderTopbar([{ label:'Account' }, { label: US_TABS.find(t=>t.id===STATE.settingsTab).label }]);
+  const u = DATA.user;
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="page-content us-page">
+      <div class="us-hero">
+        <div class="us-hero-avatar" style="background:${u.color}">${u.initials}
+          <button class="us-hero-cam" title="Change photo" id="us-photo">${ico(I.camera,14)}</button>
+        </div>
+        <div class="us-hero-info">
+          <div class="us-hero-name">${u.name}</div>
+          <div class="us-hero-meta">${u.title} · ${u.department}</div>
+          <div class="us-hero-tags">
+            <span class="us-tag">${ico(I.mail,12)}${u.email}</span>
+            <span class="us-tag">${ico(I.globe,12)}${u.location}</span>
+            ${u.twoFactor?`<span class="us-tag us-tag--ok">${ico(I.shield,12)}2FA enabled</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="us-shell">
+        <nav class="us-nav">
+          ${US_TABS.map(t=>`<button class="us-nav-item ${STATE.settingsTab===t.id?'active':''}" data-ustab="${t.id}">${ico(t.icon,16)}<span>${t.label}</span></button>`).join('')}
+          <div class="us-nav-sep"></div>
+          <button class="us-nav-item us-nav-item--danger" id="us-signout">${ico(I.logOut,16)}<span>Sign out</span></button>
+        </nav>
+        <div class="us-body" id="us-body">${renderUsTab()}</div>
+      </div>
+    </div>`;
+
+  el.querySelectorAll('[data-ustab]').forEach(t =>
+    t.addEventListener('click', () => { STATE.settingsTab = t.dataset.ustab; renderUserSettings(); }));
+  el.querySelector('#us-photo')?.addEventListener('click', () => toast('Photo upload is a Phase 2 capability', 'info'));
+  el.querySelector('#us-signout')?.addEventListener('click', () => toast('Signed out (demo)', 'info'));
+  bindUsTab();
+}
+
+function renderUsTab() {
+  switch (STATE.settingsTab) {
+    case 'profile':       return usProfileTab();
+    case 'security':      return usSecurityTab();
+    case 'notifications': return usNotificationsTab();
+    case 'appearance':    return usAppearanceTab();
+    case 'preferences':   return usPreferencesTab();
+    default: return '';
+  }
+}
+
+/* ---- shared building blocks ---- */
+function usToggleRow(key, label, desc) {
+  const on = key === 'twoFactorToggle' ? DATA.user.twoFactor : DATA.user.settings[key];
+  return `<div class="us-row">
+    <div class="us-row-text"><div class="us-row-label">${label}</div><div class="us-row-desc">${desc}</div></div>
+    <label class="toggle-switch"><input type="checkbox" data-toggle="${key}" ${on?'checked':''}><span class="toggle-slider"></span></label>
+  </div>`;
+}
+function usSegment(key, options) {
+  const cur = DATA.user.settings[key];
+  return `<div class="us-segment" data-segment="${key}">
+    ${options.map(o=>`<button class="us-seg-btn ${cur===o.val?'active':''}" data-val="${o.val}">${o.icon?ico(o.icon,14):''}${o.label}</button>`).join('')}
+  </div>`;
+}
+function usField(id, label, value, type='text', placeholder='') {
+  const tag = type==='textarea'
+    ? `<textarea class="input textarea" id="${id}" data-profile="${id}" placeholder="${placeholder}">${value||''}</textarea>`
+    : `<input class="input" id="${id}" data-profile="${id}" type="${type}" value="${value||''}" placeholder="${placeholder}">`;
+  return `<div class="form-group">${label?`<label class="form-label">${label}</label>`:''}${tag}</div>`;
+}
+
+/* ---- Profile ---- */
+function usProfileTab() {
+  const u = DATA.user;
+  return `
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Personal information</div>
+        <div class="us-section-sub">This is how you appear across your workspace.</div></div>
+      <div class="card us-card">
+        <div class="form-row mb-4">
+          ${usField('name','Full name',u.name)}
+          ${usField('title','Job title',u.title)}
+        </div>
+        <div class="form-row mb-4">
+          ${usField('email','Email',u.email,'email')}
+          ${usField('phone','Phone',u.phone)}
+        </div>
+        <div class="form-row mb-4">
+          ${usField('department','Department',u.department)}
+          ${usField('location','Location',u.location)}
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label">Timezone</label>
+          <select class="input select" data-profile="timezone" id="pf-timezone">
+            ${['America/Los_Angeles','America/New_York','Europe/London','Europe/Berlin','Asia/Jerusalem','Asia/Tokyo'].map(tz=>`<option ${u.timezone===tz?'selected':''}>${tz}</option>`).join('')}
+          </select>
+        </div>
+        ${usField('bio','Bio',u.bio,'textarea','Tell your team a little about yourself…')}
+        <div class="us-actions">
+          <button class="btn btn-ghost" id="pf-reset">Reset</button>
+          <button class="btn btn-primary" id="pf-save">${ico(I.check,14)} Save changes</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---- Security ---- */
+function usSecurityTab() {
+  const u = DATA.user;
+  return `
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Password</div>
+        <div class="us-section-sub">Last changed ${u.lastPasswordChange}.</div></div>
+      <div class="card us-card">
+        <div class="form-group mb-4"><label class="form-label">Current password</label><input class="input" type="password" id="sec-cur" placeholder="••••••••"></div>
+        <div class="form-row mb-4">
+          <div class="form-group"><label class="form-label">New password</label><input class="input" type="password" id="sec-new" placeholder="At least 8 characters"></div>
+          <div class="form-group"><label class="form-label">Confirm new password</label><input class="input" type="password" id="sec-confirm" placeholder="Repeat password"></div>
+        </div>
+        <div class="us-actions"><button class="btn btn-primary" id="sec-save">${ico(I.key,14)} Update password</button></div>
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Two-factor authentication</div>
+        <div class="us-section-sub">Add an extra layer of security to your account.</div></div>
+      <div class="card us-card">
+        ${usToggleRow('twoFactorToggle','Authenticator app','Require a one-time code from your authenticator on each sign-in.')}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Active sessions</div>
+        <div class="us-section-sub">Devices currently signed in to your account.</div></div>
+      <div class="card us-card us-card--flush">
+        ${u.sessions.map(s=>`
+          <div class="us-session">
+            <span class="us-session-icon">${ico(s.device.includes('iPhone')||s.device.includes('iOS')?I.smartphone:I.monitor,18)}</span>
+            <div class="us-session-info">
+              <div class="us-session-device">${s.device} ${s.current?'<span class="us-badge-current">This device</span>':''}</div>
+              <div class="us-session-meta">${s.location} · ${s.lastActive}</div>
+            </div>
+            ${s.current?'':`<button class="btn btn-ghost btn-sm" data-revoke="${s.id}">Revoke</button>`}
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title us-danger-title">Danger zone</div></div>
+      <div class="card us-card us-danger-card">
+        <div class="us-row">
+          <div class="us-row-text"><div class="us-row-label">Deactivate account</div><div class="us-row-desc">Temporarily disable your account. You can reactivate by signing in again.</div></div>
+          <button class="btn btn-secondary btn-sm" id="sec-deactivate">Deactivate</button>
+        </div>
+        <div class="us-row">
+          <div class="us-row-text"><div class="us-row-label">Delete account</div><div class="us-row-desc">Permanently remove your account and all associated data. This cannot be undone.</div></div>
+          <button class="btn btn-danger btn-sm" id="sec-delete">Delete account</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---- Notifications ---- */
+function usNotificationsTab() {
+  return `
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Channels</div>
+        <div class="us-section-sub">Choose where you receive notifications.</div></div>
+      <div class="card us-card us-card--flush">
+        ${usToggleRow('notifyEmail','Email','Send notifications to ' + DATA.user.email + '.')}
+        ${usToggleRow('notifyPush','Push','Real-time alerts on your devices.')}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Email digest</div>
+        <div class="us-section-sub">A rollup of activity across your projects.</div></div>
+      <div class="card us-card">
+        ${usSegment('notifyDigest',[{val:'off',label:'Off'},{val:'daily',label:'Daily'},{val:'weekly',label:'Weekly'}])}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">What to notify me about</div></div>
+      <div class="card us-card us-card--flush">
+        ${usToggleRow('notifyApprovals','Approval requests','When an approval needs your decision.')}
+        ${usToggleRow('notifyMentions','Mentions','When someone @mentions you in a comment.')}
+        ${usToggleRow('notifyAssignments','Task assignments','When a task is assigned to you.')}
+        ${usToggleRow('notifyStatusChanges','Status changes','When a project or task status changes.')}
+        ${usToggleRow('notifyAutomations','Automation runs','When an automation you own executes.')}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Quiet hours</div>
+        <div class="us-section-sub">Pause non-critical notifications overnight (10pm–7am).</div></div>
+      <div class="card us-card us-card--flush">
+        ${usToggleRow('quietHours','Enable quiet hours','Critical approvals will still come through.')}
+      </div>
+    </div>`;
+}
+
+/* ---- Appearance ---- */
+function usAppearanceTab() {
+  const accent = DATA.user.settings.accentColor;
+  return `
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Theme</div>
+        <div class="us-section-sub">Customize how Wired looks for you.</div></div>
+      <div class="card us-card">
+        ${usSegment('theme',[{val:'light',label:'Light',icon:I.sun},{val:'dark',label:'Dark',icon:I.moon},{val:'system',label:'System',icon:I.monitor}])}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Accent color</div>
+        <div class="us-section-sub">Used for buttons, links and highlights.</div></div>
+      <div class="card us-card">
+        <div class="us-swatches" data-accent>
+          ${US_ACCENTS.map(c=>`<button class="us-swatch ${accent===c?'active':''}" data-color="${c}" style="background:${c}" title="${c}">${accent===c?ico(I.check,14):''}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Display density</div>
+        <div class="us-section-sub">How much breathing room between elements.</div></div>
+      <div class="card us-card">
+        ${usSegment('density',[{val:'compact',label:'Compact'},{val:'comfortable',label:'Comfortable'},{val:'spacious',label:'Spacious'}])}
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Sidebar</div>
+        <div class="us-section-sub">Default state when you open the app.</div></div>
+      <div class="card us-card">
+        ${usSegment('sidebar',[{val:'expanded',label:'Expanded'},{val:'collapsed',label:'Collapsed'}])}
+      </div>
+    </div>`;
+}
+
+/* ---- Preferences ---- */
+function usPreferencesTab() {
+  const s = DATA.user.settings;
+  const sel = (key, opts) => `<select class="input select" data-setting="${key}">${opts.map(o=>`<option value="${o.val}" ${s[key]===o.val?'selected':''}>${o.label}</option>`).join('')}</select>`;
+  return `
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Language & region</div></div>
+      <div class="card us-card">
+        <div class="form-row mb-4">
+          <div class="form-group"><label class="form-label">Language</label>
+            ${sel('language',[{val:'en',label:'English'},{val:'es',label:'Español'},{val:'fr',label:'Français'},{val:'de',label:'Deutsch'},{val:'he',label:'עברית'}])}</div>
+          <div class="form-group"><label class="form-label">Date format</label>
+            ${sel('dateFormat',[{val:'MMM D, YYYY',label:'Jun 27, 2026'},{val:'DD/MM/YYYY',label:'27/06/2026'},{val:'MM/DD/YYYY',label:'06/27/2026'},{val:'YYYY-MM-DD',label:'2026-06-27'}])}</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Time format</label>
+            ${usSegment('timeFormat',[{val:'12h',label:'12-hour'},{val:'24h',label:'24-hour'}])}</div>
+          <div class="form-group"><label class="form-label">Week starts on</label>
+            ${usSegment('weekStart',[{val:'sunday',label:'Sunday'},{val:'monday',label:'Monday'}])}</div>
+        </div>
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Defaults</div>
+        <div class="us-section-sub">Where Wired takes you and what it shows first.</div></div>
+      <div class="card us-card">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Landing page</label>
+            ${sel('landingPage',[{val:'dashboard',label:'Dashboard'},{val:'projects',label:'Projects'},{val:'commercial',label:'Commercial'}])}</div>
+          <div class="form-group"><label class="form-label">Default project view</label>
+            ${sel('defaultProjectView',[{val:'overview',label:'Overview'},{val:'tasks',label:'Tasks'},{val:'timeline',label:'Timeline'},{val:'budget',label:'Budget'}])}</div>
+        </div>
+      </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Workflow</div></div>
+      <div class="card us-card us-card--flush">
+        ${usToggleRow('autoAssign','Auto-assign new tasks to me','When I create a task, set me as the assignee.')}
+        ${usToggleRow('confirmDestructive','Confirm before destructive actions','Ask before deleting projects, tasks or automations.')}
+        ${usToggleRow('showCompletedTasks','Show completed tasks by default','Include done items in task lists without filtering.')}
+      </div>
+    </div>`;
+}
+
+/* ---- bindings ---- */
+function bindUsTab() {
+  const body = document.getElementById('us-body');
+  if (!body) return;
+
+  // toggles
+  body.querySelectorAll('[data-toggle]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const key = inp.dataset.toggle;
+      if (key === 'twoFactorToggle') { DATA.user.twoFactor = inp.checked; }
+      else { DATA.user.settings[key] = inp.checked; saveUserSettings(); }
+      toast(inp.checked ? 'Enabled' : 'Disabled', 'success');
+    });
+  });
+
+  // segmented controls
+  body.querySelectorAll('[data-segment]').forEach(seg => {
+    seg.querySelectorAll('[data-val]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = seg.dataset.segment;
+        DATA.user.settings[key] = btn.dataset.val;
+        saveUserSettings();
+        seg.querySelectorAll('[data-val]').forEach(b => b.classList.toggle('active', b === btn));
+        toast('Preference updated', 'success');
+      });
+    });
+  });
+
+  // dropdown settings (preferences)
+  body.querySelectorAll('[data-setting]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      DATA.user.settings[sel.dataset.setting] = sel.value;
+      saveUserSettings();
+      toast('Preference updated', 'success');
+    });
+  });
+
+  // accent swatches
+  body.querySelectorAll('[data-accent] [data-color]').forEach(sw => {
+    sw.addEventListener('click', () => {
+      DATA.user.settings.accentColor = sw.dataset.color;
+      saveUserSettings();
+      renderUserSettings();
+      toast('Accent color updated', 'success');
+    });
+  });
+
+  // profile save / reset
+  body.querySelector('#pf-save')?.addEventListener('click', () => {
+    body.querySelectorAll('[data-profile]').forEach(f => {
+      const v = f.value.trim();
+      DATA.user[f.dataset.profile] = v;
+    });
+    if (DATA.user.name) {
+      DATA.user.initials = DATA.user.name.split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase();
+    }
+    renderSidebar();
+    renderUserSettings();
+    toast('Profile saved', 'success');
+  });
+  body.querySelector('#pf-reset')?.addEventListener('click', () => renderUserSettings());
+
+  // security
+  body.querySelector('#sec-save')?.addEventListener('click', () => {
+    const cur = body.querySelector('#sec-cur').value;
+    const nw = body.querySelector('#sec-new').value;
+    const cf = body.querySelector('#sec-confirm').value;
+    if (!cur || !nw) return toast('Fill in your current and new password', 'warning');
+    if (nw.length < 8) return toast('New password must be at least 8 characters', 'warning');
+    if (nw !== cf) return toast('New passwords do not match', 'error');
+    DATA.user.lastPasswordChange = '2026-06-27';
+    renderUserSettings();
+    toast('Password updated', 'success');
+  });
+  body.querySelectorAll('[data-revoke]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      DATA.user.sessions = DATA.user.sessions.filter(s => s.id !== +btn.dataset.revoke);
+      renderUserSettings();
+      toast('Session revoked', 'success');
+    });
+  });
+  body.querySelector('#sec-deactivate')?.addEventListener('click', () => toast('Account deactivation is a Phase 2 capability', 'info'));
+  body.querySelector('#sec-delete')?.addEventListener('click', () => toast('Account deletion is a Phase 2 capability', 'warning'));
 }
 
 // --- WIZARD ---
@@ -1723,39 +2736,47 @@ function bindDsTab() {
 
 /* ---- Integrations tab ---- */
 function renderDsIntegrations() {
-  const sourceBadgeColor = { 'Project Tracking':'#0052cc','Engineering':'#24292e','Communication':'#4a154b','CRM':'#00a1e0','Spreadsheet':'#34a853','Documentation':'#000','Automation':'#ff4a00','Custom':'#6366f1' };
   return `
-    <div class="integration-grid">
-      ${DATA.integrations.map(intg=>`
-        <div class="integration-card ${intg.status==='connected'?'connected':''}">
-          <div class="integration-header">
-            <div class="integration-icon" style="background:${intg.bg};color:${intg.color}">${intg.icon}</div>
-            <div style="flex:1">
-              <div class="integration-name">${intg.name}</div>
-              <div class="integration-category">${intg.category}</div>
-            </div>
-            ${intg.status==='connected'
-              ? `<span class="badge" style="background:#f0fdf4;color:#16a34a;font-size:10px">${ico(I.checkCircle,10)} Connected</span>`
-              : `<span class="badge badge-gray" style="font-size:10px">Disconnected</span>`}
-          </div>
-          <div class="integration-desc">${intg.description}</div>
-          ${intg.status==='connected' ? `
-            <div class="integration-meta">
-              ${ico(I.database,11)} ${intg.records.toLocaleString()} records
-              &nbsp;·&nbsp;
-              ${ico(I.clock,11)} Synced ${intg.syncedAt}
-            </div>` : ''}
-          <div class="integration-footer">
-            <label class="toggle">
-              <input type="checkbox" class="intg-toggle" data-intg="${intg.id}" ${intg.status==='connected'?'checked':''}>
-              <span class="toggle-track"></span>
-              <span style="font-size:12px;font-weight:500;color:var(--c-text-2)">${intg.status==='connected'?'Enabled':'Enable'}</span>
-            </label>
-            ${intg.status==='connected'
-              ? `<button class="btn btn-secondary btn-sm intg-sync-btn" data-intg="${intg.id}">${ico(I.refreshCw,12)} Sync now</button>`
-              : `<button class="btn btn-ghost btn-sm" style="font-size:12px">View docs ${ico(I.link,12)}</button>`}
-          </div>
-        </div>`).join('')}
+    <div style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)">
+      <table class="table" id="integrations-table">
+        <thead><tr>
+          <th>Integration</th><th>Category</th><th>Status</th>
+          <th style="text-align:right">Records</th><th>Last Synced</th><th style="text-align:right">Actions</th>
+        </tr></thead>
+        <tbody id="integrations-body">
+          ${DATA.integrations.map(intg=>`
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--sp-2)">
+                  <div class="integration-icon" style="background:${intg.bg};color:${intg.color};width:28px;height:28px;font-size:12px;flex:0 0 auto">${intg.icon}</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--c-text-1)">${intg.name}</div>
+                    <div style="font-size:11px;color:var(--c-text-3)">${intg.description}</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--c-text-2)">${intg.category}</td>
+              <td>
+                ${intg.status==='connected'
+                  ? `<span class="badge" style="background:#f0fdf4;color:#16a34a;font-size:10px">${ico(I.checkCircle,10)} Connected</span>`
+                  : `<span class="badge badge-gray" style="font-size:10px">Disconnected</span>`}
+              </td>
+              <td style="text-align:right;font-size:12px;color:var(--c-text-2)">${intg.status==='connected'?intg.records.toLocaleString():'—'}</td>
+              <td style="font-size:11px;color:var(--c-text-3)">${intg.syncedAt||'—'}</td>
+              <td style="text-align:right">
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-2)">
+                  <label class="toggle">
+                    <input type="checkbox" class="intg-toggle" data-intg="${intg.id}" ${intg.status==='connected'?'checked':''}>
+                    <span class="toggle-track"></span>
+                  </label>
+                  ${intg.status==='connected'
+                    ? `<button class="btn btn-secondary btn-sm intg-sync-btn" data-intg="${intg.id}">${ico(I.refreshCw,12)} Sync</button>`
+                    : `<button class="btn btn-ghost btn-sm" style="font-size:12px">Docs ${ico(I.link,12)}</button>`}
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
     </div>`;
 }
 
@@ -1859,26 +2880,35 @@ function renderDsViews() {
     <div style="display:flex;justify-content:flex-end;margin-bottom:var(--sp-4)">
       <button class="btn btn-primary" id="new-view-btn">${ico(I.plus)} New View</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--sp-4)">
-      ${DATA.customViews.map(v=>`
-        <div class="view-card" data-view="${v.id}">
-          <div class="view-card-icon" style="background:${v.color}18;color:${v.color}">${I[v.icon]||I.eye}</div>
-          <div class="view-card-name">${v.name}</div>
-          <div class="view-card-desc">${v.description}</div>
-          <div class="view-columns">
-            ${v.columns.map(c=>`<span class="view-col-chip">${c}</span>`).join('')}
-          </div>
-          <div class="view-card-meta" style="margin-top:var(--sp-3)">
-            <span>${ico(I.users,11)} ${v.createdBy}</span>
-            <span>${ico(I.clock,11)} Last run ${v.lastRun}</span>
-            <span>${ico(I.database,11)} ${v.rows} rows</span>
-          </div>
-        </div>`).join('')}
-      <div class="view-card" id="empty-view-card" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;color:var(--c-text-3);gap:var(--sp-2)">
-        <div style="width:36px;height:36px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center">${ico(I.plus,18)}</div>
-        <div style="font-size:13px;font-weight:600">Create a view</div>
-        <div style="font-size:12px;text-align:center;max-width:200px">Filter, sort and select columns to build a reusable data view</div>
-      </div>
+    <div style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)">
+      <table class="table" id="views-table">
+        <thead><tr>
+          <th>View</th><th>Columns</th><th>Created by</th>
+          <th>Last run</th><th style="text-align:right">Rows</th>
+        </tr></thead>
+        <tbody id="views-body">
+          ${DATA.customViews.map(v=>`
+            <tr class="view-row" data-view="${v.id}" style="cursor:pointer">
+              <td>
+                <div style="display:flex;align-items:center;gap:var(--sp-2)">
+                  <div class="view-card-icon" style="background:${v.color}18;color:${v.color};width:28px;height:28px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:6px">${I[v.icon]||I.eye}</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:600;color:var(--c-text-1)">${v.name}</div>
+                    <div style="font-size:11px;color:var(--c-text-3)">${v.description}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="view-columns" style="margin:0">
+                  ${v.columns.map(c=>`<span class="view-col-chip">${c}</span>`).join('')}
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--c-text-2)">${ico(I.users,11)} ${v.createdBy}</td>
+              <td style="font-size:11px;color:var(--c-text-3)">${v.lastRun}</td>
+              <td style="text-align:right;font-size:12px;color:var(--c-text-2)">${v.rows}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
     </div>`;
 }
 
@@ -1977,9 +3007,8 @@ function bindDsViews() {
     return;
   }
   document.getElementById('new-view-btn')?.addEventListener('click',()=>{ STATE.dsViewBuilder=true; renderDataSources(); });
-  document.getElementById('empty-view-card')?.addEventListener('click',()=>{ STATE.dsViewBuilder=true; renderDataSources(); });
-  document.querySelectorAll('.view-card[data-view]').forEach(card=>{
-    card.addEventListener('click',()=>{ toast('View opened — data would render here','info'); });
+  document.querySelectorAll('.view-row[data-view]').forEach(row=>{
+    row.addEventListener('click',()=>{ toast('View opened — data would render here','info'); });
   });
 }
 
@@ -2510,18 +3539,31 @@ function renderWorkflowBuilder(wf) {
 }
 
 // --- REPORTS ---
+const OOB_REPORTS = [
+  { id:'oob1', name:'Health Score by Project',    vizType:'bar',   icon:'bar',   color:'#6366f1', description:'Current health score for every project.' },
+  { id:'oob2', name:'Budget vs Spend',             vizType:'bar2',  icon:'bar',   color:'#f59e0b', description:'Budget allocated vs actual spend per project.' },
+  { id:'oob3', name:'Task Status Distribution',    vizType:'pie',   icon:'pie',   color:'#10b981', description:'Breakdown of tasks by status across all projects.' },
+  { id:'oob4', name:'Team Workload',               vizType:'bar3',  icon:'bar',   color:'#8b5cf6', description:'Open task count per team member.' },
+  { id:'oob5', name:'Risk Severity Breakdown',     vizType:'pie2',  icon:'pie',   color:'#ef4444', description:'Distribution of open risks by severity level.' },
+  { id:'oob6', name:'Project KPI Summary',         vizType:'pivot', icon:'pivot', color:'#0891b2', description:'Progress, budget burn, tasks and health in one pivot.' },
+];
+
+const METRIC_LABELS = { health:'Health Scores', budget:'Budget vs Spend', tasks:'Task Distribution', team:'Team Workload', risk:'Risk Breakdown', pivot:'Project KPI Pivot' };
+const VIZ_LABELS = { bar:'Bar Chart', bar2:'Grouped Bar', bar3:'Bar Chart', pie:'Pie Chart', pie2:'Pie Chart', pivot:'Pivot Table' };
+
+function openReportDetail(type, id) {
+  STATE.openReport = { type, id };
+  renderReports();
+}
+
 function renderReports() {
   if (!STATE.reportsTab) STATE.reportsTab = 'oob';
+
+  if (STATE.openReport) { renderReportDetail(STATE.openReport); return; }
+
   renderTopbar([{ label: 'Reports' }]);
 
-  const oobReports = [
-    { id:'oob1', name:'Health Score by Project',    vizType:'bar',   icon:'bar',   color:'#6366f1', description:'Current health score for every project.' },
-    { id:'oob2', name:'Budget vs Spend',             vizType:'bar2',  icon:'bar',   color:'#f59e0b', description:'Budget allocated vs actual spend per project.' },
-    { id:'oob3', name:'Task Status Distribution',    vizType:'pie',   icon:'pie',   color:'#10b981', description:'Breakdown of tasks by status across all projects.' },
-    { id:'oob4', name:'Team Workload',               vizType:'bar3',  icon:'bar',   color:'#8b5cf6', description:'Open task count per team member.' },
-    { id:'oob5', name:'Risk Severity Breakdown',     vizType:'pie2',  icon:'pie',   color:'#ef4444', description:'Distribution of open risks by severity level.' },
-    { id:'oob6', name:'Project KPI Summary',         vizType:'pivot', icon:'pivot', color:'#0891b2', description:'Progress, budget burn, tasks and health in one pivot.' },
-  ];
+  const oobReports = OOB_REPORTS;
 
   document.getElementById('content').innerHTML = `
     <div class="page-header">
@@ -2708,7 +3750,7 @@ function renderOobReports(oobReports) {
   document.getElementById('rpt-body').innerHTML = `
     <div class="rpt-grid">
       ${oobReports.map(r => `
-        <div class="rpt-card">
+        <div class="rpt-card rpt-card-clickable" data-id="${r.id}">
           <div class="rpt-card-header">
             <span class="rpt-card-icon" style="background:${r.color}18;color:${r.color}">${iconMap[r.icon]||I.reports}</span>
             <div>
@@ -2720,6 +3762,10 @@ function renderOobReports(oobReports) {
         </div>
       `).join('')}
     </div>`;
+
+  document.querySelectorAll('#rpt-body .rpt-card-clickable').forEach(card => {
+    card.addEventListener('click', () => openReportDetail('oob', card.dataset.id));
+  });
 }
 
 function renderCustomReports() {
@@ -2748,7 +3794,7 @@ function renderCustomReports() {
       </div>` : `
       <div class="rpt-grid">
         ${reports.map(r => `
-          <div class="rpt-card">
+          <div class="rpt-card rpt-card-clickable" data-id="${r.id}">
             <div class="rpt-card-header">
               <span class="rpt-card-icon" style="background:#6366f118;color:#6366f1">${I.reports}</span>
               <div style="flex:1">
@@ -2772,19 +3818,100 @@ function renderCustomReports() {
   `;
 
   document.getElementById('rpt-empty-new')?.addEventListener('click', () => openReportModal());
+  document.querySelectorAll('#rpt-body .rpt-card-clickable').forEach(card => {
+    card.addEventListener('click', () => openReportDetail('custom', card.dataset.id));
+  });
   document.querySelectorAll('.rpt-edit-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const r = DATA.reports.find(x => x.id === btn.dataset.id);
       if (r) openReportModal(r);
     });
   });
   document.querySelectorAll('.rpt-del-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (!confirm('Delete this report?')) return;
       DATA.reports = DATA.reports.filter(x => x.id !== btn.dataset.id);
       toast('Report deleted');
       renderReports();
     });
+  });
+}
+
+// --- REPORT DETAIL (full inner page) ---
+function enlargeChart(svg) {
+  return svg.replace(/height:\s*\d+px/, 'height:380px');
+}
+
+function renderReportDetail(ref) {
+  let r, chart, isCustom, metricLabel, vizLabel, color;
+  if (ref.type === 'oob') {
+    r = OOB_REPORTS.find(x => x.id === ref.id);
+    if (!r) { STATE.openReport = null; return renderReports(); }
+    chart = OOB_CHARTS[r.id]?.() || '';
+    isCustom = false;
+    color = r.color;
+  } else {
+    r = DATA.reports.find(x => x.id === ref.id);
+    if (!r) { STATE.openReport = null; return renderReports(); }
+    chart = chartForMetric(r.metric);
+    isCustom = true;
+    color = '#6366f1';
+  }
+  metricLabel = isCustom ? (METRIC_LABELS[r.metric] || r.metric) : (METRIC_LABELS[r.id] || r.name);
+  vizLabel = VIZ_LABELS[r.vizType] || r.vizType || '—';
+
+  renderTopbar([{ label: 'Reports', page: 'reports' }, { label: r.name }]);
+
+  const metaItem = (label, value) => `
+    <div class="rpt-detail-meta-item">
+      <div class="rpt-detail-meta-label">${label}</div>
+      <div class="rpt-detail-meta-value">${value}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <button class="btn btn-secondary btn-sm" id="rpt-detail-back">${I.chevronLeft} Back</button>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <span class="rpt-card-icon" style="background:${color}18;color:${color};width:42px;height:42px">${I.reports}</span>
+          <div>
+            <h1 class="page-title">${r.name}</h1>
+            <p class="page-sub">${r.description || ''}</p>
+          </div>
+        </div>
+      </div>
+      ${isCustom ? `
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" id="rpt-detail-edit">${I.edit} Edit</button>
+          <button class="btn btn-secondary" id="rpt-detail-del">${I.trash} Delete</button>
+        </div>` : `
+        <span class="rpt-detail-badge">Built-in</span>`}
+    </div>
+
+    <div class="rpt-detail-chart">${enlargeChart(chart)}</div>
+
+    <div class="rpt-detail-meta">
+      ${metaItem('Data source', metricLabel)}
+      ${metaItem('Chart type', vizLabel)}
+      ${isCustom ? metaItem('Created by', r.createdBy) : metaItem('Origin', 'Built-in report')}
+      ${isCustom ? metaItem('Created', r.createdAt) : ''}
+      ${isCustom && r.tags?.length ? metaItem('Tags', r.tags.map(t=>`<span class="rpt-tag">${t}</span>`).join(' ')) : ''}
+    </div>
+  `;
+
+  document.getElementById('rpt-detail-back').addEventListener('click', () => {
+    STATE.openReport = null;
+    renderReports();
+  });
+  document.getElementById('rpt-detail-edit')?.addEventListener('click', () => openReportModal(r));
+  document.getElementById('rpt-detail-del')?.addEventListener('click', () => {
+    if (!confirm('Delete this report?')) return;
+    DATA.reports = DATA.reports.filter(x => x.id !== r.id);
+    STATE.openReport = null;
+    toast('Report deleted');
+    renderReports();
   });
 }
 
@@ -2886,8 +4013,1179 @@ function openReportModal(existing) {
   });
 }
 
+// --- RESOURCES ---
+function renderResources() {
+  if (!STATE.resourceTab) STATE.resourceTab = 'overview';
+  renderTopbar([{ label: 'Resources' }]);
+
+  const totalBudget = DATA.costCategories.reduce((s,c)=>s+c.budget,0);
+  const totalSpent  = DATA.costCategories.reduce((s,c)=>s+c.spent,0);
+  const totalHeadcount = DATA.departments.reduce((s,d)=>s+d.headcount,0);
+  const totalAllocated = DATA.departments.reduce((s,d)=>s+d.allocated,0);
+  const avgCapacity = Math.round(DATA.peopleAllocations.reduce((s,p)=>{
+    const used = p.allocations.reduce((a,x)=>a+x.pct,0) + p.otherPct;
+    return s + used;
+  }, 0) / DATA.peopleAllocations.length);
+
+  const tabs = [
+    { id:'overview',    label:'Overview' },
+    { id:'budget',      label:'Budget' },
+    { id:'people',      label:'People' },
+    { id:'departments', label:'Departments' },
+  ];
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Resources</h1>
+        <p class="page-sub">Budget, headcount and capacity across all projects and departments</p>
+      </div>
+      <button class="btn btn-primary" id="res-request-btn">${ico(I.plus,13)} Request Resource</button>
+    </div>
+
+    <div class="tab-bar" style="margin-bottom:24px;display:flex;flex-direction:row">
+      ${tabs.map(t=>`<div class="tab-item ${STATE.resourceTab===t.id?'active':''}" data-tab="${t.id}">${t.label}</div>`).join('')}
+    </div>
+
+    <div id="res-body"></div>
+  `;
+
+  document.querySelectorAll('.tab-item[data-tab]').forEach(el => {
+    el.addEventListener('click', () => { STATE.resourceTab = el.dataset.tab; renderResources(); });
+  });
+  document.getElementById('res-request-btn').addEventListener('click', () => showToast('Resource request flow coming soon', 'info'));
+
+  const body = document.getElementById('res-body');
+  if      (STATE.resourceTab === 'overview')    renderResourcesOverview(body, totalBudget, totalSpent, totalHeadcount, totalAllocated, avgCapacity);
+  else if (STATE.resourceTab === 'budget')      renderResourcesBudget(body);
+  else if (STATE.resourceTab === 'people')      renderResourcesPeople(body);
+  else if (STATE.resourceTab === 'departments') renderResourcesDepts(body);
+}
+
+function resBudgetBar(spent, budget, color) {
+  const pct = Math.min(100, Math.round(spent / budget * 100));
+  const barColor = pct > 90 ? '#ef4444' : pct > 75 ? '#f59e0b' : color || '#6366f1';
+  return `
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="flex:1;height:6px;border-radius:4px;background:var(--border)">
+        <div style="width:${pct}%;height:100%;border-radius:4px;background:${barColor};transition:width .4s"></div>
+      </div>
+      <span style="font-size:11px;font-weight:600;color:${barColor};width:32px;text-align:right">${pct}%</span>
+    </div>`;
+}
+
+function resFmt(n) { return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':'$'+(n/1000).toFixed(0)+'k'; }
+
+function renderResourcesOverview(el, totalBudget, totalSpent, totalHeadcount, totalAllocated, avgCapacity) {
+  const remaining = totalBudget - totalSpent;
+  const burnPct   = Math.round(totalSpent / totalBudget * 100);
+
+  // project budget breakdown for mini chart
+  const projBudgets = DATA.projects.map(p=>({ name:p.name.split(' ')[0], budget:p.budget, spent:p.spent }));
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px">
+      ${resKpi('Total Budget',    resFmt(totalBudget),   '#eef2ff','#6366f1', I.dollar,   `${burnPct}% consumed`)}
+      ${resKpi('Spent to Date',   resFmt(totalSpent),    burnPct>80?'#fef2f2':'#f0fdf4', burnPct>80?'#ef4444':'#16a34a', I.trendUp, `${resFmt(remaining)} remaining`)}
+      ${resKpi('Total Headcount', totalHeadcount+' ppl', '#f0fdf4','#10b981', I.users,    `${totalAllocated} allocated`)}
+      ${resKpi('Avg Capacity',    avgCapacity+'%',       avgCapacity>95?'#fef2f2':'#fffbeb', avgCapacity>95?'#ef4444':'#f59e0b', I.chart, avgCapacity>95?'Over capacity':'Utilisation')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:16px">Budget by Cost Category</div>
+        ${DATA.costCategories.map(c=>`
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:13px;font-weight:500">${c.name}</span>
+              <span style="font-size:12px;color:var(--text-muted)">${resFmt(c.spent)} / ${resFmt(c.budget)}</span>
+            </div>
+            ${resBudgetBar(c.spent, c.budget, c.color)}
+          </div>`).join('')}
+      </div>
+
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:16px">Budget by Project</div>
+        ${projBudgets.map(p=>`
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:13px;font-weight:500">${p.name}</span>
+              <span style="font-size:12px;color:var(--text-muted)">${resFmt(p.spent)} / ${resFmt(p.budget)}</span>
+            </div>
+            ${resBudgetBar(p.spent, p.budget, '#6366f1')}
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px">
+      <div class="section-title" style="margin-bottom:16px">Department Headcount &amp; Allocation</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+        ${DATA.departments.map(d=>{
+          const allocPct = Math.round(d.allocated/d.headcount*100);
+          return `
+            <div style="text-align:center;padding:16px;border-radius:10px;border:1px solid var(--border)">
+              <div style="width:44px;height:44px;border-radius:50%;background:${d.color}18;border:2px solid ${d.color};display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:18px;font-weight:700;color:${d.color}">${d.headcount}</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:2px">${d.name}</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">${d.allocated}/${d.headcount} allocated</div>
+              ${resBudgetBar(d.allocated, d.headcount, d.color)}
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function resKpi(label, value, bg, color, icon, sub) {
+  return `
+    <div class="card" style="padding:18px;background:${bg}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="display:inline-flex;width:32px;height:32px;border-radius:8px;background:${color}20;color:${color};align-items:center;justify-content:center">${ico(icon,16)}</span>
+        <span style="font-size:12px;color:var(--text-muted);font-weight:500">${label}</span>
+      </div>
+      <div style="font-size:24px;font-weight:700;color:${color}">${value}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${sub}</div>
+    </div>`;
+}
+
+function renderResourcesBudget(el) {
+  const totalBudget = DATA.projects.reduce((s,p)=>s+p.budget,0);
+  const totalSpent  = DATA.projects.reduce((s,p)=>s+p.spent,0);
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:16px">Cost Category Breakdown</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:6px 8px;color:var(--text-muted);font-weight:600">Category</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Budget</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Spent</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Remaining</th>
+              <th style="padding:6px 8px;color:var(--text-muted);font-weight:600;width:100px">Burn</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DATA.costCategories.map(c=>{
+              const rem = c.budget-c.spent;
+              const pct = Math.round(c.spent/c.budget*100);
+              const barColor = pct>90?'#ef4444':pct>75?'#f59e0b':c.color;
+              return `<tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 8px">
+                  <span style="display:inline-flex;align-items:center;gap:6px">
+                    <span style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0"></span>
+                    ${c.name}
+                  </span>
+                </td>
+                <td style="padding:10px 8px;text-align:right;font-weight:500">${resFmt(c.budget)}</td>
+                <td style="padding:10px 8px;text-align:right;color:${barColor};font-weight:600">${resFmt(c.spent)}</td>
+                <td style="padding:10px 8px;text-align:right;color:var(--text-muted)">${resFmt(rem)}</td>
+                <td style="padding:10px 8px">${resBudgetBar(c.spent,c.budget,c.color)}</td>
+              </tr>`;
+            }).join('')}
+            <tr style="border-top:2px solid var(--border);background:var(--surface)">
+              <td style="padding:10px 8px;font-weight:700">Total</td>
+              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.budget,0))}</td>
+              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.spent,0))}</td>
+              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(DATA.costCategories.reduce((s,c)=>s+c.budget-c.spent,0))}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:16px">Budget by Project</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:6px 8px;color:var(--text-muted);font-weight:600">Project</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Budget</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:600">Spent</th>
+              <th style="padding:6px 8px;color:var(--text-muted);font-weight:600;width:100px">Burn</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DATA.projects.map(p=>{
+              const pct = Math.round(p.spent/p.budget*100);
+              const barColor = pct>90?'#ef4444':pct>75?'#f59e0b':'#6366f1';
+              const statusMeta = { active:'#10b981', 'at-risk':'#ef4444', planning:'#64748b', completed:'#06b6d4', 'on-hold':'#94a3b8' };
+              return `<tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 8px">
+                  <div style="font-weight:500">${p.name}</div>
+                  <div style="font-size:11px;color:${statusMeta[p.status]||'#64748b'};text-transform:capitalize">${p.status}</div>
+                </td>
+                <td style="padding:10px 8px;text-align:right">${resFmt(p.budget)}</td>
+                <td style="padding:10px 8px;text-align:right;color:${barColor};font-weight:600">${resFmt(p.spent)}</td>
+                <td style="padding:10px 8px">${resBudgetBar(p.spent,p.budget,'#6366f1')}</td>
+              </tr>`;
+            }).join('')}
+            <tr style="border-top:2px solid var(--border);background:var(--surface)">
+              <td style="padding:10px 8px;font-weight:700">Total</td>
+              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(totalBudget)}</td>
+              <td style="padding:10px 8px;text-align:right;font-weight:700">${resFmt(totalSpent)}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function renderResourcesPeople(el) {
+  const projects = DATA.projects;
+
+  el.innerHTML = `
+    <div style="margin-bottom:20px">
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:16px">Capacity &amp; Allocation Matrix</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted)">Person</th>
+              <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted)">Department</th>
+              ${projects.map(p=>`<th style="text-align:center;padding:8px 6px;font-weight:600;color:var(--text-muted);font-size:11px;max-width:80px">${p.name.split(' ')[0]}</th>`).join('')}
+              <th style="text-align:center;padding:8px 10px;font-weight:600;color:var(--text-muted)">Other</th>
+              <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:140px">Utilisation</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DATA.peopleAllocations.map(person=>{
+              const totalUsed = person.allocations.reduce((s,a)=>s+a.pct,0) + person.otherPct;
+              const barColor = totalUsed > 100 ? '#ef4444' : totalUsed > 85 ? '#f59e0b' : '#10b981';
+              return `<tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px 10px">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="width:28px;height:28px;border-radius:50%;background:${person.color};color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">${person.initials}</span>
+                    <div>
+                      <div style="font-weight:500">${person.name}</div>
+                      <div style="font-size:11px;color:var(--text-muted)">${person.role}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding:10px 10px;font-size:12px;color:var(--text-muted)">${person.department}</td>
+                ${projects.map(p=>{
+                  const alloc = person.allocations.find(a=>a.projectId===p.id);
+                  return alloc
+                    ? `<td style="text-align:center;padding:10px 6px"><span style="display:inline-block;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;background:${person.color}18;color:${person.color}">${alloc.pct}%</span></td>`
+                    : `<td style="text-align:center;padding:10px 6px;color:var(--border)">—</td>`;
+                }).join('')}
+                <td style="text-align:center;padding:10px 10px;font-size:12px;color:var(--text-muted)">${person.otherPct}%</td>
+                <td style="padding:10px 10px">
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="flex:1;height:6px;border-radius:4px;background:var(--border)">
+                      <div style="width:${Math.min(100,totalUsed)}%;height:100%;border-radius:4px;background:${barColor}"></div>
+                    </div>
+                    <span style="font-size:11px;font-weight:700;color:${barColor};width:34px">${totalUsed}%</span>
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      ${DATA.peopleAllocations.map(person=>{
+        const totalUsed = person.allocations.reduce((s,a)=>s+a.pct,0) + person.otherPct;
+        const avail = Math.max(0,100-totalUsed);
+        const barColor = totalUsed > 100 ? '#ef4444' : totalUsed > 85 ? '#f59e0b' : '#10b981';
+        return `
+          <div class="card" style="padding:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+              <span style="width:36px;height:36px;border-radius:50%;background:${person.color};color:#fff;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">${person.initials}</span>
+              <div>
+                <div style="font-weight:600;font-size:14px">${person.name}</div>
+                <div style="font-size:11px;color:var(--text-muted)">${person.role} · ${person.department}</div>
+              </div>
+            </div>
+            ${person.allocations.map(a=>{
+              const proj = DATA.projects.find(p=>p.id===a.projectId);
+              return proj ? `
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-size:12px;color:var(--text)">${proj.name}</span>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:60px;height:5px;border-radius:3px;background:var(--border)">
+                      <div style="width:${a.pct}%;height:100%;border-radius:3px;background:${person.color}"></div>
+                    </div>
+                    <span style="font-size:11px;font-weight:600;color:${person.color};width:28px">${a.pct}%</span>
+                  </div>
+                </div>` : '';
+            }).join('')}
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <span style="font-size:12px;color:var(--text-muted)">Other / Admin</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="width:60px;height:5px;border-radius:3px;background:var(--border)">
+                  <div style="width:${person.otherPct}%;height:100%;border-radius:3px;background:#94a3b8"></div>
+                </div>
+                <span style="font-size:11px;font-weight:600;color:#94a3b8;width:28px">${person.otherPct}%</span>
+              </div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;font-weight:600;color:${barColor}">${totalUsed}% utilised</span>
+              <span style="font-size:11px;color:var(--text-muted)">${avail}% available</span>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderResourcesDepts(el) {
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:24px">
+      ${DATA.departments.map(d=>{
+        const burnPct = Math.round(d.spent/d.budget*100);
+        const allocPct = Math.round(d.allocated/d.headcount*100);
+        const barColor = burnPct>90?'#ef4444':burnPct>75?'#f59e0b':d.color;
+        const deptProjects = DATA.projects.filter(p =>
+          DATA.peopleAllocations.some(pa => pa.department===d.name && pa.allocations.some(a=>a.projectId===p.id))
+        );
+        return `
+          <div class="card" style="padding:20px;border-top:3px solid ${d.color}">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+              <div>
+                <div style="font-size:16px;font-weight:700">${d.name}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Head: ${d.headName}</div>
+              </div>
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:${d.headColor};color:#fff;font-size:12px;font-weight:700">${d.head}</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+              <div style="padding:10px;background:var(--surface);border-radius:8px">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Budget</div>
+                <div style="font-size:16px;font-weight:700;color:${d.color}">${resFmt(d.budget)}</div>
+              </div>
+              <div style="padding:10px;background:var(--surface);border-radius:8px">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Spent</div>
+                <div style="font-size:16px;font-weight:700;color:${barColor}">${resFmt(d.spent)}</div>
+              </div>
+              <div style="padding:10px;background:var(--surface);border-radius:8px">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Headcount</div>
+                <div style="font-size:16px;font-weight:700">${d.headcount}</div>
+              </div>
+              <div style="padding:10px;background:var(--surface);border-radius:8px">
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Allocated</div>
+                <div style="font-size:16px;font-weight:700;color:${allocPct===100?'#f59e0b':d.color}">${d.allocated}</div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px">
+                <span>Budget burn</span><span>${burnPct}%</span>
+              </div>
+              ${resBudgetBar(d.spent, d.budget, d.color)}
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px">
+                <span>Headcount allocation</span><span>${allocPct}%</span>
+              </div>
+              ${resBudgetBar(d.allocated, d.headcount, d.color)}
+            </div>
+
+            ${deptProjects.length ? `
+              <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Active in</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                ${deptProjects.map(p=>`<span style="font-size:11px;padding:2px 8px;border-radius:8px;background:${d.color}15;color:${d.color};font-weight:500">${p.name.split(' ')[0]}</span>`).join('')}
+              </div>` : ''}
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// --- ISSUES ---
+const ISSUE_STATUSES   = ['open','in-progress','in-review','done','closed'];
+const ISSUE_PRIORITIES = ['critical','high','medium','low'];
+const ISSUE_TYPES      = ['bug','feature','task'];
+
+const ISSUE_STATUS_META = {
+  'open':        { label:'Open',       color:'#64748b', bg:'#f1f5f9' },
+  'in-progress': { label:'In Progress',color:'#0891b2', bg:'#e0f2fe' },
+  'in-review':   { label:'In Review',  color:'#7c3aed', bg:'#ede9fe' },
+  'done':        { label:'Done',       color:'#16a34a', bg:'#dcfce7' },
+  'closed':      { label:'Closed',     color:'#94a3b8', bg:'#f8fafc' },
+};
+const ISSUE_PRIORITY_META = {
+  critical: { label:'Critical', color:'#dc2626', bg:'#fef2f2' },
+  high:     { label:'High',     color:'#ea580c', bg:'#fff7ed' },
+  medium:   { label:'Medium',   color:'#ca8a04', bg:'#fefce8' },
+  low:      { label:'Low',      color:'#64748b', bg:'#f1f5f9' },
+};
+const ISSUE_TYPE_META = {
+  bug:     { label:'Bug',     color:'#ef4444', icon:'🐛' },
+  feature: { label:'Feature', color:'#6366f1', icon:'✨' },
+  task:    { label:'Task',    color:'#10b981', icon:'✓'  },
+};
+
+const OOB_ISSUE_VIEWS = [
+  { id:'oob-all',      label:'All Issues',    layout:'table',    groupBy:null,        filter:null,          icon:'list',       description:'Every issue across all projects' },
+  { id:'oob-mine',     label:'My Issues',     layout:'table',    groupBy:null,        filter:'assignee-me', icon:'checkSquare',description:'Issues assigned to you' },
+  { id:'oob-board',    label:'Status Board',  layout:'board',    groupBy:'status',    filter:null,          icon:'kanban',     description:'Kanban board grouped by status' },
+  { id:'oob-priority', label:'By Priority',   layout:'board',    groupBy:'priority',  filter:null,          icon:'zap',        description:'Board grouped by priority level' },
+  { id:'oob-timeline', label:'Timeline',      layout:'timeline', groupBy:null,        filter:null,          icon:'timeline',   description:'Gantt-style view by due date' },
+  { id:'oob-calendar', label:'Calendar',      layout:'calendar', groupBy:null,        filter:null,          icon:'calendar',   description:'Issues plotted on a monthly calendar' },
+];
+
+function getIssuesForView(view) {
+  let issues = [...DATA.issues];
+  if (view.filter === 'assignee-me') issues = issues.filter(i => i.assignee === DATA.user.initials);
+  if (STATE.issuesSearch) {
+    const q = STATE.issuesSearch.toLowerCase();
+    issues = issues.filter(i => i.title.toLowerCase().includes(q) || i.labels.some(l=>l.includes(q)));
+  }
+  return issues;
+}
+
+function issueBadge(type, val) {
+  if (type === 'status') {
+    const m = ISSUE_STATUS_META[val] || {};
+    return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${m.bg};color:${m.color}">${m.label||val}</span>`;
+  }
+  if (type === 'priority') {
+    const m = ISSUE_PRIORITY_META[val] || {};
+    return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${m.bg};color:${m.color}">${m.label||val}</span>`;
+  }
+  if (type === 'itype') {
+    const m = ISSUE_TYPE_META[val] || {};
+    return `<span style="display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;background:${m.color}18;color:${m.color}">${m.icon} ${m.label||val}</span>`;
+  }
+  return val;
+}
+
+function renderIssues() {
+  renderTopbar([{ label: 'Issues' }]);
+
+  const allViews = [
+    ...OOB_ISSUE_VIEWS,
+    ...STATE.issuesCustomViews
+  ];
+  const activeView = allViews.find(v => v.id === STATE.issuesViewId) || OOB_ISSUE_VIEWS[0];
+  const issues = getIssuesForView(activeView);
+
+  const viewIconMap = { list:I.list, checkSquare:I.checkSquare, kanban:I.kanban, zap:I.zap, timeline:I.timeline, calendar:I.calendarView };
+
+  const sidebarHtml = `
+    <div style="width:220px;flex-shrink:0;border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;padding:4px 8px 8px">Built-in Views</div>
+      ${OOB_ISSUE_VIEWS.map(v => `
+        <div class="issues-view-item ${activeView.id===v.id?'active':''}" data-view="${v.id}" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:${activeView.id===v.id?'600':'400'};color:${activeView.id===v.id?'var(--primary)':'var(--text)'};background:${activeView.id===v.id?'var(--primary-light)':'transparent'};transition:background .15s">
+          <span style="display:inline-flex;width:15px;height:15px;flex-shrink:0;opacity:.7">${viewIconMap[v.icon]||I.list}</span>
+          ${v.label}
+        </div>`).join('')}
+
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;padding:16px 8px 8px;display:flex;align-items:center;justify-content:space-between">
+        My Views
+        <button id="issues-new-view-btn" style="background:none;border:none;cursor:pointer;color:var(--primary);display:inline-flex;align-items:center;padding:2px">${ico(I.plus,13)}</button>
+      </div>
+      ${STATE.issuesCustomViews.length === 0
+        ? `<div style="font-size:12px;color:var(--text-muted);padding:4px 10px">No custom views yet</div>`
+        : STATE.issuesCustomViews.map(v => `
+          <div class="issues-view-item ${activeView.id===v.id?'active':''}" data-view="${v.id}" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:${activeView.id===v.id?'600':'400'};color:${activeView.id===v.id?'var(--primary)':'var(--text)'};background:${activeView.id===v.id?'var(--primary-light)':'transparent'};transition:background .15s">
+            <span style="display:inline-flex;width:15px;height:15px;flex-shrink:0;opacity:.7">${viewIconMap[v.icon]||I.list}</span>
+            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.label}</span>
+            <span class="issues-del-view" data-view="${v.id}" style="display:none;cursor:pointer;color:#ef4444">${ico(I.x,12)}</span>
+          </div>`).join('')}
+    </div>`;
+
+  const toolbar = `
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 20px 0;flex-shrink:0">
+      <div style="position:relative;flex:1;max-width:320px">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)">${ico(I.search,14)}</span>
+        <input id="issues-search" type="text" placeholder="Search issues…" value="${STATE.issuesSearch||''}"
+          style="width:100%;padding:7px 10px 7px 32px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text);box-sizing:border-box">
+      </div>
+      <span style="font-size:12px;color:var(--text-muted)">${issues.length} issue${issues.length!==1?'s':''}</span>
+      <button class="btn btn-primary btn-sm" id="issues-new-btn" style="margin-left:auto">${ico(I.plus,13)} New Issue</button>
+    </div>`;
+
+  const viewDesc = activeView.description ? `<div style="font-size:12px;color:var(--text-muted);padding:6px 20px 0">${activeView.description}</div>` : '';
+
+  let bodyHtml = '';
+  if (activeView.layout === 'table')    bodyHtml = renderIssuesTable(issues, activeView);
+  else if (activeView.layout === 'board')    bodyHtml = renderIssuesBoard(issues, activeView);
+  else if (activeView.layout === 'timeline') bodyHtml = renderIssuesTimeline(issues);
+  else if (activeView.layout === 'calendar') bodyHtml = renderIssuesCalendar(issues);
+
+  document.getElementById('content').innerHTML = `
+    <div style="display:flex;height:100%;overflow:hidden">
+      ${sidebarHtml}
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden">
+        ${toolbar}
+        ${viewDesc}
+        <div style="flex:1;overflow:auto;padding:${activeView.layout==='board'?'14px 20px':'14px 20px'}">
+          ${bodyHtml}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // bind view switcher
+  document.querySelectorAll('.issues-view-item[data-view]').forEach(el => {
+    el.addEventListener('click', () => { STATE.issuesViewId = el.dataset.view; renderIssues(); });
+    el.addEventListener('mouseenter', () => { const del = el.querySelector('.issues-del-view'); if(del) del.style.display='inline-flex'; });
+    el.addEventListener('mouseleave', () => { const del = el.querySelector('.issues-del-view'); if(del) del.style.display='none'; });
+  });
+  document.querySelectorAll('.issues-del-view').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      STATE.issuesCustomViews = STATE.issuesCustomViews.filter(v => v.id !== el.dataset.view);
+      if (STATE.issuesViewId === el.dataset.view) STATE.issuesViewId = 'oob-all';
+      renderIssues();
+    });
+  });
+
+  document.getElementById('issues-search').addEventListener('input', e => {
+    STATE.issuesSearch = e.target.value;
+    renderIssues();
+  });
+
+  document.getElementById('issues-new-btn').addEventListener('click', () => openIssueModal());
+  document.getElementById('issues-new-view-btn').addEventListener('click', () => openIssueViewModal());
+
+  document.querySelectorAll('.issues-row[data-id]').forEach(el => {
+    el.addEventListener('click', () => openIssueDetail(+el.dataset.id));
+  });
+  document.querySelectorAll('.issue-card[data-id]').forEach(el => {
+    el.addEventListener('click', () => openIssueDetail(+el.dataset.id));
+  });
+}
+
+function renderIssuesTable(issues, view) {
+  if (!issues.length) return `<div style="text-align:center;padding:60px;color:var(--text-muted)">No issues found</div>`;
+  return `
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border)">
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:36px">#</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted)">Title</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:90px">Type</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:110px">Status</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:90px">Priority</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:140px">Project</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:90px">Assignee</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);width:90px">Due</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${issues.map(iss => `
+          <tr class="issues-row" data-id="${iss.id}" style="border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s" onmouseenter="this.style.background='var(--surface-hover)'" onmouseleave="this.style.background=''">
+            <td style="padding:10px 10px;color:var(--text-muted);font-size:11px">#${iss.id}</td>
+            <td style="padding:10px 10px">
+              <div style="font-weight:500;color:var(--text)">${iss.title}</div>
+              <div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">
+                ${iss.labels.map(l=>`<span style="font-size:10px;padding:1px 6px;border-radius:8px;background:var(--surface-hover);color:var(--text-muted)">${l}</span>`).join('')}
+              </div>
+            </td>
+            <td style="padding:10px 10px">${issueBadge('itype',iss.type)}</td>
+            <td style="padding:10px 10px">${issueBadge('status',iss.status)}</td>
+            <td style="padding:10px 10px">${issueBadge('priority',iss.priority)}</td>
+            <td style="padding:10px 10px;font-size:12px;color:var(--text-muted)">${iss.project}</td>
+            <td style="padding:10px 10px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:${iss.assigneeColor};color:#fff;font-size:10px;font-weight:700">${iss.assignee}</span>
+            </td>
+            <td style="padding:10px 10px;font-size:12px;color:var(--text-muted)">${iss.due||'—'}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderIssuesBoard(issues, view) {
+  const groupKey = view.groupBy || 'status';
+  const groups = groupKey === 'status' ? ISSUE_STATUSES : ISSUE_PRIORITIES;
+  const metaMap = groupKey === 'status' ? ISSUE_STATUS_META : ISSUE_PRIORITY_META;
+
+  const cols = groups.map(g => {
+    const cards = issues.filter(i => i[groupKey] === g);
+    const meta  = metaMap[g] || { label: g, color:'#64748b', bg:'#f1f5f9' };
+    return `
+      <div style="flex-shrink:0;width:240px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 4px">
+          <span style="width:10px;height:10px;border-radius:50%;background:${meta.color};flex-shrink:0"></span>
+          <span style="font-weight:600;font-size:13px;color:var(--text)">${meta.label||g}</span>
+          <span style="margin-left:auto;font-size:11px;background:var(--surface-hover);padding:1px 7px;border-radius:10px;color:var(--text-muted)">${cards.length}</span>
+        </div>
+        ${cards.map(iss => `
+          <div class="issue-card" data-id="${iss.id}" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:box-shadow .15s" onmouseenter="this.style.boxShadow='0 2px 10px rgba(0,0,0,.08)'" onmouseleave="this.style.boxShadow=''">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:6px">
+              ${issueBadge('itype',iss.type)}
+              <span style="font-size:10px;color:var(--text-muted)">#${iss.id}</span>
+            </div>
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1.4">${iss.title}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              ${groupKey==='status' ? issueBadge('priority',iss.priority) : issueBadge('status',iss.status)}
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${iss.assigneeColor};color:#fff;font-size:9px;font-weight:700">${iss.assignee}</span>
+            </div>
+          </div>`).join('')}
+        ${cards.length === 0 ? `<div style="border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;color:var(--text-muted);font-size:12px">No issues</div>` : ''}
+      </div>`;
+  }).join('');
+
+  return `<div style="display:flex;gap:16px;align-items:flex-start;overflow-x:auto;padding-bottom:8px">${cols}</div>`;
+}
+
+function renderIssuesTimeline(issues) {
+  const sorted = [...issues].filter(i=>i.due).sort((a,b)=>a.due.localeCompare(b.due));
+  if (!sorted.length) return `<div style="text-align:center;padding:60px;color:var(--text-muted)">No issues with due dates</div>`;
+
+  const minDate = new Date(sorted[0].due);
+  const maxDate = new Date(sorted[sorted.length-1].due);
+  const totalDays = Math.max(1, (maxDate - minDate) / 86400000) + 14;
+  const W = 700;
+
+  const today = new Date('2026-06-20');
+  const todayOffset = Math.max(0,(today-minDate)/86400000/totalDays*W);
+
+  const rows = sorted.map((iss, idx) => {
+    const d = new Date(iss.due);
+    const offset = Math.max(0,(d-minDate)/86400000/totalDays*W);
+    const barW = 120;
+    const x = Math.min(offset, W-barW);
+    const y = idx*38+10;
+    const pm = ISSUE_PRIORITY_META[iss.priority]||{color:'#64748b'};
+    const label = iss.title.length > 28 ? iss.title.slice(0,26)+'…' : iss.title;
+    return `
+      <rect x="${x}" y="${y}" width="${barW}" height="24" rx="5" fill="${pm.color}" opacity="0.18"/>
+      <rect x="${x}" y="${y}" width="4" height="24" rx="2" fill="${pm.color}"/>
+      <text x="${x+10}" y="${y+15}" font-size="11" fill="var(--text)">${label}</text>
+      <text x="${x+barW+6}" y="${y+15}" font-size="10" fill="var(--text-muted)">${iss.due}</text>`;
+  }).join('');
+
+  const svgH = sorted.length*38+30;
+  return `
+    <div style="overflow-x:auto">
+      <svg viewBox="0 0 ${W+160} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:600px;font-family:inherit">
+        <line x1="${todayOffset}" y1="0" x2="${todayOffset}" y2="${svgH}" stroke="#ef444450" stroke-width="1.5" stroke-dasharray="4"/>
+        <text x="${todayOffset+3}" y="12" font-size="10" fill="#ef4444">Today</text>
+        ${rows}
+      </svg>
+    </div>`;
+}
+
+function renderIssuesCalendar(issues) {
+  const year = 2026, month = 5; // June 2026 (0-indexed)
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  const byDay = {};
+  issues.forEach(iss => {
+    if (!iss.due) return;
+    const d = new Date(iss.due);
+    if (d.getFullYear()===year && d.getMonth()===month) {
+      const k = d.getDate();
+      if (!byDay[k]) byDay[k]=[];
+      byDay[k].push(iss);
+    }
+  });
+
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let cells = '';
+  let dayCount = 1;
+  for (let row=0; row<6; row++) {
+    for (let col=0; col<7; col++) {
+      const cellIdx = row*7+col;
+      if (cellIdx < firstDay || dayCount > daysInMonth) {
+        cells += `<div style="min-height:80px;border:1px solid var(--border);border-radius:6px;background:var(--surface-hover);opacity:.4"></div>`;
+      } else {
+        const isToday = dayCount===20;
+        const issDay = byDay[dayCount]||[];
+        const dots = issDay.slice(0,3).map(iss => {
+          const pm = ISSUE_PRIORITY_META[iss.priority]||{color:'#64748b'};
+          return `<div class="issue-card" data-id="${iss.id}" style="font-size:10px;padding:2px 5px;border-radius:4px;background:${pm.color}18;color:${pm.color};cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${iss.title}">${iss.title.slice(0,20)}${iss.title.length>20?'…':''}</div>`;
+        }).join('');
+        const more = issDay.length > 3 ? `<div style="font-size:10px;color:var(--text-muted)">+${issDay.length-3} more</div>` : '';
+        cells += `<div style="min-height:80px;border:1px solid var(--border);border-radius:6px;padding:6px;background:${isToday?'var(--primary-light)':'var(--card)'}">
+          <div style="font-weight:${isToday?'700':'400'};font-size:12px;color:${isToday?'var(--primary)':'var(--text-muted)'};margin-bottom:4px">${dayCount}</div>
+          <div style="display:flex;flex-direction:column;gap:2px">${dots}${more}</div>
+        </div>`;
+        dayCount++;
+      }
+    }
+    if (dayCount > daysInMonth) break;
+  }
+
+  return `
+    <div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">${monthNames[month]} ${year}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px">
+        ${days.map(d=>`<div style="text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);padding:4px">${d}</div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${cells}</div>
+    </div>`;
+}
+
+function openIssueDetail(id) {
+  const iss = DATA.issues.find(i=>i.id===id);
+  if (!iss) return;
+  const pm = ISSUE_PRIORITY_META[iss.priority]||{};
+  const sm = ISSUE_STATUS_META[iss.status]||{};
+  const tm = ISSUE_TYPE_META[iss.type]||{};
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:flex-start;justify-content:flex-end';
+  overlay.innerHTML = `
+    <div style="width:480px;height:100%;background:var(--card);overflow-y:auto;padding:28px;box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <span style="font-size:12px;color:var(--text-muted)">Issue #${iss.id}</span>
+        <button id="iss-close" style="background:none;border:none;cursor:pointer;color:var(--text-muted)">${ico(I.x,16)}</button>
+      </div>
+      <div style="font-size:17px;font-weight:700;color:var(--text);line-height:1.4">${iss.title}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${issueBadge('itype',iss.type)}
+        ${issueBadge('status',iss.status)}
+        ${issueBadge('priority',iss.priority)}
+      </div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6">${iss.description}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;background:var(--surface);border-radius:10px">
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Project</div><div style="font-size:13px;font-weight:500">${iss.project}</div></div>
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Assignee</div><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;border-radius:50%;background:${iss.assigneeColor};color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">${iss.assignee}</span>${iss.assignee}</div></div>
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Due</div><div style="font-size:13px;font-weight:500">${iss.due||'—'}</div></div>
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Reporter</div><div style="font-size:13px;font-weight:500">${iss.reporter}</div></div>
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Created</div><div style="font-size:13px;font-weight:500">${iss.created}</div></div>
+        <div><div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">Updated</div><div style="font-size:13px;font-weight:500">${iss.updated}</div></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px">Labels</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${iss.labels.map(l=>`<span style="font-size:11px;padding:2px 8px;border-radius:8px;background:var(--surface-hover);color:var(--text-muted)">${l}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+  overlay.querySelector('#iss-close').addEventListener('click', () => overlay.remove());
+}
+
+function openIssueModal() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border-radius:14px;padding:28px;width:500px;max-width:95vw;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,.18)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:16px;font-weight:700">New Issue</span>
+        <button id="ni-close" style="background:none;border:none;cursor:pointer;color:var(--text-muted)">${ico(I.x,16)}</button>
+      </div>
+      <input id="ni-title" type="text" placeholder="Issue title…" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--surface);color:var(--text);outline:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Type</label>
+          <select id="ni-type" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+            ${ISSUE_TYPES.map(t=>`<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Priority</label>
+          <select id="ni-priority" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+            ${ISSUE_PRIORITIES.map(p=>`<option value="${p}">${p.charAt(0).toUpperCase()+p.slice(1)}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Project</label>
+          <select id="ni-project" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+            ${DATA.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Assignee</label>
+          <select id="ni-assignee" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+            ${DATA.team.map(m=>`<option value="${m.initials}">${m.name}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Due Date</label>
+        <input id="ni-due" type="date" style="padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+      </div>
+      <textarea id="ni-desc" placeholder="Description (optional)…" rows="3" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text);resize:vertical;outline:none"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:10px">
+        <button id="ni-cancel" class="btn btn-secondary">Cancel</button>
+        <button id="ni-save" class="btn btn-primary">Create Issue</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if(e.target===overlay) close(); });
+  overlay.querySelector('#ni-close').addEventListener('click', close);
+  overlay.querySelector('#ni-cancel').addEventListener('click', close);
+  overlay.querySelector('#ni-save').addEventListener('click', () => {
+    const title = overlay.querySelector('#ni-title').value.trim();
+    if (!title) { overlay.querySelector('#ni-title').focus(); return; }
+    const projId = +overlay.querySelector('#ni-project').value;
+    const proj   = DATA.projects.find(p=>p.id===projId);
+    const assigneeInit = overlay.querySelector('#ni-assignee').value;
+    const member = DATA.team.find(m=>m.initials===assigneeInit);
+    const newId  = Math.max(...DATA.issues.map(i=>i.id))+1;
+    DATA.issues.push({
+      id:      newId,
+      title,
+      type:         overlay.querySelector('#ni-type').value,
+      status:       'open',
+      priority:     overlay.querySelector('#ni-priority').value,
+      project:      proj ? proj.name : '',
+      projectId:    projId,
+      assignee:     assigneeInit,
+      assigneeColor: member ? member.color : '#64748b',
+      reporter:     DATA.user.initials,
+      created:      '2026-06-20',
+      updated:      '2026-06-20',
+      due:          overlay.querySelector('#ni-due').value || null,
+      labels:       [],
+      description:  overlay.querySelector('#ni-desc').value.trim(),
+    });
+    close();
+    showToast('Issue created', 'success');
+    renderIssues();
+  });
+}
+
+function openIssueViewModal() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border-radius:14px;padding:28px;width:420px;max-width:95vw;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,.18)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:16px;font-weight:700">New View</span>
+        <button id="nv-close" style="background:none;border:none;cursor:pointer;color:var(--text-muted)">${ico(I.x,16)}</button>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">View Name</label>
+        <input id="nv-name" type="text" placeholder="e.g. Critical Bugs" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--surface);color:var(--text);outline:none;box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:8px">Layout</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="nv-layout-picker">
+          ${[
+            {id:'table',    icon:'list',        label:'Table'},
+            {id:'board',    icon:'kanban',      label:'Board'},
+            {id:'timeline', icon:'timeline',    label:'Timeline'},
+            {id:'calendar', icon:'calendarView',label:'Calendar'},
+          ].map(opt=>`
+            <div class="nv-layout-opt" data-layout="${opt.id}" style="border:2px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .15s">
+              <span style="color:var(--text-muted)">${ico(I[opt.icon],20)}</span>
+              <span style="font-size:12px;font-weight:500">${opt.label}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div id="nv-groupby-wrap">
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Group By (Board only)</label>
+        <select id="nv-groupby" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+          <option value="status">Status</option>
+          <option value="priority">Priority</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Filter Assignee</label>
+        <select id="nv-filter" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text)">
+          <option value="">All assignees</option>
+          <option value="assignee-me">Assigned to me</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px">
+        <button id="nv-cancel" class="btn btn-secondary">Cancel</button>
+        <button id="nv-save" class="btn btn-primary">Create View</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  let selectedLayout = 'table';
+  const layoutOpts = overlay.querySelectorAll('.nv-layout-opt');
+  const groupWrap   = overlay.querySelector('#nv-groupby-wrap');
+
+  const setLayout = (id) => {
+    selectedLayout = id;
+    layoutOpts.forEach(el => {
+      el.style.borderColor = el.dataset.layout===id ? 'var(--primary)' : 'var(--border)';
+      el.style.background  = el.dataset.layout===id ? 'var(--primary-light)' : '';
+    });
+    groupWrap.style.display = id==='board' ? '' : 'none';
+  };
+  setLayout('table');
+  layoutOpts.forEach(el => el.addEventListener('click', () => setLayout(el.dataset.layout)));
+
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if(e.target===overlay) close(); });
+  overlay.querySelector('#nv-close').addEventListener('click', close);
+  overlay.querySelector('#nv-cancel').addEventListener('click', close);
+  overlay.querySelector('#nv-save').addEventListener('click', () => {
+    const name = overlay.querySelector('#nv-name').value.trim();
+    if (!name) { overlay.querySelector('#nv-name').focus(); return; }
+    const iconMap = { table:'list', board:'kanban', timeline:'timeline', calendar:'calendarView' };
+    const newView = {
+      id:      'custom-' + Date.now(),
+      label:   name,
+      layout:  selectedLayout,
+      groupBy: selectedLayout==='board' ? overlay.querySelector('#nv-groupby').value : null,
+      filter:  overlay.querySelector('#nv-filter').value || null,
+      icon:    iconMap[selectedLayout]||'list',
+      description: `Custom view: ${name}`,
+    };
+    STATE.issuesCustomViews.push(newView);
+    STATE.issuesViewId = newView.id;
+    close();
+    renderIssues();
+  });
+}
+
+// ============================================================
+// COMMERCIAL — internal competitive analysis (dev use only)
+// ============================================================
+const COMMERCIAL = {
+  competitors: [
+    { id:'wired',   name:'Wired',      vendor:'(us)',           color:'#6366f1', segment:'Governance-first PM', founded:2026, tagline:'Policy-driven project governance with approval gates and live health scoring.' },
+    { id:'jira',    name:'Jira',       vendor:'Atlassian',      color:'#0052cc', segment:'Engineering / Agile', founded:2002, tagline:'Issue tracking and agile boards with a deep developer ecosystem.' },
+    { id:'monday',  name:'monday.com', vendor:'monday.com',     color:'#ff3d57', segment:'Work OS / general',   founded:2012, tagline:'Highly visual, flexible Work OS for cross-functional teams.' },
+    { id:'asana',   name:'Asana',      vendor:'Asana',          color:'#f06a6a', segment:'Work management',     founded:2008, tagline:'Task and workflow management with goals and portfolios.' },
+    { id:'clickup', name:'ClickUp',    vendor:'ClickUp',        color:'#7b68ee', segment:'All-in-one',         founded:2017, tagline:'Broad "one app to replace them all" feature surface.' },
+    { id:'linear',  name:'Linear',     vendor:'Linear',         color:'#5e6ad2', segment:'Engineering',        founded:2019, tagline:'Fast, opinionated issue tracker for software teams.' },
+    { id:'wrike',   name:'Wrike',      vendor:'Wrike',          color:'#08cf65', segment:'Enterprise PM',      founded:2006, tagline:'Enterprise work management with strong reporting and approvals.' },
+  ],
+
+  // capability matrix — value is 'yes' | 'partial' | 'no'. star = a Wired differentiator row.
+  features: [
+    { name:'Kanban / board views',        star:false, wired:'yes',     jira:'yes',     monday:'yes',     asana:'yes',     clickup:'yes',     linear:'yes',     wrike:'yes' },
+    { name:'Gantt / timeline',            star:false, wired:'yes',     jira:'partial', monday:'yes',     asana:'yes',     clickup:'yes',     linear:'no',      wrike:'yes' },
+    { name:'Issue tracking',              star:false, wired:'yes',     jira:'yes',     monday:'partial', asana:'partial', clickup:'yes',     linear:'yes',     wrike:'partial' },
+    { name:'Custom fields',               star:false, wired:'yes',     jira:'yes',     monday:'yes',     asana:'yes',     clickup:'yes',     linear:'partial', wrike:'yes' },
+    { name:'Workflow automation',         star:false, wired:'yes',     jira:'yes',     monday:'yes',     asana:'yes',     clickup:'yes',     linear:'partial', wrike:'yes' },
+    { name:'Resource / capacity mgmt',    star:false, wired:'yes',     jira:'no',      monday:'yes',     asana:'yes',     clickup:'yes',     linear:'no',      wrike:'yes' },
+    { name:'Custom reports / dashboards', star:false, wired:'yes',     jira:'yes',     monday:'yes',     asana:'yes',     clickup:'yes',     linear:'partial', wrike:'yes' },
+    { name:'Native integrations',         star:false, wired:'partial', jira:'yes',     monday:'yes',     asana:'yes',     clickup:'yes',     linear:'yes',     wrike:'yes' },
+    { name:'Phase-gated workflows',       star:true,  wired:'yes',     jira:'partial', monday:'no',      asana:'no',      clickup:'partial', linear:'no',      wrike:'partial' },
+    { name:'Policy / governance engine',  star:true,  wired:'yes',     jira:'no',      monday:'no',      asana:'no',      clickup:'no',      linear:'no',      wrike:'partial' },
+    { name:'Approval gates',              star:true,  wired:'yes',     jira:'partial', monday:'partial', asana:'partial', clickup:'partial', linear:'no',      wrike:'yes' },
+    { name:'Project health scoring',      star:true,  wired:'yes',     jira:'no',      monday:'no',      asana:'partial', clickup:'no',      linear:'no',      wrike:'partial' },
+    { name:'Guided walkthroughs',         star:true,  wired:'yes',     jira:'no',      monday:'no',      asana:'no',      clickup:'no',      linear:'no',      wrike:'no' },
+  ],
+
+  // illustrative public list pricing, per user / month billed annually (USD)
+  pricing: [
+    { id:'wired',   free:'Internal',          low:null, high:null, note:'Pre-commercial — pricing not yet set' },
+    { id:'jira',    free:'Up to 10 users',    low:7.75, high:15.25, note:'Standard → Premium' },
+    { id:'monday',  free:'Up to 2 seats',     low:9,    high:19,    note:'Basic → Pro' },
+    { id:'asana',   free:'Up to 10 users',    low:10.99,high:24.99, note:'Starter → Advanced' },
+    { id:'clickup', free:'Free Forever',      low:7,    high:12,    note:'Unlimited → Business' },
+    { id:'linear',  free:'Up to 10 users',    low:8,    high:14,    note:'Basic → Business' },
+    { id:'wrike',   free:'Limited',           low:9.80, high:24.80, note:'Team → Business' },
+  ],
+
+  wins: [
+    { title:'Policy & governance engine', desc:'Global, type- and project-scoped policies that auto-trigger actions and approvals — no competitor ships this natively.' },
+    { title:'Approval gates everywhere', desc:'Approvals are first-class: queue, history, and policy-driven requests woven through every workflow phase.' },
+    { title:'Live project health scoring', desc:'Composite health (tasks, milestones, budget, risk) surfaced continuously, not as a bolt-on report.' },
+    { title:'Phase-gated workflows', desc:'Opinionated lifecycle templates with required actions and sign-off gates per phase.' },
+    { title:'Guided walkthroughs', desc:'Built-in onboarding that drives health improvement — unique vs. all listed tools.' },
+  ],
+  gaps: [
+    { title:'Integration breadth', desc:'Jira, Monday and Asana have hundreds of native integrations + app marketplaces; Wired has a focused set today.' },
+    { title:'Ecosystem & mindshare', desc:'Atlassian/Asana own developer and enterprise mindshare; Wired is pre-market.' },
+    { title:'Mobile & offline', desc:'Competitors ship mature native mobile apps; Wired is web-first.' },
+    { title:'Scale & SSO/enterprise admin', desc:'Enterprise IAM, audit and provisioning still need to reach parity with Wrike/Jira.' },
+  ],
+};
+
+function cmCell(v) {
+  if (v === 'yes')     return '<span style="color:#16a34a;font-weight:700;font-size:15px">✓</span>';
+  if (v === 'partial') return '<span style="color:#f59e0b;font-weight:700;font-size:15px">~</span>';
+  return '<span style="color:#cbd5e1;font-weight:700;font-size:15px">–</span>';
+}
+
+function renderCommercial() {
+  renderTopbar([{ label: 'Commercial' }]);
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Commercial</h1>
+        <p class="page-subtitle">Competitive comparison vs. leading project-management tools — internal, for development use only</p>
+      </div>
+      <span class="badge badge-medium" title="This page is internal and not part of the customer-facing product">${ico(I.lock,12)} Internal · Dev only</span>
+    </div>
+
+    <div id="cm-body"></div>
+  `;
+
+  renderCommercialComparison(document.getElementById('cm-body'));
+}
+
+function cmKpiCardsHtml() {
+  const others = COMMERCIAL.competitors.filter(c=>c.id!=='wired');
+  const starFeatures = COMMERCIAL.features.filter(f=>f.star);
+  const wiredYes = COMMERCIAL.features.filter(f=>f.wired==='yes').length;
+  return `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      ${resKpi('Competitors Tracked', others.length+'',          '#eef2ff','#6366f1', I.layers,   'Leading PM tools')}
+      ${resKpi('Capabilities Mapped', COMMERCIAL.features.length+'', '#f0fdf4','#16a34a', I.checkSquare, wiredYes+' supported by Wired')}
+      ${resKpi('Differentiators',     starFeatures.length+'',     '#fffbeb','#f59e0b', I.zap,      'Where Wired stands alone')}
+      ${resKpi('Market Position',     'Challenger',               '#fef2f2','#ef4444', I.trendUp,  'Pre-commercial, governance niche')}
+    </div>`;
+}
+
+function cmLandscapeHtml() {
+  return `
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      ${COMMERCIAL.competitors.map(c=>`
+        <div class="card" style="padding:18px;${c.id==='wired'?'border:2px solid '+c.color+';background:'+c.color+'08':''}">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <div style="width:40px;height:40px;border-radius:10px;background:${c.color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800">${c.name.charAt(0)}</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:700;color:var(--c-text)">${c.name} ${c.id==='wired'?'<span style="font-size:11px;font-weight:600;color:'+c.color+'">— us</span>':''}</div>
+              <div style="font-size:11px;color:var(--c-text-3)">${c.vendor} · est. ${c.founded}</div>
+            </div>
+            <span class="badge" style="background:${c.color}18;color:${c.color}">${c.segment}</span>
+          </div>
+          <div style="font-size:12px;color:var(--c-text-2);line-height:1.5">${c.tagline}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderCommercialComparison(el) {
+  el.innerHTML = `
+    <div style="margin-bottom:28px">${cmKpiCardsHtml()}</div>
+
+    <p style="font-size:13px;color:var(--c-text-2);margin:0 0 20px;line-height:1.5">
+      Consolidated view — every capability, price point and positioning note for Wired vs. the leading project-management tools on one page.
+    </p>
+
+    <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:14px">${ico(I.table2,15)} Feature Matrix</div>
+    <div id="cm-cmp-matrix" style="margin-bottom:32px"></div>
+
+    <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:14px">${ico(I.dollar,15)} Pricing</div>
+    <div id="cm-cmp-pricing" style="margin-bottom:32px"></div>
+
+    <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:14px">${ico(I.trendUp,15)} Positioning</div>
+    <div id="cm-cmp-positioning" style="margin-bottom:32px"></div>
+
+    <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:14px">${ico(I.layers,15)} Competitive Landscape</div>
+    <div style="margin-bottom:32px">${cmLandscapeHtml()}</div>
+
+    <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:14px">${ico(I.zap,15)} Why Wired Wins</div>
+    ${cmWhyWinsHtml()}
+  `;
+  renderCommercialMatrix(document.getElementById('cm-cmp-matrix'));
+  renderCommercialPricing(document.getElementById('cm-cmp-pricing'));
+  renderCommercialPositioning(document.getElementById('cm-cmp-positioning'));
+}
+
+function cmWhyWinsHtml() {
+  const starFeatures = COMMERCIAL.features.filter(f=>f.star);
+  return `
+    <div class="card" style="padding:20px">
+      <div style="font-size:12px;color:var(--c-text-3);margin-bottom:16px">Capabilities no listed competitor offers natively today</div>
+      <div style="display:grid;grid-template-columns:repeat(${starFeatures.length},1fr);gap:12px">
+        ${starFeatures.map(f=>`
+          <div style="text-align:center;padding:14px;border-radius:10px;border:1px solid var(--c-border);background:#fffbeb">
+            <div style="color:#f59e0b;margin-bottom:8px;display:flex;justify-content:center">${ico(I.zap,18)}</div>
+            <div style="font-size:12px;font-weight:600;color:var(--c-text);line-height:1.3">${f.name}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderCommercialMatrix(el) {
+  const cols = COMMERCIAL.competitors;
+  el.innerHTML = `
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:18px;padding:14px 18px;border-bottom:1px solid var(--c-border);font-size:12px;color:var(--c-text-2)">
+        <span><span style="color:#16a34a;font-weight:700">✓</span> Full support</span>
+        <span><span style="color:#f59e0b;font-weight:700">~</span> Partial / add-on</span>
+        <span><span style="color:#cbd5e1;font-weight:700">–</span> Not available</span>
+        <span style="margin-left:auto">${ico(I.zap,12)} = Wired differentiator</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:12px 16px;font-size:12px;color:var(--c-text-3);position:sticky;left:0;background:var(--c-surface)">Capability</th>
+              ${cols.map(c=>`<th style="text-align:center;padding:12px 10px;font-size:12px;color:${c.id==='wired'?c.color:'var(--c-text-2)'};font-weight:${c.id==='wired'?'700':'600'};${c.id==='wired'?'background:'+c.color+'0d':''}">${c.name}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${COMMERCIAL.features.map(f=>`
+              <tr style="border-top:1px solid var(--c-border);${f.star?'background:#fffbeb40':''}">
+                <td style="text-align:left;padding:11px 16px;font-size:13px;color:var(--c-text);position:sticky;left:0;background:${f.star?'#fffdf5':'var(--c-surface)'}">
+                  ${f.star?'<span style="color:#f59e0b;margin-right:6px">'+ico(I.zap,11)+'</span>':''}${f.name}
+                </td>
+                ${cols.map(c=>`<td style="text-align:center;padding:11px 10px;${c.id==='wired'?'background:'+c.color+'0d':''}">${cmCell(f[c.id])}</td>`).join('')}
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--c-text-3);margin-top:12px">Assessment is directional and maintained internally for product positioning. Competitor capabilities change frequently — verify before external use.</p>`;
+}
+
+function renderCommercialPricing(el) {
+  const byId = id => COMMERCIAL.competitors.find(c=>c.id===id);
+  el.innerHTML = `
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="data-table" style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:12px 16px;font-size:12px;color:var(--c-text-3)">Tool</th>
+            <th style="text-align:left;padding:12px 16px;font-size:12px;color:var(--c-text-3)">Free tier</th>
+            <th style="text-align:left;padding:12px 16px;font-size:12px;color:var(--c-text-3)">Paid range (user/mo)</th>
+            <th style="text-align:left;padding:12px 16px;font-size:12px;color:var(--c-text-3)">Tiers</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${COMMERCIAL.pricing.map(p=>{
+            const c = byId(p.id);
+            const range = p.low==null ? '<span style="color:var(--c-text-3)">—</span>'
+              : `<span style="font-weight:700;color:var(--c-text)">$${p.low.toFixed(2)} – $${p.high.toFixed(2)}</span>`;
+            return `
+              <tr style="border-top:1px solid var(--c-border);${p.id==='wired'?'background:'+c.color+'0d':''}">
+                <td style="padding:12px 16px">
+                  <span style="display:inline-flex;align-items:center;gap:10px">
+                    <span style="width:26px;height:26px;border-radius:7px;background:${c.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">${c.name.charAt(0)}</span>
+                    <span style="font-size:13px;font-weight:600;color:var(--c-text)">${c.name}</span>
+                  </span>
+                </td>
+                <td style="padding:12px 16px;font-size:13px;color:var(--c-text-2)">${p.free}</td>
+                <td style="padding:12px 16px;font-size:13px">${range}</td>
+                <td style="padding:12px 16px;font-size:12px;color:var(--c-text-3)">${p.note}</td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--c-text-3);margin-top:12px">Illustrative public list pricing (USD, billed annually) for reference only — actual figures vary by plan, region and negotiation. Wired is pre-commercial; pricing is a strategic input, not yet set.</p>`;
+}
+
+function renderCommercialPositioning(el) {
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+      <div class="card" style="padding:20px;border-top:3px solid #16a34a">
+        <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><span style="color:#16a34a">${ico(I.thumbsUp,16)}</span> Where Wired wins</div>
+        ${COMMERCIAL.wins.map(w=>`
+          <div style="padding:12px 0;border-bottom:1px solid var(--c-border)">
+            <div style="font-size:13px;font-weight:600;color:var(--c-text);margin-bottom:3px">${w.title}</div>
+            <div style="font-size:12px;color:var(--c-text-2);line-height:1.5">${w.desc}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card" style="padding:20px;border-top:3px solid #ef4444">
+        <div class="section-title" style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><span style="color:#ef4444">${ico(I.alertTriangle,16)}</span> Where Wired must catch up</div>
+        ${COMMERCIAL.gaps.map(g=>`
+          <div style="padding:12px 0;border-bottom:1px solid var(--c-border)">
+            <div style="font-size:13px;font-weight:600;color:var(--c-text);margin-bottom:3px">${g.title}</div>
+            <div style="font-size:12px;color:var(--c-text-2);line-height:1.5">${g.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px">
+      <div class="section-title" style="margin-bottom:10px">Positioning statement</div>
+      <p style="font-size:13px;color:var(--c-text-2);line-height:1.6;margin:0">
+        For <strong>PMOs and delivery leaders</strong> who need projects to follow process — not just track tasks —
+        <strong>Wired</strong> is a <strong>governance-first project-management platform</strong> that bakes policies, approval gates and live health scoring
+        into every workflow. Unlike <strong>Jira</strong> (engineering-centric), <strong>Monday/Asana/ClickUp</strong> (flexible but ungoverned work management)
+        or <strong>Linear</strong> (pure issue tracking), Wired enforces the rules of delivery automatically, so compliance and oversight are built in rather than bolted on.
+      </p>
+    </div>`;
+}
+
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
+  restoreUserSettings();
+  restoreLocation();
   renderSidebar();
   render();
 });
