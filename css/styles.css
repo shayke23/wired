@@ -1880,8 +1880,27 @@ tbody tr:hover td { background: #FAFCFF; }
   margin-bottom: 12px;
 }
 
+.op-portfolio-table { width: 100%; border-collapse: collapse; }
+.op-portfolio-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--c-text-3);
+  font-weight: 600;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--c-border);
+}
+.op-portfolio-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: middle;
+}
+.op-portfolio-row { cursor: pointer; transition: background 120ms; }
+.op-portfolio-row:hover { background: var(--c-bg-2, #f8fafc); }
+
 @media print {
-  #sidebar, #topbar, .op-no-print { display: none !important; }
+  #sidebar, #topbar, .op-no-print, .prd-no-print { display: none !important; }
   #main-container, #content { margin: 0 !important; padding: 0 !important; }
   .op-sheet { border: none; box-shadow: none; }
 }

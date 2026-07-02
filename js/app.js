@@ -405,6 +405,7 @@ const I = {
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
   checkCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
   info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  help: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   list: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
   grid: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
   filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>`,
@@ -505,6 +506,13 @@ function progressBar(pct, cls='blue') {
 function fmt(n) { return n>=1000 ? '$'+(n/1000).toFixed(0)+'k' : '$'+n; }
 function fmtFull(n) { return '$'+n.toLocaleString(); }
 
+// Escape user-entered text before interpolating into innerHTML.
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function toast(msg, type='success') {
   const icons = { success: I.checkCircle, error: I.x, warning: I.alertTriangle, info: I.info };
   const t = document.createElement('div');
@@ -519,6 +527,7 @@ function toast(msg, type='success') {
 function renderSidebar() {
   const globalNav = [
     { id:'dashboard', label:'Dashboard', icon:I.dashboard },
+    { id:'portfolio', label:'1 Pager', icon:I.fileText },
     { id:'commercial', label:'Commercial', icon:I.trendUp },
   ];
   if (DATA.user.settings.showNotes) {
@@ -527,6 +536,7 @@ function renderSidebar() {
   const criticalIssues = DATA.issues.filter(i => i.priority === 'critical' && i.status !== 'done').length;
   const projectScopedNav = STATE.currentProject ? [
     { id:'one-pager',    label:'1 Pager',      icon:I.fileText },
+    { id:'prd',          label:'PRD',          icon:I.checkSquare },
     { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
     { id:'issues',       label:'Issues',       icon:I.issues,   badge: criticalIssues || null },
     { id:'risks',        label:'Risks',        icon:I.shield,   badge: STATE.currentProject.risks.filter(r=>r.open).length || null },
@@ -660,8 +670,8 @@ function renderTopbar(crumbs) {
         ${I.bell}
         <span class="topbar-notif-dot"></span>
       </div>
+      <div class="topbar-icon-btn" title="Support" data-page="support">${I.help}</div>
       <div class="topbar-icon-btn" title="Settings" data-page="user-settings">${I.settings}</div>
-      <div class="topbar-avatar" title="${DATA.user.name} · Account settings" data-page="user-settings" style="cursor:pointer">${DATA.user.initials}</div>
     </div>`;
   document.querySelectorAll('#topbar [data-page]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.page));
@@ -717,12 +727,14 @@ function render() {
     case 'risks':     renderRisks(); break;
     case 'resources': renderResources(); break;
     case 'commercial': renderCommercial(); break;
+    case 'portfolio': renderPortfolioOnePager(); break;
     case 'notes':     renderNotes(); break;
     case 'issues':    renderIssues(); break;
     case 'actions':   renderActions(); break;
     case 'projects': renderProjects(); break;
     case 'project-detail': renderProjectDetail(); break;
     case 'one-pager': renderOnePager(); break;
+    case 'prd':       renderPRD(); break;
     case 'approvals': renderApprovals(); break;
     case 'policies': renderPolicies(); break;
     case 'team': renderTeam(); break;
@@ -732,6 +744,7 @@ function render() {
     case 'reports': renderReports(); break;
     case 'workflow-builder': renderWorkflowBuilder(); break;
     case 'user-settings': renderUserSettings(); break;
+    case 'support': renderSupport(); break;
     default: renderDashboard();
   }
 }
@@ -1876,6 +1889,33 @@ function renderPolicies() {
     ${DATA.policies.filter(p=>p.scope==='type').map(p=>policyCard(p)).join('')}
     <div class="section-title mt-6">Project-Specific Policies</div>
     ${DATA.policies.filter(p=>p.scope==='project').map(p=>policyCard(p)).join('')}`;
+}
+
+// --- SUPPORT ---
+function renderSupport() {
+  renderTopbar([{label:'Support'}]);
+  const channels = [
+    { icon: I.info, title:'Help Center', desc:'Browse guides, FAQs, and product documentation.', action:'Open docs' },
+    { icon: I.users, title:'Contact Support', desc:'Reach our team — typical reply within a few hours.', action:'Start a ticket' },
+    { icon: I.zap, title:"What's New", desc:'See the latest features, fixes, and release notes.', action:'View changelog' },
+  ];
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Support</div>
+        <div class="page-subtitle">Get help, contact our team, or browse documentation</div>
+      </div>
+    </div>
+    <div class="grid-projects">
+      ${channels.map(c=>`
+        <div class="member-card" style="align-items:flex-start;text-align:left;gap:10px">
+          <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#eef2ff;color:#6366f1">${c.icon}</div>
+          <div class="member-name">${c.title}</div>
+          <div class="text-sm text-muted">${c.desc}</div>
+          <button class="btn btn-secondary mt-2">${c.action}</button>
+        </div>
+      `).join('')}
+    </div>`;
 }
 
 // --- TEAM ---
@@ -3728,6 +3768,106 @@ function renderOnePager() {
   document.getElementById('op-print-btn')?.addEventListener('click', () => window.print());
 }
 
+// Global / portfolio 1 Pager — single-page executive overview across all projects.
+function renderPortfolioOnePager() {
+  renderTopbar([{ label: '1 Pager' }]);
+
+  const projects = DATA.projects;
+  const active = projects.filter(p => p.status === 'active').length;
+  const atRisk = projects.filter(p => p.status === 'at-risk' || p.status === 'on-hold').length;
+  const withHealth = projects.filter(p => p.health != null);
+  const avgHealth = withHealth.length ? Math.round(withHealth.reduce((a, p) => a + p.health, 0) / withHealth.length) : null;
+  const totalBudget = projects.reduce((a, p) => a + (p.budget || 0), 0);
+  const totalSpent = projects.reduce((a, p) => a + (p.spent || 0), 0);
+  const budgetPct = totalBudget ? Math.round((totalSpent / totalBudget) * 100) : 0;
+  const totalOverdue = projects.reduce((a, p) => a + (p.tasks.overdue || 0), 0);
+  const openRisks = projects.reduce((a, p) => a + p.risks.filter(r => r.open).length, 0);
+
+  const stat = (label, value, sub = '') => `
+    <div class="op-stat">
+      <div class="op-stat-label">${label}</div>
+      <div class="op-stat-value">${value}${sub ? `<span class="op-stat-sub">${sub}</span>` : ''}</div>
+    </div>`;
+
+  const projectRow = p => {
+    const pBudgetPct = p.budget ? Math.round((p.spent / p.budget) * 100) : 0;
+    const openR = p.risks.filter(r => r.open).length;
+    const barCls = p.health == null ? 'blue' : (p.health >= 75 ? 'green' : p.health >= 50 ? 'amber' : 'red');
+    return `
+      <tr class="op-portfolio-row" data-project="${p.id}">
+        <td>
+          <div style="font-weight:600;font-size:13px">${p.name}</div>
+          <div class="text-xs text-muted">${p.type} · PM ${p.pm}</div>
+        </td>
+        <td>${statusBadge(p.status)}</td>
+        <td>${healthBadge(p.health)}</td>
+        <td style="min-width:120px">
+          <div class="progress-bar"><div class="progress-fill ${barCls}" style="width:${p.progress}%"></div></div>
+          <div class="text-xs text-muted mt-1">${p.progress}%</div>
+        </td>
+        <td class="text-sm">${fmt(p.spent)} <span class="text-xs text-muted">/ ${fmt(p.budget)} · ${pBudgetPct}%</span></td>
+        <td class="text-sm">${p.tasks.done}/${p.tasks.total}${p.tasks.overdue ? ` <span style="color:var(--c-danger)">· ${p.tasks.overdue} overdue</span>` : ''}</td>
+        <td class="text-sm" style="text-align:center">${openR || '—'}</td>
+      </tr>`;
+  };
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header op-no-print">
+      <div>
+        <h1 class="page-title">1 Pager</h1>
+        <p class="page-sub">A single-page executive overview across all ${projects.length} projects</p>
+      </div>
+      <button class="btn btn-secondary" id="op-print-btn">${I.fileText} Print / PDF</button>
+    </div>
+
+    <div class="card op-sheet">
+      <div class="op-head">
+        <div>
+          <div class="op-title">Portfolio Overview</div>
+          <div class="text-sm text-muted mt-1">${active} active · ${atRisk} needs attention · ${projects.length} total</div>
+        </div>
+        <div class="op-head-meta">
+          <span>${ico(I.clock)} As of ${DATA.user && DATA.user.today ? DATA.user.today : 'Jun 27, 2026'}</span>
+        </div>
+      </div>
+
+      <div class="op-stats">
+        ${stat('Projects', projects.length, ` · ${active} active`)}
+        ${stat('Avg Health', avgHealth == null ? 'N/A' : avgHealth, avgHealth == null ? '' : ' / 100')}
+        ${stat('Budget Used', fmt(totalSpent), ' of ' + fmt(totalBudget) + ` · ${budgetPct}%`)}
+        ${stat('Overdue Tasks', totalOverdue)}
+        ${stat('Open Risks', openRisks)}
+      </div>
+
+      <div class="op-body">
+        <div class="op-block">
+          <div class="op-block-title">Projects</div>
+          <table class="op-portfolio-table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Health</th>
+                <th>Progress</th>
+                <th>Budget</th>
+                <th>Tasks</th>
+                <th style="text-align:center">Risks</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${projects.map(projectRow).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('op-print-btn')?.addEventListener('click', () => window.print());
+  document.querySelectorAll('.op-portfolio-row[data-project]').forEach(el => {
+    el.addEventListener('click', () => navigate('project-detail', +el.dataset.project));
+  });
+}
+
 function renderReports() {
   if (!STATE.reportsTab) STATE.reportsTab = 'oob';
 
@@ -4645,8 +4785,11 @@ function renderRisks() {
         <thead>
           <tr style="border-bottom:2px solid var(--border)">
             <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Risk</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Implications</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Mitigation</th>
             <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Severity</th>
             <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Due</th>
             <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Status</th>
             <th style="width:44px"></th>
           </tr>
@@ -4659,12 +4802,24 @@ function renderRisks() {
                   style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.desc||'<span style="color:#bbb">Describe risk…</span>'}</span>
               </td>
               <td style="padding:10px 14px">
+                <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="implications"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.implications||'<span style="color:#bbb">Add implications…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="mitigation"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.mitigation||'<span style="color:#bbb">Add mitigation…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
                 <span class="risk-sev" data-pid="${p.id}" data-rid="${r.id}" title="Click to change severity"
                   style="cursor:pointer">${priorityBadge(r.severity)}</span>
               </td>
               <td style="padding:10px 14px">
                 <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="owner"
                   style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${r.owner||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="risk-edit" data-pid="${p.id}" data-rid="${r.id}" data-field="due"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.due||'<span style="color:#bbb">Set date…</span>'}</span>
               </td>
               <td style="padding:10px 14px">
                 <span class="risk-status" data-pid="${p.id}" data-rid="${r.id}" title="Click to toggle"
@@ -4706,10 +4861,11 @@ function renderRisks() {
       const risk = findRisk(+span.dataset.pid, +span.dataset.rid);
       if (!risk) return;
       const field = span.dataset.field;
+      const isDate = field === 'due';
       const input = document.createElement('input');
-      input.type = 'text';
+      input.type = isDate ? 'date' : 'text';
       input.value = risk[field] || '';
-      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + Math.max(120, ((risk[field]||'').length + 2) * 8) + 'px;outline:none';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + (isDate ? 150 : Math.max(120, ((risk[field]||'').length + 2) * 8)) + 'px;outline:none';
       span.replaceWith(input);
       input.focus();
       input.select();
@@ -4775,6 +4931,14 @@ function openRiskModal() {
         <label class="form-label">Description</label>
         <input class="form-input" id="rk-desc" placeholder="e.g. Third-party API dependency delay"/>
       </div>
+      <div class="form-group">
+        <label class="form-label">Implications</label>
+        <input class="form-input" id="rk-implications" placeholder="e.g. Launch could slip by 2 weeks"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mitigation</label>
+        <input class="form-input" id="rk-mitigation" placeholder="e.g. Line up a backup vendor"/>
+      </div>
       <div class="form-row">
         <div class="form-group" style="flex:1">
           <label class="form-label">Severity</label>
@@ -4785,6 +4949,10 @@ function openRiskModal() {
         <div class="form-group" style="flex:1">
           <label class="form-label">Owner</label>
           <input class="form-input" id="rk-owner" placeholder="e.g. JD"/>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Due date</label>
+          <input class="form-input" id="rk-due" type="date"/>
         </div>
       </div>
     </div>
@@ -4807,13 +4975,380 @@ function openRiskModal() {
     p.risks.push({
       id: maxId + 1,
       desc,
+      implications: document.getElementById('rk-implications').value.trim(),
+      mitigation: document.getElementById('rk-mitigation').value.trim(),
       severity: document.getElementById('rk-severity').value,
       owner: document.getElementById('rk-owner').value.trim() || '—',
+      due: document.getElementById('rk-due').value,
       open: true
     });
     toast('Risk added');
     close();
     renderRisks();
+  });
+}
+
+// ============================================================
+// PRD — Project Requirement Definition
+// ============================================================
+const PRD_DOC_STATUSES = ['Draft', 'In Review', 'Approved'];
+const PRD_REQ_TYPES    = ['Functional', 'Non-Functional'];
+const PRD_PRIORITIES   = ['Must', 'Should', 'Could', "Won't"];   // MoSCoW
+const PRD_REQ_STATUSES = ['Proposed', 'Approved', 'In Progress', 'Done'];
+
+const PRD_DOC_STATUS_COLOR = { 'Draft':'#94a3b8', 'In Review':'#f59e0b', 'Approved':'#10b981' };
+const PRD_PRIORITY_COLOR   = { 'Must':'#ef4444', 'Should':'#f59e0b', 'Could':'#6366f1', "Won't":'#94a3b8' };
+const PRD_REQ_STATUS_COLOR = { 'Proposed':'#94a3b8', 'Approved':'#6366f1', 'In Progress':'#f59e0b', 'Done':'#10b981' };
+
+function prdBadge(value, color) {
+  return `<span class="badge" style="background:${color}1a;color:${color}"><span class="badge-dot" style="background:${color}"></span>${value}</span>`;
+}
+
+// Lazily create (and seed) the PRD document for a project.
+function getPRD(projectId) {
+  if (!DATA.prds) DATA.prds = {};
+  if (!DATA.prds[projectId]) {
+    const p = DATA.projects.find(x => x.id === projectId);
+    DATA.prds[projectId] = {
+      status: 'Draft',
+      version: '0.1',
+      author: p ? p.pm : '',
+      updatedAt: todayStr(),
+      overview: p ? p.description : '',
+      goals: '',
+      metrics: '',
+      scopeIn: '',
+      scopeOut: '',
+      assumptions: '',
+      requirements: []
+    };
+  }
+  return DATA.prds[projectId];
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function persistPRDs() {
+  try { localStorage.setItem('wiredPRDs', JSON.stringify(DATA.prds || {})); }
+  catch (e) { console.error('[persistPRDs]', e); }
+}
+
+function restorePRDs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('wiredPRDs') || 'null');
+    if (saved && typeof saved === 'object') DATA.prds = saved;
+  } catch (e) { console.error('[restorePRDs]', e); }
+}
+
+// Persist after any PRD mutation, stamping the "last updated" date.
+function touchPRD(projectId) {
+  const doc = getPRD(projectId);
+  doc.updatedAt = todayStr();
+  persistPRDs();
+}
+
+function renderPRD() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  const doc = getPRD(p.id);
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: 'PRD' }]);
+
+  const reqs = doc.requirements;
+  const mustCount = reqs.filter(r => r.priority === 'Must').length;
+  const doneCount = reqs.filter(r => r.status === 'Done').length;
+
+  // Inline-editable narrative block.
+  const section = (key, title, placeholder) => `
+    <div class="card prd-section" style="padding:18px 20px;margin-bottom:16px">
+      <div class="op-block-title" style="margin-bottom:8px">${title}</div>
+      <div class="prd-edit" data-field="${key}" data-placeholder="${placeholder}"
+        style="font-size:13px;color:#475569;line-height:1.6;cursor:text;white-space:pre-wrap;min-height:20px;border-radius:4px;padding:4px 6px;margin:-4px -6px">${doc[key] ? escapeHtml(doc[key]) : `<span style="color:#94a3b8">${placeholder}</span>`}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header prd-no-print">
+      <div>
+        <div class="page-title">PRD</div>
+        <div class="page-subtitle">Project Requirement Definition · ${p.name}</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-secondary" id="prd-print-btn">${I.fileText} Print / PDF</button>
+        <button class="btn btn-primary" id="prd-add-req">${I.plus} Add Requirement</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Status</div>
+        <span class="prd-doc-status" title="Click to change status" style="cursor:pointer">${prdBadge(doc.status, PRD_DOC_STATUS_COLOR[doc.status])}</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Version</div>
+        <span class="prd-meta-edit" data-field="version" style="font-size:14px;font-weight:600;cursor:text;border-radius:4px;padding:1px 4px">${escapeHtml(doc.version)}</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Author</div>
+        <span class="prd-meta-edit" data-field="author" style="font-size:14px;font-weight:600;cursor:text;border-radius:4px;padding:1px 4px">${doc.author ? escapeHtml(doc.author) : '<span style="color:#94a3b8">—</span>'}</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Last updated</div>
+        <span style="font-size:14px;font-weight:600">${doc.updatedAt}</span>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Requirements</div>
+        <span style="font-size:14px;font-weight:600">${reqs.length} total · ${mustCount} must · ${doneCount} done</span>
+      </div>
+    </div>
+
+    ${section('overview', 'Overview / Problem Statement', 'What problem does this project solve, and for whom? Click to edit…')}
+    ${section('goals', 'Goals & Objectives', 'List the primary goals and objectives. Click to edit…')}
+    ${section('metrics', 'Success Metrics', 'How will success be measured (KPIs, targets)? Click to edit…')}
+
+    <div class="grid-2" style="gap:16px;margin-bottom:16px">
+      ${section('scopeIn', 'In Scope', 'What is included in this project? Click to edit…').replace('margin-bottom:16px','margin-bottom:0')}
+      ${section('scopeOut', 'Out of Scope', 'What is explicitly excluded? Click to edit…').replace('margin-bottom:16px','margin-bottom:0')}
+    </div>
+
+    ${section('assumptions', 'Assumptions & Constraints', 'List assumptions, dependencies, and constraints. Click to edit…')}
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)">
+        <div class="op-block-title" style="margin:0">Requirements</div>
+        <button class="btn btn-secondary btn-sm prd-no-print" id="prd-add-req-2">${I.plus} Add</button>
+      </div>
+      ${reqs.length ? `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:70px">ID</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Requirement</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:140px">Type</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Priority</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:130px">Status</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="width:44px" class="prd-no-print"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${reqs.map(r => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 14px;font-weight:600;color:var(--text-muted);font-variant-numeric:tabular-nums">${r.code}</td>
+              <td style="padding:10px 14px">
+                <span class="prd-req-edit" data-rid="${r.id}" data-field="title"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${r.title ? escapeHtml(r.title) : '<span style="color:#bbb">Describe requirement…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="prd-req-cycle" data-rid="${r.id}" data-field="type" title="Click to change" style="cursor:pointer">${prdBadge(r.type, '#0891b2')}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="prd-req-cycle" data-rid="${r.id}" data-field="priority" title="Click to change" style="cursor:pointer">${prdBadge(r.priority, PRD_PRIORITY_COLOR[r.priority])}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="prd-req-cycle" data-rid="${r.id}" data-field="status" title="Click to change" style="cursor:pointer">${prdBadge(r.status, PRD_REQ_STATUS_COLOR[r.status])}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="prd-req-edit" data-rid="${r.id}" data-field="owner"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${r.owner ? escapeHtml(r.owner) : '<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px;text-align:center" class="prd-no-print">
+                <button class="btn-icon prd-req-del" data-rid="${r.id}" title="Delete requirement" style="color:#ef4444">${ico(I.trash,15)}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `
+        <div style="text-align:center;padding:50px;color:var(--text-muted)">
+          No requirements yet. Click “Add Requirement” to capture the first one.
+        </div>`}
+    </div>
+  `;
+
+  // --- print ---
+  document.getElementById('prd-print-btn').addEventListener('click', () => window.print());
+
+  // --- add requirement ---
+  document.getElementById('prd-add-req').addEventListener('click', () => openPRDReqModal());
+  document.getElementById('prd-add-req-2')?.addEventListener('click', () => openPRDReqModal());
+
+  // --- narrative section inline edit (multiline) ---
+  document.querySelectorAll('.prd-edit').forEach(el => {
+    el.addEventListener('mouseenter', () => { el.style.background = '#f0f7ff'; });
+    el.addEventListener('mouseleave', () => { el.style.background = ''; });
+    el.addEventListener('click', () => {
+      const field = el.dataset.field;
+      const ta = document.createElement('textarea');
+      ta.value = doc[field] || '';
+      ta.rows = Math.max(3, (ta.value.match(/\n/g) || []).length + 3);
+      ta.style.cssText = 'border:1px solid #6366f1;border-radius:4px;padding:8px;font:inherit;line-height:1.6;color:#475569;width:100%;box-sizing:border-box;outline:none;resize:vertical';
+      el.replaceWith(ta);
+      ta.focus();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { doc[field] = ta.value.trim(); touchPRD(p.id); }
+        renderPRD();
+      };
+      ta.addEventListener('blur', () => commit(true));
+      ta.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter' && (ke.metaKey || ke.ctrlKey)) { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- meta inline edit (version, author) ---
+  document.querySelectorAll('.prd-meta-edit').forEach(el => {
+    el.addEventListener('mouseenter', () => { el.style.background = '#f0f7ff'; });
+    el.addEventListener('mouseleave', () => { el.style.background = ''; });
+    el.addEventListener('click', () => {
+      const field = el.dataset.field;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = doc[field] || '';
+      input.style.cssText = 'border:1px solid #6366f1;border-radius:4px;padding:2px 6px;font-size:14px;font-weight:600;width:120px;outline:none';
+      el.replaceWith(input);
+      input.focus(); input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { doc[field] = input.value.trim(); touchPRD(p.id); }
+        renderPRD();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- doc status cycle ---
+  document.querySelector('.prd-doc-status')?.addEventListener('click', () => {
+    const i = PRD_DOC_STATUSES.indexOf(doc.status);
+    doc.status = PRD_DOC_STATUSES[(i + 1) % PRD_DOC_STATUSES.length];
+    touchPRD(p.id);
+    renderPRD();
+  });
+
+  // --- requirement text inline edit (title, owner) ---
+  document.querySelectorAll('.prd-req-edit').forEach(span => {
+    span.addEventListener('mouseenter', () => { span.style.background = '#f0f7ff'; });
+    span.addEventListener('mouseleave', () => { span.style.background = ''; });
+    span.addEventListener('click', () => {
+      const req = doc.requirements.find(r => r.id === +span.dataset.rid);
+      if (!req) return;
+      const field = span.dataset.field;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = req[field] || '';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + Math.max(120, ((req[field]||'').length + 2) * 8) + 'px;outline:none';
+      span.replaceWith(input);
+      input.focus(); input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { req[field] = input.value.trim(); touchPRD(p.id); }
+        renderPRD();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- requirement badge cycles (type, priority, status) ---
+  const cycleMap = { type: PRD_REQ_TYPES, priority: PRD_PRIORITIES, status: PRD_REQ_STATUSES };
+  document.querySelectorAll('.prd-req-cycle').forEach(el => {
+    el.addEventListener('click', () => {
+      const req = doc.requirements.find(r => r.id === +el.dataset.rid);
+      if (!req) return;
+      const field = el.dataset.field;
+      const opts = cycleMap[field];
+      const i = opts.indexOf(req[field]);
+      req[field] = opts[(i + 1) % opts.length];
+      touchPRD(p.id);
+      renderPRD();
+    });
+  });
+
+  // --- delete requirement ---
+  document.querySelectorAll('.prd-req-del').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!confirm('Delete this requirement?')) return;
+      doc.requirements = doc.requirements.filter(r => r.id !== +el.dataset.rid);
+      touchPRD(p.id);
+      toast('Requirement deleted');
+      renderPRD();
+    });
+  });
+}
+
+function openPRDReqModal() {
+  const p = STATE.currentProject;
+  if (!p) { toast('No project selected', 'warning'); return; }
+  const doc = getPRD(p.id);
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>Add Requirement</h3>
+      <button class="btn-icon" id="prd-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:grid;grid-template-columns:120px 1fr;gap:16px 14px;align-items:center">
+      <label class="form-label" for="prd-req-title" style="margin:0;text-align:left">Requirement</label>
+      <input class="form-input" id="prd-req-title" placeholder="e.g. Users can reset their password via email"/>
+
+      <label class="form-label" for="prd-req-type" style="margin:0;text-align:left">Type</label>
+      <select class="form-select" id="prd-req-type">
+        ${PRD_REQ_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}
+      </select>
+
+      <label class="form-label" for="prd-req-priority" style="margin:0;text-align:left">Priority</label>
+      <select class="form-select" id="prd-req-priority">
+        ${PRD_PRIORITIES.map(pr=>`<option value="${pr}" ${pr==='Should'?'selected':''}>${pr}</option>`).join('')}
+      </select>
+
+      <label class="form-label" for="prd-req-status" style="margin:0;text-align:left">Status</label>
+      <select class="form-select" id="prd-req-status">
+        ${PRD_REQ_STATUSES.map(s=>`<option value="${s}">${s}</option>`).join('')}
+      </select>
+
+      <label class="form-label" for="prd-req-owner" style="margin:0;text-align:left">Owner</label>
+      <input class="form-input" id="prd-req-owner" placeholder="e.g. AM"/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="prd-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="prd-modal-save">Add requirement</button>
+    </div>`;
+
+  const close = () => { overlay.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('prd-modal-close').addEventListener('click', close);
+  document.getElementById('prd-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  document.getElementById('prd-modal-save').addEventListener('click', () => {
+    const title = document.getElementById('prd-req-title').value.trim();
+    if (!title) { toast('Requirement text is required', 'warning'); return; }
+    const maxId = Math.max(0, ...Object.values(DATA.prds || {}).flatMap(d => d.requirements.map(r => r.id)));
+    const seq = doc.requirements.length + 1;
+    doc.requirements.push({
+      id: maxId + 1,
+      code: 'REQ-' + String(seq).padStart(3, '0'),
+      title,
+      type: document.getElementById('prd-req-type').value,
+      priority: document.getElementById('prd-req-priority').value,
+      status: document.getElementById('prd-req-status').value,
+      owner: document.getElementById('prd-req-owner').value.trim()
+    });
+    touchPRD(p.id);
+    toast('Requirement added');
+    close();
+    renderPRD();
   });
 }
 
@@ -5088,6 +5623,7 @@ function openIssueDetail(id) {
 
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:flex-start;justify-content:flex-end';
+  overlay.className = 'app-modal';
   overlay.innerHTML = `
     <div style="width:480px;height:100%;background:var(--card);overflow-y:auto;padding:28px;box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column;gap:16px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between">
@@ -5124,6 +5660,7 @@ function openIssueDetail(id) {
 function openIssueModal() {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center';
+  overlay.className = 'app-modal';
   overlay.innerHTML = `
     <div style="background:var(--card);border-radius:14px;padding:28px;width:500px;max-width:95vw;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,.18)">
       <div style="display:flex;align-items:center;justify-content:space-between">
@@ -5206,6 +5743,7 @@ function openIssueModal() {
 function openIssueViewModal() {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center';
+  overlay.className = 'app-modal';
   overlay.innerHTML = `
     <div style="background:var(--card);border-radius:14px;padding:28px;width:420px;max-width:95vw;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,.18)">
       <div style="display:flex;align-items:center;justify-content:space-between">
@@ -5725,9 +6263,53 @@ function makeEditableMultiline(value, onSave, placeholder) {
 }
 
 // --- INIT ---
+// Global Escape: close the topmost open dialog/overlay/panel. Checked from
+// topmost (most recently opened) to bottommost — the first open one is closed.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+
+  // Inline field editors handle their own Escape (cancel) and take precedence:
+  // blur to dismiss the editor before any parent dialog closes.
+  const ae = document.activeElement;
+  if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) { ae.blur(); e.stopPropagation(); return; }
+
+  // 1. Ad-hoc overlays appended to <body> (issue detail, new issue, new view) — topmost.
+  const overlays = document.querySelectorAll('body > .app-modal');
+  if (overlays.length) { overlays[overlays.length - 1].remove(); e.stopPropagation(); return; }
+
+  // 2. Shared modal overlay (report / risk / PRD modals).
+  const modalOverlay = document.getElementById('modal-overlay');
+  if (modalOverlay && !modalOverlay.classList.contains('hidden')) {
+    modalOverlay.classList.add('hidden');
+    const box = document.getElementById('modal-box');
+    if (box) box.innerHTML = '';
+    e.stopPropagation();
+    return;
+  }
+
+  // 3. Toggled fixed modals (display flex/none).
+  for (const id of ['automation-modal', 'action-modal', 'run-modal']) {
+    const m = document.getElementById(id);
+    if (m && m.style.display !== 'none') { m.style.display = 'none'; e.stopPropagation(); return; }
+  }
+
+  // 4. Wizard / template shells.
+  const shellOverlay = document.getElementById('wizard-shell') || document.getElementById('wt-overlay');
+  if (shellOverlay) { shellOverlay.remove(); e.stopPropagation(); return; }
+
+  // 5. Workflow builder: close the action detail panel first, then the builder itself.
+  if (document.getElementById('wf-builder-shell')) {
+    const detailClose = document.getElementById('detail-close');
+    if (detailClose) { detailClose.click(); e.stopPropagation(); return; }
+    const back = document.getElementById('wf-back-btn');
+    if (back) { back.click(); e.stopPropagation(); return; }
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   restoreUserSettings();
   restoreNotes();
+  restorePRDs();
   restoreLocation();
   renderSidebar();
   render();
