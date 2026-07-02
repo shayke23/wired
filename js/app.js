@@ -430,6 +430,22 @@ DATA.projects.forEach(p => { if (!p.decisions) p.decisions = []; });
   { id:5, title:'Original teal palette superseded by deep indigo', context:'Accessibility contrast testing failed on the teal-on-white combination.', alternatives:'Darken teal, add outlines', owner:'LM', date:'2026-06-01', impact:'low', status:'superseded' }
 ];
 
+// --- DEBRIEF SEED ---
+// Every project carries a debrief log (retrospective insights + follow-ups).
+DATA.projects.forEach(p => { if (!p.debriefs) p.debriefs = []; });
+(DATA.projects.find(p => p.id === 1) || {}).debriefs = [
+  { id:1, date:'2026-06-30', summary:'API contract freeze unlocked parallel work', category:'went-well', owner:'SR', status:'addressed', notes:'Frontend and backend stopped blocking each other; adopt contract-first kickoff on every epic.' },
+  { id:2, date:'2026-06-30', summary:'Load testing started too late', category:'went-wrong', owner:'TK', status:'open', notes:'Performance issues surfaced two weeks before beta. Schedule load tests at 50% task completion.' },
+  { id:3, date:'2026-06-30', summary:'Standups drifted into status theater', category:'improvement', owner:'AM', status:'open', notes:'Updates repeated the board; switch to blocker-only standup format.' }
+];
+(DATA.projects.find(p => p.id === 2) || {}).debriefs = [
+  { id:4, date:'2026-06-15', summary:'JD turned around the logo revision overnight', category:'kudos', owner:'JD', status:'addressed', notes:'Unblocked the print vendor deadline with hours to spare.' },
+  { id:5, date:'2026-06-15', summary:'Stakeholder review loops were too long', category:'went-wrong', owner:'JD', status:'open', notes:'Each design round waited 4–6 days on sponsor feedback. Agree a 48h feedback SLA.' }
+];
+(DATA.projects.find(p => p.id === 5) || {}).debriefs = [
+  { id:6, date:'2026-06-05', summary:'Evidence collection template saved a full week', category:'went-well', owner:'LM', status:'addressed', notes:'Auditors accepted the pre-packaged evidence bundles on first pass; reuse next year.' }
+];
+
 // --- QUALITY / TEST PLANS SEED ---
 // Manual + automation test plans with execution status per project.
 DATA.testPlans = [
@@ -449,6 +465,23 @@ DATA.testPlans = [
   { id:12, name:'Data Platform — Pipeline Contract Tests', kind:'automation', project:'Data Platform', projectId:3, owner:'FG', ownerColor:'#a855f7', status:'draft', priority:'high', framework:'pytest', schedule:'Not scheduled', coverage:12, duration:'—', lastRun:'Never', tests:{ total:38, passed:0, failed:0, blocked:0, pending:38 } },
   { id:13, name:'Compliance Audit — Security Scans', kind:'automation', project:'Compliance Audit', projectId:5, owner:'HQ', ownerColor:'#14b8a6', status:'passed', priority:'critical', framework:'OWASP ZAP', schedule:'Weekly', coverage:0, duration:'8m 55s', lastRun:'2026-05-30', tests:{ total:52, passed:52, failed:0, blocked:0, pending:0 } },
   { id:14, name:'Partner Portal — Smoke Automation', kind:'automation', project:'Partner Portal', projectId:6, owner:'LI', ownerColor:'#14b8a6', status:'blocked', priority:'low', framework:'Cypress', schedule:'Paused', coverage:34, duration:'—', lastRun:'2026-06-14', tests:{ total:40, passed:12, failed:2, blocked:24, pending:2 } }
+];
+
+// --- SECURITY FINDINGS SEED ---
+// Open + resolved security findings per project (vulns, access, compliance, data).
+DATA.securityFindings = [
+  { id:1,  projectId:1, title:'OAuth tokens stored without encryption at rest',        category:'data',           severity:'critical', status:'open',        owner:'SR', source:'Pen test',       due:'2026-07-08' },
+  { id:2,  projectId:1, title:'API rate limiting missing on public endpoints',          category:'vulnerability',  severity:'high',     status:'in-progress', owner:'LI', source:'Security scan',  due:'2026-07-15' },
+  { id:3,  projectId:1, title:'Stale service-account keys older than 90 days',          category:'access',         severity:'medium',   status:'open',        owner:'AM', source:'Access review',  due:'2026-07-20' },
+  { id:4,  projectId:1, title:'Dependency CVE-2026-1183 in payment SDK',                category:'vulnerability',  severity:'high',     status:'resolved',    owner:'SR', source:'Dependabot',     due:'2026-06-20' },
+  { id:5,  projectId:2, title:'Marketing asset bucket publicly listable',               category:'data',           severity:'medium',   status:'resolved',    owner:'JD', source:'Cloud audit',    due:'2026-06-12' },
+  { id:6,  projectId:3, title:'PII columns unmasked in analytics replicas',             category:'data',           severity:'critical', status:'in-progress', owner:'FG', source:'Data review',    due:'2026-07-10' },
+  { id:7,  projectId:3, title:'Pipeline secrets committed to repo history',             category:'access',         severity:'high',     status:'open',        owner:'SR', source:'Secret scan',    due:'2026-07-05' },
+  { id:8,  projectId:4, title:'Mobile app allows screenshots on sensitive screens',     category:'compliance',     severity:'low',      status:'open',        owner:'GB', source:'App review',     due:'2026-07-30' },
+  { id:9,  projectId:4, title:'Certificate pinning not enforced on API calls',          category:'vulnerability',  severity:'medium',   status:'in-progress', owner:'FS', source:'Pen test',       due:'2026-07-18' },
+  { id:10, projectId:5, title:'Quarterly access recertification overdue for 4 users',   category:'compliance',     severity:'high',     status:'open',        owner:'LM', source:'Audit control',  due:'2026-07-04' },
+  { id:11, projectId:5, title:'Audit log retention below 12-month requirement',         category:'compliance',     severity:'medium',   status:'resolved',    owner:'LM', source:'Audit control',  due:'2026-05-30' },
+  { id:12, projectId:6, title:'Partner API keys shared across environments',            category:'access',         severity:'high',     status:'open',        owner:'DC', source:'Access review',  due:'2026-07-12' }
 ];
 
 // --- STATE ---
@@ -478,7 +511,9 @@ const STATE = {
   resourceTab: 'overview',
   commercialTab: 'overview',
   risksFilter: { severity: '', status: '' },
+  securityFilter: { severity: '', status: '', category: '' },
   decisionsFilter: { impact: '', status: '' },
+  debriefsFilter: { category: '', status: '' },
   teamView: 'table',
   workflowView: 'table',
   qualityTab: 'manual',
@@ -645,6 +680,7 @@ function renderSidebar() {
   if (DATA.user.settings.showNotes) {
     globalNav.push({ id:'notes', label:'Notes', icon:I.fileText });
   }
+  globalNav.sort((a, b) => a.label.localeCompare(b.label));
   const criticalIssues = DATA.issues.filter(i => i.priority === 'critical' && i.status !== 'done').length;
   const projectScopedNav = STATE.currentProject ? [
     { id:'one-pager',    label:'1 Pager',      icon:I.fileText },
@@ -652,7 +688,9 @@ function renderSidebar() {
     { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
     { id:'issues',       label:'Issues',       icon:I.issues,   badge: criticalIssues || null },
     { id:'risks',        label:'Risks',        icon:I.shield,   badge: STATE.currentProject.risks.filter(r=>r.open).length || null },
+    { id:'security',     label:'Security',     icon:I.lock,     badge: DATA.securityFindings.filter(s=>s.projectId===STATE.currentProject.id && s.status!=='resolved' && (s.severity==='high'||s.severity==='critical')).length || null },
     { id:'decisions',    label:'Decisions',    icon:I.gitBranch, badge: (STATE.currentProject.decisions||[]).filter(d=>d.status==='proposed').length || null },
+    { id:'debrief',      label:'Debrief',      icon:I.history,  badge: (STATE.currentProject.debriefs||[]).filter(d=>d.status==='open').length || null },
     { id:'actions',      label:'Actions',      icon:I.actions },
     { id:'resources',    label:'Resources',    icon:I.resource },
     { id:'policies',     label:'Policies',     icon:I.zap },
@@ -663,6 +701,7 @@ function renderSidebar() {
     { id:'reports',      label:'Reports',      icon:I.reports },
     { id:'integrations', label:'Integrations', icon:I.plug },
   ] : [];
+  projectScopedNav.sort((a, b) => a.label.localeCompare(b.label));
 
   const navItem = n => `
     <div class="nav-item ${STATE.currentPage===n.id?'active':''}" data-page="${n.id}">
@@ -679,8 +718,7 @@ function renderSidebar() {
       </svg>
     </button>
     <div class="sidebar-logo">
-      <div class="logo-mark">W</div>
-      <span class="logo-name">Wired</span>
+      <img class="logo-mark" src="wired.png" alt="Wired logo" />
     </div>
     <div class="sidebar-body">
       <nav class="sidebar-nav sidebar-nav--global">
@@ -868,7 +906,9 @@ function render() {
   switch(STATE.currentPage) {
     case 'dashboard': renderDashboard(); break;
     case 'risks':     renderRisks(); break;
+    case 'security':  renderSecurity(); break;
     case 'decisions': renderDecisions(); break;
+    case 'debrief':   renderDebrief(); break;
     case 'resources': renderResources(); break;
     case 'commercial': renderCommercial(); break;
     case 'quality': renderQuality(); break;
@@ -2151,6 +2191,7 @@ function applyWireProposal(p) {
       if (!proj.risks) proj.risks = [];
       const r = { id: _wireId(), desc: p.payload.risk.desc, severity: p.payload.risk.severity, owner: p.payload.risk.owner, open: true };
       proj.risks.push(r);
+      p.result = `Risk #${r.id} was created on ${p.project} — "${r.desc}" (${_cap(r.severity)}, owner ${r.owner})`;
       p._undo = () => { const i = proj.risks.indexOf(r); if (i >= 0) proj.risks.splice(i, 1); };
     } else if (p.entity === 'issue') {
       const o = p.payload.issue;
@@ -2159,12 +2200,14 @@ function applyWireProposal(p) {
         reporter: DATA.user.initials, created: _wireToday(), updated: _wireToday(), due: o.due,
         labels: o.labels || [], description: o.description || '' };
       DATA.issues.push(it);
+      p.result = `Issue #${it.id} was created on ${p.project} — "${it.title}" (${_cap(it.priority)}, assigned ${it.assignee}, due ${it.due})`;
       p._undo = () => { const i = DATA.issues.indexOf(it); if (i >= 0) DATA.issues.splice(i, 1); };
     } else if (p.entity === 'approval') {
       const o = p.payload.approval;
       const ap = { id: _wireId(), title: o.title, desc: o.desc, policy: o.policy, project: p.project,
         projectId: p.projectId, action: o.action || 'notify', urgency: o.urgency, age: 'just now' };
       DATA.approvals.push(ap);
+      p.result = `Approval #${ap.id} was added to the queue for ${p.project} — "${ap.title}"`;
       p._undo = () => { const i = DATA.approvals.indexOf(ap); if (i >= 0) DATA.approvals.splice(i, 1); };
     } else if (p.entity === 'task') {
       const o = p.payload.task;
@@ -2174,6 +2217,7 @@ function applyWireProposal(p) {
       DATA.tasks[p.projectId].push(t);
       const proj = DATA.projects.find(x => x.id === p.projectId);
       if (proj && proj.tasks) proj.tasks.total++;
+      p.result = `Task #${t.id} was created on ${p.project} — "${t.name}" (assigned ${t.assignee}, due ${t.due})`;
       p._undo = () => {
         const arr = DATA.tasks[p.projectId] || []; const i = arr.indexOf(t); if (i >= 0) arr.splice(i, 1);
         if (proj && proj.tasks) proj.tasks.total--;
@@ -2187,7 +2231,10 @@ function applyWireProposal(p) {
       const prev = {};
       Object.keys(p.payload.changes).forEach(k => { prev[k] = target[k]; target[k] = p.payload.changes[k]; });
       if ('updated' in target) target.updated = _wireToday();
+      p.result = `${_cap(p.entity)} #${target.id} was updated on ${p.project} — "${p.payload.targetLabel}": ${p.payload.changeLabel}`;
       p._undo = () => { Object.keys(prev).forEach(k => { target[k] = prev[k]; }); };
+    } else {
+      p.result = `Could not locate "${p.payload.targetLabel}" — no change was made`;
     }
   }
   p.status = 'applied';
@@ -2197,6 +2244,7 @@ function undoWireProposal(p) {
   if (!p || p.status !== 'applied') return;
   if (typeof p._undo === 'function') p._undo();
   p._undo = null;
+  p.result = null;
   p.status = 'pending';
 }
 
@@ -2291,6 +2339,8 @@ function wireCard(p) {
         <span class="wire-src-meta"><strong style="color:${p.authorColor}">${escapeHtml(p.author)}</strong> · ${p.when}</span>
         <div class="wire-raw">“${escapeHtml(p.raw)}”</div>
       </div>
+      ${p.status === 'applied' && p.result ? `
+      <div class="wire-result">${ico(I.checkCircle, 14)}<span>${escapeHtml(p.result)}</span></div>` : ''}
       <div class="wire-card-actions">${actions}</div>
     </div>`;
 }
@@ -2359,13 +2409,20 @@ function bindWireReview() {
   const find = id => (STATE.wireProposals || []).find(p => p.id === id);
 
   root.querySelectorAll('[data-wire-accept]').forEach(b => b.addEventListener('click', () => {
-    applyWireProposal(find(b.dataset.wireAccept)); renderSidebar(); toast('Change applied'); renderWireReview();
+    const p = find(b.dataset.wireAccept);
+    applyWireProposal(p); renderSidebar();
+    toast(p && p.result ? p.result : 'Change applied');
+    renderWireReview();
   }));
   root.querySelectorAll('[data-wire-dismiss]').forEach(b => b.addEventListener('click', () => {
     const p = find(b.dataset.wireDismiss); if (p) p.status = 'dismissed'; renderWireReview();
   }));
   root.querySelectorAll('[data-wire-undo]').forEach(b => b.addEventListener('click', () => {
-    undoWireProposal(find(b.dataset.wireUndo)); renderSidebar(); toast('Change reverted'); renderWireReview();
+    const p = find(b.dataset.wireUndo);
+    const was = p && p.result;
+    undoWireProposal(p); renderSidebar();
+    toast(was ? 'Reverted: ' + was : 'Change reverted', 'warning');
+    renderWireReview();
   }));
   root.querySelectorAll('[data-wire-restore]').forEach(b => b.addEventListener('click', () => {
     const p = find(b.dataset.wireRestore); if (p) p.status = 'pending'; renderWireReview();
@@ -2373,8 +2430,13 @@ function bindWireReview() {
   root.querySelectorAll('[data-wire-view]').forEach(b => b.addEventListener('click', () => wireView(find(b.dataset.wireView))));
 
   root.querySelector('#wire-accept-all')?.addEventListener('click', () => {
-    (STATE.wireProposals || []).filter(p => p.status === 'pending').forEach(applyWireProposal);
-    renderSidebar(); toast('All changes applied'); renderWireReview();
+    const batch = (STATE.wireProposals || []).filter(p => p.status === 'pending');
+    batch.forEach(applyWireProposal);
+    const created = batch.filter(p => p.op === 'create').length;
+    const updated = batch.filter(p => p.op === 'update').length;
+    renderSidebar();
+    toast(`${created} item${created === 1 ? '' : 's'} created, ${updated} updated — see each card for details`);
+    renderWireReview();
   });
   root.querySelector('#wire-dismiss-all')?.addEventListener('click', () => {
     (STATE.wireProposals || []).filter(p => p.status === 'pending').forEach(p => { p.status = 'dismissed'; });
@@ -5975,6 +6037,305 @@ function openRiskModal() {
 }
 
 // ============================================================
+// SECURITY — project security findings register
+// ============================================================
+const SEC_SEVERITIES = ['low','medium','high','critical'];
+const SEC_STATUSES   = ['open','in-progress','resolved'];
+const SEC_CATEGORIES = ['vulnerability','access','data','compliance'];
+const SEC_STATUS_COLOR   = { 'open':'#ef4444', 'in-progress':'#f59e0b', 'resolved':'#10b981' };
+const SEC_CATEGORY_COLOR = { vulnerability:'#ef4444', access:'#6366f1', data:'#0ea5e9', compliance:'#8b5cf6' };
+
+function secLabel(v) { return v.split('-').map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
+
+function secBadge(value, color) {
+  return `<span class="badge" style="background:${color}1a;color:${color}"><span class="badge-dot" style="background:${color}"></span>${secLabel(value)}</span>`;
+}
+
+function findSecurityFinding(findingId) {
+  return DATA.securityFindings.find(s => s.id === findingId) || null;
+}
+
+function restoreSecurityFilters() {
+  const key = 'securityFilters_' + (STATE.currentProject ? STATE.currentProject.id : 'none');
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  if (saved && Object.keys(saved).length) STATE.securityFilter = { severity:'', status:'', category:'', ...saved };
+  else STATE.securityFilter = { severity:'', status:'', category:'' };
+}
+
+function renderSecurity() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: 'Security' }]);
+  restoreSecurityFilters();
+  const filterKey = 'securityFilters_' + p.id;
+
+  const all = DATA.securityFindings.filter(s => s.projectId === p.id);
+  const f = STATE.securityFilter;
+  let rows = [...all];
+  if (f.severity) rows = rows.filter(s => s.severity === f.severity);
+  if (f.status)   rows = rows.filter(s => s.status === f.status);
+  if (f.category) rows = rows.filter(s => s.category === f.category);
+
+  const open = all.filter(s => s.status !== 'resolved').length;
+  const high = all.filter(s => s.status !== 'resolved' && (s.severity === 'high' || s.severity === 'critical')).length;
+  const resolved = all.length - open;
+
+  const stat = (val, label, color) => `
+    <div class="card" style="flex:1;padding:16px 18px">
+      <div style="font-size:28px;font-weight:800;color:${color||'var(--text)'};line-height:1">${val}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${label}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Security</div>
+        <div class="page-subtitle">${p.name} · ${all.length} finding${all.length!==1?'s':''} · ${open} open · ${high} high/critical</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" id="btn-new-finding">${I.plus} New Finding</button>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mb-5">
+      ${stat(all.length, 'Total findings')}
+      ${stat(open, 'Open', '#f59e0b')}
+      ${stat(high, 'High / Critical open', '#ef4444')}
+      ${stat(resolved, 'Resolved', '#10b981')}
+    </div>
+
+    <div class="flex gap-3 mb-4" style="align-items:center">
+      <select class="form-select" id="sec-f-severity" style="max-width:160px">
+        <option value="">All severities</option>
+        ${SEC_SEVERITIES.map(s=>`<option value="${s}" ${f.severity===s?'selected':''}>${secLabel(s)}</option>`).join('')}
+      </select>
+      <select class="form-select" id="sec-f-status" style="max-width:150px">
+        <option value="">All statuses</option>
+        ${SEC_STATUSES.map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${secLabel(s)}</option>`).join('')}
+      </select>
+      <select class="form-select" id="sec-f-category" style="max-width:160px">
+        <option value="">All categories</option>
+        ${SEC_CATEGORIES.map(c=>`<option value="${c}" ${f.category===c?'selected':''}>${secLabel(c)}</option>`).join('')}
+      </select>
+      ${(f.severity||f.status||f.category)?`<button class="btn btn-secondary btn-sm" id="sec-f-clear">Clear filters</button>`:''}
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">${rows.length} shown</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      ${rows.length ? `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Finding</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:130px">Category</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Severity</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Source</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Due</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Status</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(s => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 14px">
+                <span class="sec-edit" data-sid="${s.id}" data-field="title"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${escapeHtml(s.title)||'<span style="color:#bbb">Describe finding…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-category" data-sid="${s.id}" title="Click to change category"
+                  style="cursor:pointer">${secBadge(s.category, SEC_CATEGORY_COLOR[s.category])}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-sev" data-sid="${s.id}" title="Click to change severity"
+                  style="cursor:pointer">${priorityBadge(s.severity)}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-edit" data-sid="${s.id}" data-field="source"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${escapeHtml(s.source)||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-edit" data-sid="${s.id}" data-field="owner"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${escapeHtml(s.owner)||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-edit" data-sid="${s.id}" data-field="due"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${escapeHtml(s.due)||'<span style="color:#bbb">Set date…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="sec-status" data-sid="${s.id}" title="Click to change status"
+                  style="cursor:pointer">${secBadge(s.status, SEC_STATUS_COLOR[s.status])}</span>
+              </td>
+              <td style="padding:10px 14px;text-align:center">
+                <button class="btn-icon sec-del" data-sid="${s.id}" title="Delete finding" style="color:#ef4444">${ico(I.trash,15)}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `
+        <div style="text-align:center;padding:60px;color:var(--text-muted)">
+          ${(f.severity||f.status||f.category)?'No findings match the current filters.':'No security findings logged yet. Click “New Finding” to add one.'}
+        </div>`}
+    </div>
+  `;
+
+  // --- filters ---
+  const setFilter = (key, val) => {
+    STATE.securityFilter[key] = val;
+    localStorage.setItem(filterKey, JSON.stringify(STATE.securityFilter));
+    renderSecurity();
+  };
+  document.getElementById('sec-f-severity').addEventListener('change', e => setFilter('severity', e.target.value));
+  document.getElementById('sec-f-status').addEventListener('change', e => setFilter('status', e.target.value));
+  document.getElementById('sec-f-category').addEventListener('change', e => setFilter('category', e.target.value));
+  document.getElementById('sec-f-clear')?.addEventListener('click', () => {
+    STATE.securityFilter = { severity:'', status:'', category:'' };
+    localStorage.removeItem(filterKey);
+    renderSecurity();
+  });
+
+  document.getElementById('btn-new-finding').addEventListener('click', () => openSecurityFindingModal());
+
+  // --- inline text edit (title, source, owner, due) ---
+  document.querySelectorAll('.sec-edit').forEach(span => {
+    span.addEventListener('mouseenter', () => { span.style.background = '#f0f7ff'; });
+    span.addEventListener('mouseleave', () => { span.style.background = ''; });
+    span.addEventListener('click', () => {
+      const finding = findSecurityFinding(+span.dataset.sid);
+      if (!finding) return;
+      const field = span.dataset.field;
+      const isDate = field === 'due';
+      const input = document.createElement('input');
+      input.type = isDate ? 'date' : 'text';
+      input.value = finding[field] || '';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + (isDate ? 150 : Math.max(120, ((finding[field]||'').length + 2) * 8)) + 'px;outline:none';
+      span.replaceWith(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { finding[field] = input.value.trim(); }
+        renderSecurity();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- badge cycles: severity, status, category ---
+  const bindCycle = (selector, field, values) => {
+    document.querySelectorAll(selector).forEach(el => {
+      el.addEventListener('click', () => {
+        const finding = findSecurityFinding(+el.dataset.sid);
+        if (!finding) return;
+        const i = values.indexOf(finding[field]);
+        finding[field] = values[(i + 1) % values.length];
+        renderSecurity();
+      });
+    });
+  };
+  bindCycle('.sec-sev', 'severity', SEC_SEVERITIES);
+  bindCycle('.sec-status', 'status', SEC_STATUSES);
+  bindCycle('.sec-category', 'category', SEC_CATEGORIES);
+
+  // --- delete ---
+  document.querySelectorAll('.sec-del').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!confirm('Delete this finding?')) return;
+      DATA.securityFindings = DATA.securityFindings.filter(s => s.id !== +el.dataset.sid);
+      toast('Finding deleted');
+      renderSecurity();
+    });
+  });
+}
+
+function openSecurityFindingModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>New Security Finding</h3>
+      <button class="btn-icon" id="sec-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">Finding</label>
+        <input class="form-input" id="sf-title" placeholder="e.g. API keys exposed in client bundle"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="sf-category">
+            ${SEC_CATEGORIES.map(c=>`<option value="${c}">${secLabel(c)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Severity</label>
+          <select class="form-select" id="sf-severity">
+            ${SEC_SEVERITIES.map(s=>`<option value="${s}" ${s==='medium'?'selected':''}>${secLabel(s)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Source</label>
+          <input class="form-input" id="sf-source" placeholder="e.g. Pen test"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Owner</label>
+          <input class="form-input" id="sf-owner" placeholder="e.g. SR"/>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Due date</label>
+          <input class="form-input" id="sf-due" type="date"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="sec-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="sec-modal-save">Add finding</button>
+    </div>`;
+
+  const close = () => {
+    overlay.classList.add('hidden');
+    box.innerHTML = '';
+    document.removeEventListener('keydown', onEsc);
+  };
+  const onEsc = e => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onEsc);
+  document.getElementById('sec-modal-close').addEventListener('click', close);
+  document.getElementById('sec-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  document.getElementById('sec-modal-save').addEventListener('click', () => {
+    const title = document.getElementById('sf-title').value.trim();
+    if (!title) { toast('Finding description is required', 'warning'); return; }
+    const p = STATE.currentProject;
+    if (!p) { toast('No project selected', 'warning'); return; }
+    const maxId = Math.max(0, ...DATA.securityFindings.map(s => s.id));
+    DATA.securityFindings.push({
+      id: maxId + 1,
+      projectId: p.id,
+      title,
+      category: document.getElementById('sf-category').value,
+      severity: document.getElementById('sf-severity').value,
+      status: 'open',
+      owner: document.getElementById('sf-owner').value.trim() || '—',
+      source: document.getElementById('sf-source').value.trim(),
+      due: document.getElementById('sf-due').value
+    });
+    toast('Finding added');
+    close();
+    renderSecurity();
+  });
+}
+
+// ============================================================
 // DECISIONS — project decision log / register
 // ============================================================
 const DECISION_STATUSES = ['proposed', 'decided', 'deferred', 'superseded'];
@@ -6271,6 +6632,290 @@ function openDecisionModal() {
     close();
     renderSidebar();
     renderDecisions();
+  });
+}
+
+// ============================================================
+// DEBRIEF — project retrospective / lessons-learned log
+// ============================================================
+const DEBRIEF_CATEGORIES = ['went-well', 'went-wrong', 'improvement', 'kudos'];
+const DEBRIEF_STATUSES   = ['open', 'addressed'];
+const DEBRIEF_CATEGORY_LABEL = { 'went-well':'Went well', 'went-wrong':'Went wrong', improvement:'Improvement', kudos:'Kudos' };
+const DEBRIEF_CATEGORY_COLOR = { 'went-well':'#10b981', 'went-wrong':'#ef4444', improvement:'#f59e0b', kudos:'#8b5cf6' };
+const DEBRIEF_STATUS_COLOR   = { open:'#f59e0b', addressed:'#10b981' };
+
+function debriefBadge(value, label, color) {
+  return `<span class="badge" style="background:${color}1a;color:${color}"><span class="badge-dot" style="background:${color}"></span>${label}</span>`;
+}
+
+function findDebrief(projectId, debriefId) {
+  const p = DATA.projects.find(x => x.id === projectId);
+  if (!p || !p.debriefs) return null;
+  return p.debriefs.find(d => d.id === debriefId) || null;
+}
+
+function restoreDebriefFilters() {
+  const key = 'debriefFilters_' + (STATE.currentProject ? STATE.currentProject.id : 'none');
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  if (saved && Object.keys(saved).length) STATE.debriefsFilter = { category:'', status:'', ...saved };
+  else STATE.debriefsFilter = { category:'', status:'' };
+}
+
+function renderDebrief() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  if (!p.debriefs) p.debriefs = [];
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: 'Debrief' }]);
+  restoreDebriefFilters();
+  const filterKey = 'debriefFilters_' + p.id;
+
+  const f = STATE.debriefsFilter;
+  let rows = [...p.debriefs];
+  if (f.category) rows = rows.filter(d => d.category === f.category);
+  if (f.status)   rows = rows.filter(d => d.status === f.status);
+
+  const all = p.debriefs;
+  const openCount = all.filter(d => d.status === 'open').length;
+  const wentWell = all.filter(d => d.category === 'went-well').length;
+  const wentWrong = all.filter(d => d.category === 'went-wrong').length;
+
+  const stat = (val, label, color) => `
+    <div class="card" style="flex:1;padding:16px 18px">
+      <div style="font-size:28px;font-weight:800;color:${color||'var(--text)'};line-height:1">${val}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${label}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Debrief</div>
+        <div class="page-subtitle">${p.name} · ${all.length} insight${all.length!==1?'s':''} · ${openCount} open follow-up${openCount!==1?'s':''}</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" id="btn-new-debrief">${I.plus} New Insight</button>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mb-5">
+      ${stat(all.length, 'Total insights')}
+      ${stat(wentWell, 'Went well', '#10b981')}
+      ${stat(wentWrong, 'Went wrong', '#ef4444')}
+      ${stat(openCount, 'Open follow-ups', '#f59e0b')}
+    </div>
+
+    <div class="flex gap-3 mb-4" style="align-items:center">
+      <select class="form-select" id="db-f-category" style="max-width:170px">
+        <option value="">All categories</option>
+        ${DEBRIEF_CATEGORIES.map(c=>`<option value="${c}" ${f.category===c?'selected':''}>${DEBRIEF_CATEGORY_LABEL[c]}</option>`).join('')}
+      </select>
+      <select class="form-select" id="db-f-status" style="max-width:150px">
+        <option value="">All statuses</option>
+        ${DEBRIEF_STATUSES.map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      ${(f.category||f.status)?`<button class="btn btn-secondary btn-sm" id="db-f-clear">Clear filters</button>`:''}
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">${rows.length} shown</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      ${rows.length ? `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Date</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Summary</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:130px">Category</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Status</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Notes</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(d => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 14px">
+                <span class="db-edit" data-pid="${p.id}" data-did="${d.id}" data-field="date"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${escapeHtml(d.date)||'<span style="color:#bbb">Set date…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="db-edit" data-pid="${p.id}" data-did="${d.id}" data-field="summary"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px;font-weight:600">${escapeHtml(d.summary)||'<span style="color:#bbb">Summarize the insight…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="db-category" data-pid="${p.id}" data-did="${d.id}" title="Click to change category"
+                  style="cursor:pointer">${debriefBadge(d.category, DEBRIEF_CATEGORY_LABEL[d.category]||d.category, DEBRIEF_CATEGORY_COLOR[d.category]||'#6366f1')}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="db-edit" data-pid="${p.id}" data-did="${d.id}" data-field="owner"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${escapeHtml(d.owner)||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="db-status" data-pid="${p.id}" data-did="${d.id}" title="Click to toggle"
+                  style="cursor:pointer">${debriefBadge(d.status, d.status.charAt(0).toUpperCase()+d.status.slice(1), DEBRIEF_STATUS_COLOR[d.status]||'#f59e0b')}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="db-edit" data-pid="${p.id}" data-did="${d.id}" data-field="notes"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${escapeHtml(d.notes)||'<span style="color:#bbb">Add notes…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px;text-align:center">
+                <button class="btn-icon db-del" data-pid="${p.id}" data-did="${d.id}" title="Delete insight" style="color:#ef4444">${ico(I.trash,15)}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `
+        <div style="text-align:center;padding:60px;color:var(--text-muted)">
+          ${(f.category||f.status)?'No insights match the current filters.':'No insights logged yet. Click “New Insight” to add one.'}
+        </div>`}
+    </div>
+  `;
+
+  // --- filters ---
+  const setFilter = (key, val) => {
+    STATE.debriefsFilter[key] = val;
+    localStorage.setItem(filterKey, JSON.stringify(STATE.debriefsFilter));
+    renderDebrief();
+  };
+  document.getElementById('db-f-category').addEventListener('change', e => setFilter('category', e.target.value));
+  document.getElementById('db-f-status').addEventListener('change', e => setFilter('status', e.target.value));
+  document.getElementById('db-f-clear')?.addEventListener('click', () => {
+    STATE.debriefsFilter = { category:'', status:'' };
+    localStorage.removeItem(filterKey);
+    renderDebrief();
+  });
+
+  document.getElementById('btn-new-debrief').addEventListener('click', () => openDebriefModal());
+
+  // --- inline text edit ---
+  document.querySelectorAll('.db-edit').forEach(span => {
+    span.addEventListener('mouseenter', () => { span.style.background = '#f0f7ff'; });
+    span.addEventListener('mouseleave', () => { span.style.background = ''; });
+    span.addEventListener('click', () => {
+      const item = findDebrief(+span.dataset.pid, +span.dataset.did);
+      if (!item) return;
+      const field = span.dataset.field;
+      const isDate = field === 'date';
+      const input = document.createElement('input');
+      input.type = isDate ? 'date' : 'text';
+      input.value = item[field] || '';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + (isDate ? 150 : Math.max(140, ((item[field]||'').length + 2) * 8)) + 'px;outline:none';
+      span.replaceWith(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { item[field] = input.value.trim(); }
+        renderDebrief();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- category badge cycle ---
+  document.querySelectorAll('.db-category').forEach(el => {
+    el.addEventListener('click', () => {
+      const item = findDebrief(+el.dataset.pid, +el.dataset.did);
+      if (!item) return;
+      const i = DEBRIEF_CATEGORIES.indexOf(item.category);
+      item.category = DEBRIEF_CATEGORIES[(i + 1) % DEBRIEF_CATEGORIES.length];
+      renderDebrief();
+    });
+  });
+
+  // --- status toggle ---
+  document.querySelectorAll('.db-status').forEach(el => {
+    el.addEventListener('click', () => {
+      const item = findDebrief(+el.dataset.pid, +el.dataset.did);
+      if (!item) return;
+      item.status = item.status === 'open' ? 'addressed' : 'open';
+      renderSidebar();
+      renderDebrief();
+    });
+  });
+
+  // --- delete ---
+  document.querySelectorAll('.db-del').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!confirm('Delete this insight?')) return;
+      const proj = DATA.projects.find(x => x.id === +el.dataset.pid);
+      if (!proj) return;
+      proj.debriefs = proj.debriefs.filter(d => d.id !== +el.dataset.did);
+      toast('Insight deleted');
+      renderSidebar();
+      renderDebrief();
+    });
+  });
+}
+
+function openDebriefModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>New Insight</h3>
+      <button class="btn-icon" id="db-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">Summary</label>
+        <input class="form-input" id="db-summary" placeholder="e.g. Load testing started too late"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <input class="form-input" id="db-notes" placeholder="e.g. Performance issues surfaced two weeks before beta"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="db-category">
+            ${DEBRIEF_CATEGORIES.map(c=>`<option value="${c}" ${c==='improvement'?'selected':''}>${DEBRIEF_CATEGORY_LABEL[c]}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Owner</label>
+          <input class="form-input" id="db-owner" placeholder="e.g. AM"/>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="db-date" type="date"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="db-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="db-modal-save">Add insight</button>
+    </div>`;
+
+  const close = () => { overlay.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('db-modal-close').addEventListener('click', close);
+  document.getElementById('db-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  document.getElementById('db-modal-save').addEventListener('click', () => {
+    const summary = document.getElementById('db-summary').value.trim();
+    if (!summary) { toast('Summary is required', 'warning'); return; }
+    const p = STATE.currentProject;
+    if (!p) { toast('No project selected', 'warning'); return; }
+    if (!p.debriefs) p.debriefs = [];
+    const maxId = Math.max(0, ...DATA.projects.flatMap(pr => (pr.debriefs||[]).map(d => d.id)));
+    p.debriefs.push({
+      id: maxId + 1,
+      date: document.getElementById('db-date').value,
+      summary,
+      category: document.getElementById('db-category').value,
+      owner: document.getElementById('db-owner').value.trim() || '—',
+      status: 'open',
+      notes: document.getElementById('db-notes').value.trim()
+    });
+    toast('Insight added');
+    close();
+    renderSidebar();
+    renderDebrief();
   });
 }
 
@@ -7623,6 +8268,14 @@ document.addEventListener('keydown', (e) => {
     if (detailClose) { detailClose.click(); e.stopPropagation(); return; }
     const back = document.getElementById('wf-back-btn');
     if (back) { back.click(); e.stopPropagation(); return; }
+  }
+
+  // 6. Report detail (full inner page): Escape returns to the Reports grid.
+  if (STATE.openReport) {
+    STATE.openReport = null;
+    renderReports();
+    e.stopPropagation();
+    return;
   }
 });
 

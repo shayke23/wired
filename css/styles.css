@@ -132,12 +132,11 @@ ul, ol { list-style: none; }
   flex-shrink: 0;
 }
 .sidebar-logo .logo-mark {
-  width: 32px; height: 32px;
-  background: var(--c-primary);
+  width: 100%;
+  /* wired.png is 422x326; doubling the ratio halves the rendered height */
+  aspect-ratio: 844 / 326;
   border-radius: var(--r-md);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 16px; color: #fff;
-  flex-shrink: 0;
+  object-fit: contain;
 }
 .sidebar-logo .logo-name {
   font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.3px;
@@ -147,8 +146,14 @@ ul, ol { list-style: none; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: visible;
-  overflow-x: visible;
+  /* min-height:0 lets the body shrink below its content height (e.g. at high
+     browser zoom) and scroll internally, so the footer stays pinned on screen.
+     The project dropdown is position:fixed, so it is not clipped by this. */
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
 }
 .sidebar-nav {
   padding: var(--sp-4) 0;
@@ -351,6 +356,7 @@ ul, ol { list-style: none; }
   padding: var(--sp-4) var(--sp-5);
   border-top: 1px solid var(--c-sidebar-border);
   display: flex; align-items: center; gap: var(--sp-3);
+  flex-shrink: 0;
 }
 .sidebar-footer { cursor: pointer; transition: background var(--t); border-radius: 0; }
 .sidebar-footer:hover { background: var(--c-sidebar-hover); }
@@ -2219,3 +2225,12 @@ body.sidebar-hidden .wf-builder-shell { left: 0; }
 .wire-signal-title { font-size: 14px; font-weight: 700; color: var(--c-text); }
 .wire-signal-sub { font-size: 12.5px; color: var(--c-text-2); margin-top: 2px; line-height: 1.45; }
 .wire-signal-strip .btn { flex-shrink: 0; }
+
+/* Applied-result line: states exactly what Wire did (ticket created/updated) */
+.wire-result {
+  display: flex; align-items: flex-start; gap: 7px;
+  background: var(--c-success-light); border: 1px solid #A7F3D0; border-radius: var(--r-md);
+  padding: 8px 12px; margin-bottom: 12px;
+  font-size: 12.5px; font-weight: 500; color: #047857; line-height: 1.5;
+}
+.wire-result svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
