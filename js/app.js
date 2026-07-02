@@ -23,7 +23,9 @@ const DATA = {
       notifyApprovals: true, notifyMentions: true, notifyAssignments: true,
       notifyStatusChanges: false, notifyAutomations: true, quietHours: false,
       autoAssign: true, confirmDestructive: true, showCompletedTasks: false,
-      showNotes: true
+      showNotes: true,
+      wireMode: 'semi-auto',
+      tableBorderWidth: '1', tableBorderColor: '#334155'
     }
   },
 
@@ -215,6 +217,72 @@ const DATA = {
           { id: 39, name: 'Audit closed', type: 'milestone', required: true, desc: 'Formal audit closure' }
         ]}
       ]
+    },
+    {
+      id: 4, name: 'Customer Release', description: 'End-to-end product release lifecycle from planning to post-release monitoring.', projectType: 'Engineering', color: '#0ea5e9',
+      phases: [
+        { id: 14, name: 'Release Planning', color: '#0ea5e9', actions: [
+          { id: 40, name: 'Define release scope', type: 'document', required: true, desc: 'Lock features, fixes, and cut-off date for the release' },
+          { id: 41, name: 'Release schedule', type: 'document', required: true, desc: 'Timeline with code freeze, staging, and go-live dates' },
+          { id: 42, name: 'Risk assessment', type: 'review', required: false, desc: 'Identify release risks and mitigation plans' }
+        ]},
+        { id: 15, name: 'Readiness', color: '#8b5cf6', actions: [
+          { id: 43, name: 'Code freeze', type: 'milestone', required: true, desc: 'Freeze the release branch for stabilization' },
+          { id: 44, name: 'Release notes', type: 'document', required: true, desc: 'Draft customer-facing changelog and notes' },
+          { id: 45, name: 'Regression testing', type: 'task', required: true, desc: 'Full regression suite on the release candidate' },
+          { id: 46, name: 'Security review', type: 'review', required: true, desc: 'Security and dependency scan sign-off' }
+        ]},
+        { id: 16, name: 'Staging', color: '#d97706', actions: [
+          { id: 47, name: 'Deploy to staging', type: 'task', required: true, desc: 'Promote release candidate to the staging environment' },
+          { id: 48, name: 'Smoke tests', type: 'task', required: true, desc: 'Verify critical paths in staging' },
+          { id: 49, name: 'Stakeholder UAT', type: 'review', required: true, desc: 'Business and support sign-off on staging build' },
+          { id: 50, name: 'Go/No-go approval', type: 'approval', required: true, desc: 'Final release decision from release manager' }
+        ]},
+        { id: 17, name: 'Rollout', color: '#16a34a', actions: [
+          { id: 51, name: 'Deploy to production', type: 'milestone', required: true, desc: 'Ship the release to customers' },
+          { id: 52, name: 'Post-deploy verification', type: 'task', required: true, desc: 'Confirm health checks and key metrics after deploy' },
+          { id: 53, name: 'Customer announcement', type: 'task', required: true, desc: 'Publish release notes and notify customers' }
+        ]},
+        { id: 18, name: 'Post-release', color: '#6366f1', actions: [
+          { id: 54, name: 'Monitor & support', type: 'task', required: true, desc: 'Track errors, feedback, and incidents post-launch' },
+          { id: 55, name: 'Release retrospective', type: 'meeting', required: false, desc: 'Review what went well and improvement actions' }
+        ]}
+      ]
+    },
+    {
+      id: 5, name: 'RFP', description: 'Request for Proposal lifecycle from intake and qualification through vendor award.', projectType: 'Operations', color: '#7c3aed',
+      phases: [
+        { id: 19, name: 'Intake', color: '#7c3aed', actions: [
+          { id: 56, name: 'Log RFP request', type: 'document', required: true, desc: 'Capture the opportunity, source, and submission deadline' },
+          { id: 57, name: 'Bid/no-bid decision', type: 'approval', required: true, desc: 'Leadership go/no-go on pursuing the RFP' },
+          { id: 58, name: 'Assign proposal team', type: 'task', required: true, desc: 'Name the owner and contributors for each section' }
+        ]},
+        { id: 20, name: 'Requirements', color: '#6366f1', actions: [
+          { id: 59, name: 'Analyze RFP document', type: 'review', required: true, desc: 'Break down mandatory requirements, scope, and evaluation criteria' },
+          { id: 60, name: 'Compliance matrix', type: 'document', required: true, desc: 'Map each requirement to a proposal response and owner' },
+          { id: 61, name: 'Clarification questions', type: 'task', required: false, desc: 'Submit questions to the issuer before the Q&A deadline' }
+        ]},
+        { id: 21, name: 'Solution & Pricing', color: '#0891b2', actions: [
+          { id: 63, name: 'Solution design', type: 'document', required: true, desc: 'Draft the proposed approach, methodology, and deliverables' },
+          { id: 64, name: 'Pricing & estimate', type: 'task', required: true, desc: 'Build the cost model and pricing schedule' },
+          { id: 65, name: 'Win themes & differentiators', type: 'document', required: false, desc: 'Articulate why we win against competitors' }
+        ]},
+        { id: 22, name: 'Drafting', color: '#d97706', actions: [
+          { id: 66, name: 'Write proposal sections', type: 'task', required: true, desc: 'Author responses per the compliance matrix' },
+          { id: 67, name: 'Collect past performance', type: 'document', required: true, desc: 'Gather case studies, references, and certifications' },
+          { id: 68, name: 'Executive summary', type: 'document', required: true, desc: 'Draft the executive summary and cover letter' }
+        ]},
+        { id: 23, name: 'Review & Approval', color: '#dc2626', actions: [
+          { id: 69, name: 'Color-team review', type: 'review', required: true, desc: 'Peer review of the full proposal for quality and compliance' },
+          { id: 70, name: 'Legal & contracts review', type: 'review', required: true, desc: 'Review terms, liability, and contractual commitments' },
+          { id: 71, name: 'Final approval', type: 'approval', required: true, desc: 'Executive sign-off to submit' }
+        ]},
+        { id: 24, name: 'Submission', color: '#16a34a', actions: [
+          { id: 72, name: 'Finalize & package', type: 'task', required: true, desc: 'Assemble final documents per submission format' },
+          { id: 73, name: 'Submit proposal', type: 'milestone', required: true, desc: 'Deliver the proposal before the deadline' },
+          { id: 74, name: 'Award decision', type: 'milestone', required: false, desc: 'Record win/loss and capture debrief feedback' }
+        ]}
+      ]
     }
   ],
 
@@ -349,6 +417,40 @@ const DATA = {
   ]
 };
 
+// --- DECISION LOG SEED ---
+// Every project carries a decision register (key decisions + rationale).
+DATA.projects.forEach(p => { if (!p.decisions) p.decisions = []; });
+(DATA.projects.find(p => p.id === 1) || {}).decisions = [
+  { id:1, title:'Use PostgreSQL for the primary datastore', context:'Need ACID guarantees and strong JSON support for the analytics workload.', alternatives:'MongoDB, DynamoDB', owner:'SR', date:'2026-04-18', impact:'high', status:'decided' },
+  { id:2, title:'Adopt trunk-based development with feature flags', context:'Long-lived branches were causing painful merges before the beta cutover.', alternatives:'GitFlow, release branches', owner:'AM', date:'2026-05-02', impact:'medium', status:'decided' },
+  { id:3, title:'Defer native mobile app to a fast-follow release', context:'Scope pressure on the Q3 launch; responsive web covers 90% of use.', alternatives:'Ship web + iOS together, React Native wrapper', owner:'AM', date:'2026-06-10', impact:'high', status:'proposed' }
+];
+(DATA.projects.find(p => p.id === 2) || {}).decisions = [
+  { id:4, title:'Standardize on a single serif display typeface', context:'Brand audit found five competing fonts across touchpoints.', alternatives:'Keep dual sans/serif system, license a custom face', owner:'JD', date:'2026-05-20', impact:'medium', status:'decided' },
+  { id:5, title:'Original teal palette superseded by deep indigo', context:'Accessibility contrast testing failed on the teal-on-white combination.', alternatives:'Darken teal, add outlines', owner:'LM', date:'2026-06-01', impact:'low', status:'superseded' }
+];
+
+// --- QUALITY / TEST PLANS SEED ---
+// Manual + automation test plans with execution status per project.
+DATA.testPlans = [
+  // Manual test plans
+  { id:1, name:'Alpha Launch — Regression Suite', kind:'manual', project:'Alpha Launch', projectId:1, owner:'DC', ownerColor:'#ec4899', status:'passed', priority:'high', environment:'Staging', lastRun:'2026-06-28', tests:{ total:48, passed:44, failed:1, blocked:1, pending:2 } },
+  { id:2, name:'Checkout & Payments Smoke', kind:'manual', project:'Alpha Launch', projectId:1, owner:'EK', ownerColor:'#84cc16', status:'failed', priority:'critical', environment:'Staging', lastRun:'2026-06-30', tests:{ total:22, passed:15, failed:5, blocked:0, pending:2 } },
+  { id:3, name:'Brand Refresh — Visual QA', kind:'manual', project:'Brand Refresh', projectId:2, owner:'JD', ownerColor:'#f59e0b', status:'in-progress', priority:'medium', environment:'Preview', lastRun:'2026-07-01', tests:{ total:30, passed:12, failed:2, blocked:1, pending:15 } },
+  { id:4, name:'Mobile App v2 — Device Matrix', kind:'manual', project:'Mobile App v2', projectId:4, owner:'GB', ownerColor:'#6366f1', status:'in-progress', priority:'high', environment:'Device Lab', lastRun:'2026-06-29', tests:{ total:60, passed:38, failed:6, blocked:4, pending:12 } },
+  { id:5, name:'Compliance Audit — Manual Controls', kind:'manual', project:'Compliance Audit', projectId:5, owner:'LM', ownerColor:'#06b6d4', status:'passed', priority:'critical', environment:'Production', lastRun:'2026-05-28', tests:{ total:22, passed:22, failed:0, blocked:0, pending:0 } },
+  { id:6, name:'Partner Portal — Exploratory', kind:'manual', project:'Partner Portal', projectId:6, owner:'DC', ownerColor:'#ec4899', status:'blocked', priority:'low', environment:'Staging', lastRun:'2026-06-15', tests:{ total:18, passed:4, failed:1, blocked:9, pending:4 } },
+  { id:7, name:'Data Platform — Migration Validation', kind:'manual', project:'Data Platform', projectId:3, owner:'SR', ownerColor:'#10b981', status:'draft', priority:'high', environment:'—', lastRun:'Never', tests:{ total:14, passed:0, failed:0, blocked:0, pending:14 } },
+  // Automation test plans
+  { id:8, name:'Alpha Launch — API E2E', kind:'automation', project:'Alpha Launch', projectId:1, owner:'LI', ownerColor:'#14b8a6', status:'passed', priority:'critical', framework:'Playwright', schedule:'On every merge', coverage:81, duration:'6m 12s', lastRun:'2026-07-02', tests:{ total:214, passed:210, failed:2, blocked:0, pending:2 } },
+  { id:9, name:'Alpha Launch — Unit + Integration', kind:'automation', project:'Alpha Launch', projectId:1, owner:'SR', ownerColor:'#10b981', status:'passed', priority:'high', framework:'Jest', schedule:'On every merge', coverage:88, duration:'2m 41s', lastRun:'2026-07-02', tests:{ total:1180, passed:1174, failed:3, blocked:0, pending:3 } },
+  { id:10, name:'Mobile App v2 — UI Automation', kind:'automation', project:'Mobile App v2', projectId:4, owner:'FS', ownerColor:'#8b5cf6', status:'failed', priority:'high', framework:'Detox', schedule:'Nightly', coverage:64, duration:'11m 03s', lastRun:'2026-07-01', tests:{ total:96, passed:82, failed:11, blocked:1, pending:2 } },
+  { id:11, name:'Brand Refresh — Visual Regression', kind:'automation', project:'Brand Refresh', projectId:2, owner:'PN', ownerColor:'#0ea5e9', status:'in-progress', priority:'medium', framework:'Chromatic', schedule:'On PR', coverage:52, duration:'4m 18s', lastRun:'2026-07-01', tests:{ total:74, passed:40, failed:4, blocked:0, pending:30 } },
+  { id:12, name:'Data Platform — Pipeline Contract Tests', kind:'automation', project:'Data Platform', projectId:3, owner:'FG', ownerColor:'#a855f7', status:'draft', priority:'high', framework:'pytest', schedule:'Not scheduled', coverage:12, duration:'—', lastRun:'Never', tests:{ total:38, passed:0, failed:0, blocked:0, pending:38 } },
+  { id:13, name:'Compliance Audit — Security Scans', kind:'automation', project:'Compliance Audit', projectId:5, owner:'HQ', ownerColor:'#14b8a6', status:'passed', priority:'critical', framework:'OWASP ZAP', schedule:'Weekly', coverage:0, duration:'8m 55s', lastRun:'2026-05-30', tests:{ total:52, passed:52, failed:0, blocked:0, pending:0 } },
+  { id:14, name:'Partner Portal — Smoke Automation', kind:'automation', project:'Partner Portal', projectId:6, owner:'LI', ownerColor:'#14b8a6', status:'blocked', priority:'low', framework:'Cypress', schedule:'Paused', coverage:34, duration:'—', lastRun:'2026-06-14', tests:{ total:40, passed:12, failed:2, blocked:24, pending:2 } }
+];
+
 // --- STATE ---
 const STATE = {
   currentPage: 'dashboard',
@@ -376,7 +478,13 @@ const STATE = {
   resourceTab: 'overview',
   commercialTab: 'overview',
   risksFilter: { severity: '', status: '' },
-  teamView: 'table'
+  decisionsFilter: { impact: '', status: '' },
+  teamView: 'table',
+  workflowView: 'table',
+  qualityTab: 'manual',
+  wireAnalyzing: false,
+  wireProposals: null,
+  wireSignals: 7   // unreviewed channel signals waiting to be wired (seed count)
 };
 
 // --- ICONS (inline SVG helpers) ---
@@ -531,6 +639,7 @@ function renderSidebar() {
     { id:'dashboard', label:'Dashboard', icon:I.dashboard },
     { id:'portfolio', label:'1 Pager', icon:I.fileText },
     { id:'commercial', label:'Commercial', icon:I.trendUp },
+    { id:'quality', label:'Quality', icon:I.checkSquare },
   ];
   if (DATA.user.settings.showNotes) {
     globalNav.push({ id:'notes', label:'Notes', icon:I.fileText });
@@ -542,14 +651,16 @@ function renderSidebar() {
     { id:'approvals',    label:'Approvals',    icon:I.check,    badge: DATA.approvals.length },
     { id:'issues',       label:'Issues',       icon:I.issues,   badge: criticalIssues || null },
     { id:'risks',        label:'Risks',        icon:I.shield,   badge: STATE.currentProject.risks.filter(r=>r.open).length || null },
+    { id:'decisions',    label:'Decisions',    icon:I.gitBranch, badge: (STATE.currentProject.decisions||[]).filter(d=>d.status==='proposed').length || null },
     { id:'actions',      label:'Actions',      icon:I.actions },
     { id:'resources',    label:'Resources',    icon:I.resource },
     { id:'policies',     label:'Policies',     icon:I.zap },
     { id:'workflows',    label:'Workflows',    icon:I.workflow },
     { id:'team',         label:'Team',         icon:I.users },
     { id:'analytics',    label:'Analytics',    icon:I.chart },
+    { id:'project-quality', label:'Quality',   icon:I.checkSquare },
     { id:'reports',      label:'Reports',      icon:I.reports },
-    { id:'data-sources', label:'Data Sources', icon:I.database },
+    { id:'integrations', label:'Integrations', icon:I.plug },
   ] : [];
 
   const navItem = n => `
@@ -688,6 +799,9 @@ function renderTopbar(crumbs) {
     </div>
     <div class="topbar-search">${I.search}<span>Search...</span></div>
     <div class="topbar-actions">
+      <button class="wire-btn" id="topbar-wire-btn" title="Wire — turn channel updates into action items">
+        ${ico(I.zap,15)}<span>Wire!</span>
+      </button>
       <div class="topbar-icon-btn" title="Notifications">
         ${I.bell}
         <span class="topbar-notif-dot"></span>
@@ -701,6 +815,7 @@ function renderTopbar(crumbs) {
   document.getElementById('topbar-menu-btn')?.addEventListener('click', () => {
     setSidebarHidden(!STATE.sidebarHidden);
   });
+  document.getElementById('topbar-wire-btn')?.addEventListener('click', launchWire);
   applySidebarHidden();
 }
 
@@ -751,8 +866,11 @@ function render() {
   switch(STATE.currentPage) {
     case 'dashboard': renderDashboard(); break;
     case 'risks':     renderRisks(); break;
+    case 'decisions': renderDecisions(); break;
     case 'resources': renderResources(); break;
     case 'commercial': renderCommercial(); break;
+    case 'quality': renderQuality(); break;
+    case 'project-quality': renderQuality(true); break;
     case 'portfolio': renderPortfolioOnePager(); break;
     case 'notes':     renderNotes(); break;
     case 'issues':    renderIssues(); break;
@@ -766,11 +884,12 @@ function render() {
     case 'team': renderTeam(); break;
     case 'analytics': renderAnalytics(); break;
     case 'workflows': renderWorkflows(); break;
-    case 'data-sources': renderDataSources(); break;
+    case 'integrations': renderDataSources(); break;
     case 'reports': renderReports(); break;
     case 'workflow-builder': renderWorkflowBuilder(); break;
     case 'user-settings': renderUserSettings(); break;
     case 'support': renderSupport(); break;
+    case 'wire': renderWire(); break;
     default: renderDashboard();
   }
 }
@@ -1876,6 +1995,435 @@ function renderApprovalDetail(a) {
   </div>`;
 }
 
+// --- WIRE (channels → actionable items) ---
+// The "Wire!" button ingests recent messages from connected communication
+// channels and translates them into new or updated work items. Two modes:
+//  · semi-auto (default): every change is applied only after per-item consent
+//  · auto: changes are applied immediately, then shown for review with Undo
+const WIRE_CHANNELS = {
+  slack:   { label: 'Slack',         color: '#4A154B', tag: '#' },
+  email:   { label: 'Email',         color: '#EA4335', tag: '@' },
+  teams:   { label: 'MS Teams',      color: '#4B53BC', tag: 'T' },
+  meeting: { label: 'Meeting notes', color: '#0891B2', tag: '●' }
+};
+const WIRE_ENTITY = {
+  risk:     { label: 'Risk',     icon: I.shield,      color: '#EF4444' },
+  issue:    { label: 'Issue',    icon: I.issues,      color: '#F59E0B' },
+  approval: { label: 'Approval', icon: I.check,       color: '#0891B2' },
+  task:     { label: 'Task',     icon: I.checkSquare, color: '#6366F1' },
+  decision: { label: 'Decision', icon: I.gitBranch,   color: '#8B5CF6' }
+};
+
+// Count of signals waiting to be wired: live pending count once a scan exists,
+// otherwise the seed count of unreviewed channel activity.
+function wireBadgeCount() {
+  if (STATE.wireProposals) return STATE.wireProposals.filter(p => p.status === 'pending').length;
+  return STATE.wireSignals || 0;
+}
+// Sync the topbar-button and sidebar badges in place, without a full re-render.
+function updateWireBadges() {
+  const n = wireBadgeCount();
+  document.querySelectorAll('.wire-signal-badge').forEach(el => {
+    el.textContent = n;
+    el.style.display = n > 0 ? '' : 'none';
+  });
+}
+
+let _wireSeq = 9000;
+function _wireId() { return ++_wireSeq; }
+function _wireToday() { return new Date().toISOString().slice(0, 10); }
+function _teamColor(initials) {
+  const m = DATA.team.find(t => t.initials === initials);
+  return m ? m.color : '#6366f1';
+}
+function _cap(s) { return typeof s === 'string' && s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+// Fresh set of proposals each run — a mock "AI extraction" from connected channels.
+function buildWireProposals() {
+  return [
+    { id: 'w1', channel: 'slack', author: 'Jordan Davis', authorColor: '#f59e0b', when: '8 min ago',
+      raw: 'Client just told us the teal palette is a no-go — we are blocked until they sign off on the indigo direction.',
+      confidence: 'high', op: 'create', entity: 'risk', projectId: 2, project: 'Brand Refresh', status: 'pending',
+      payload: { risk: { desc: 'Client rejected teal palette — blocked pending indigo sign-off', severity: 'high', owner: 'JD' } } },
+
+    { id: 'w2', channel: 'email', author: 'Priya Shah · Sponsor', authorColor: '#6366f1', when: '22 min ago',
+      raw: 'Please treat the Safari login crash as the top priority for this sprint — it is blocking our enterprise pilot.',
+      confidence: 'high', op: 'update', entity: 'issue', projectId: 4, project: 'Mobile App v2', status: 'pending',
+      payload: { ref: { issueId: 1 }, changes: { status: 'in-progress' },
+        targetLabel: 'Login page crashes on Safari 17', changeLabel: 'Status → In Progress',
+        title: 'Escalate Safari login crash to active work' } },
+
+    { id: 'w3', channel: 'slack', author: 'Sam Rivera', authorColor: '#10b981', when: '35 min ago',
+      raw: 'Load testing finished — benchmarks all passed, p95 well under target. Calling it done.',
+      confidence: 'high', op: 'update', entity: 'task', projectId: 1, project: 'Alpha Launch', status: 'pending',
+      payload: { ref: { projectId: 1, taskId: 3 }, changes: { status: 'done' },
+        targetLabel: 'Load testing & benchmarks', changeLabel: 'Status → Done',
+        title: 'Mark load testing & benchmarks complete' } },
+
+    { id: 'w4', channel: 'meeting', author: 'Architecture sync', authorColor: '#0891b2', when: '1h ago',
+      raw: 'We agreed the public API needs rate limiting before the beta opens up — Sam to own it, target mid-August.',
+      confidence: 'medium', op: 'create', entity: 'issue', projectId: 3, project: 'Data Platform', status: 'pending',
+      payload: { issue: { title: 'Add rate limiting to public API endpoints', type: 'feature', priority: 'high',
+        assignee: 'SR', due: '2026-08-20', labels: ['api', 'backend'],
+        description: 'Introduce request rate limiting on public API endpoints ahead of the beta opening.' } } },
+
+    { id: 'w5', channel: 'email', author: 'Dana Lee · Finance', authorColor: '#0891b2', when: '2h ago',
+      raw: 'Partner Portal has now consumed 82% of its budget. No further spend should be committed without PM sign-off.',
+      confidence: 'high', op: 'create', entity: 'approval', projectId: 6, project: 'Partner Portal', status: 'pending',
+      payload: { approval: { title: 'Approve continued spend — Partner Portal at 82% budget',
+        desc: 'Finance flagged that Partner Portal has consumed 82% of its budget. PM sign-off required before committing further spend.',
+        policy: 'Budget Warning', action: 'notify', urgency: 'normal' } } },
+
+    { id: 'w6', channel: 'teams', author: 'Taylor Kim', authorColor: '#8b5cf6', when: '3h ago',
+      raw: 'Heads up — Android 14 push notifications are still failing after the background policy change. This could slip the beta.',
+      confidence: 'medium', op: 'create', entity: 'risk', projectId: 4, project: 'Mobile App v2', status: 'pending',
+      payload: { risk: { desc: 'Android 14 push failures may slip the beta build', severity: 'high', owner: 'TK' } } },
+
+    { id: 'w7', channel: 'meeting', author: 'Compliance follow-up', authorColor: '#06b6d4', when: '5h ago',
+      raw: 'Action item: schedule the SOC2 evidence refresh so we are ready for the next audit window.',
+      confidence: 'low', op: 'create', entity: 'task', projectId: 5, project: 'Compliance Audit', status: 'pending',
+      payload: { task: { name: 'Schedule SOC2 evidence refresh', assignee: 'LM', priority: 'medium', status: 'todo', due: '2026-07-20' } } }
+  ];
+}
+
+// Path helpers operate on p.payload using dot notation (e.g. 'risk.severity').
+function wireGet(p, path) { return path.split('.').reduce((o, k) => (o == null ? o : o[k]), p.payload); }
+function wireSet(p, path, val) {
+  const ks = path.split('.'); const last = ks.pop();
+  let o = p.payload; ks.forEach(k => { o = o[k]; });
+  o[last] = val;
+}
+
+// Derive display (title + editable fields) from the canonical payload.
+function wireDescribe(p) {
+  if (p.op === 'update') {
+    return { title: p.payload.title, titlePath: null, fields: [
+      { k: 'Target', v: p.payload.targetLabel },
+      { k: 'Change', v: p.payload.changeLabel }
+    ] };
+  }
+  const o = p.payload[p.entity];
+  const sev = ['low', 'medium', 'high'];
+  const pri = ['low', 'medium', 'high', 'critical'];
+  switch (p.entity) {
+    case 'risk': return { title: o.desc, titlePath: 'risk.desc', fields: [
+      { k: 'Severity', v: _cap(o.severity), path: 'risk.severity', enum: sev },
+      { k: 'Owner',    v: o.owner,          path: 'risk.owner' }
+    ] };
+    case 'issue': return { title: o.title, titlePath: 'issue.title', fields: [
+      { k: 'Type',     v: _cap(o.type),     path: 'issue.type' },
+      { k: 'Priority', v: _cap(o.priority), path: 'issue.priority', enum: pri },
+      { k: 'Assignee', v: o.assignee,       path: 'issue.assignee' },
+      { k: 'Due',      v: o.due,            path: 'issue.due' }
+    ] };
+    case 'approval': return { title: o.title, titlePath: 'approval.title', fields: [
+      { k: 'Urgency', v: _cap(o.urgency), path: 'approval.urgency', enum: ['normal', 'critical'] },
+      { k: 'Policy',  v: o.policy,        path: 'approval.policy' }
+    ] };
+    case 'task': return { title: o.name, titlePath: 'task.name', fields: [
+      { k: 'Priority', v: _cap(o.priority), path: 'task.priority', enum: pri },
+      { k: 'Assignee', v: o.assignee,       path: 'task.assignee' },
+      { k: 'Due',      v: o.due,            path: 'task.due' }
+    ] };
+    default: return { title: p.id, titlePath: null, fields: [] };
+  }
+}
+
+// Apply a proposal to live DATA and remember how to undo it.
+function applyWireProposal(p) {
+  if (!p || p.status === 'applied') return;
+  if (p.op === 'create') {
+    if (p.entity === 'risk') {
+      const proj = DATA.projects.find(x => x.id === p.projectId); if (!proj) return;
+      if (!proj.risks) proj.risks = [];
+      const r = { id: _wireId(), desc: p.payload.risk.desc, severity: p.payload.risk.severity, owner: p.payload.risk.owner, open: true };
+      proj.risks.push(r);
+      p._undo = () => { const i = proj.risks.indexOf(r); if (i >= 0) proj.risks.splice(i, 1); };
+    } else if (p.entity === 'issue') {
+      const o = p.payload.issue;
+      const it = { id: _wireId(), title: o.title, type: o.type, status: 'open', priority: o.priority,
+        project: p.project, projectId: p.projectId, assignee: o.assignee, assigneeColor: _teamColor(o.assignee),
+        reporter: DATA.user.initials, created: _wireToday(), updated: _wireToday(), due: o.due,
+        labels: o.labels || [], description: o.description || '' };
+      DATA.issues.push(it);
+      p._undo = () => { const i = DATA.issues.indexOf(it); if (i >= 0) DATA.issues.splice(i, 1); };
+    } else if (p.entity === 'approval') {
+      const o = p.payload.approval;
+      const ap = { id: _wireId(), title: o.title, desc: o.desc, policy: o.policy, project: p.project,
+        projectId: p.projectId, action: o.action || 'notify', urgency: o.urgency, age: 'just now' };
+      DATA.approvals.push(ap);
+      p._undo = () => { const i = DATA.approvals.indexOf(ap); if (i >= 0) DATA.approvals.splice(i, 1); };
+    } else if (p.entity === 'task') {
+      const o = p.payload.task;
+      if (!DATA.tasks[p.projectId]) DATA.tasks[p.projectId] = [];
+      const t = { id: _wireId(), name: o.name, assignee: o.assignee, assigneeColor: _teamColor(o.assignee),
+        status: o.status || 'todo', priority: o.priority, due: o.due };
+      DATA.tasks[p.projectId].push(t);
+      const proj = DATA.projects.find(x => x.id === p.projectId);
+      if (proj && proj.tasks) proj.tasks.total++;
+      p._undo = () => {
+        const arr = DATA.tasks[p.projectId] || []; const i = arr.indexOf(t); if (i >= 0) arr.splice(i, 1);
+        if (proj && proj.tasks) proj.tasks.total--;
+      };
+    }
+  } else { // update
+    let target = null;
+    if (p.entity === 'issue') target = DATA.issues.find(i => i.id === p.payload.ref.issueId);
+    else if (p.entity === 'task') target = (DATA.tasks[p.payload.ref.projectId] || []).find(t => t.id === p.payload.ref.taskId);
+    if (target) {
+      const prev = {};
+      Object.keys(p.payload.changes).forEach(k => { prev[k] = target[k]; target[k] = p.payload.changes[k]; });
+      if ('updated' in target) target.updated = _wireToday();
+      p._undo = () => { Object.keys(prev).forEach(k => { target[k] = prev[k]; }); };
+    }
+  }
+  p.status = 'applied';
+}
+
+function undoWireProposal(p) {
+  if (!p || p.status !== 'applied') return;
+  if (typeof p._undo === 'function') p._undo();
+  p._undo = null;
+  p.status = 'pending';
+}
+
+function launchWire() {
+  STATE.wireProposals = buildWireProposals();
+  STATE.wireAnalyzing = true;
+  navigate('wire');
+}
+
+function renderWire() {
+  renderTopbar([{ label: 'Wire' }]);
+  const content = document.getElementById('content');
+  if (!STATE.wireProposals) { STATE.wireProposals = buildWireProposals(); STATE.wireAnalyzing = true; }
+
+  if (STATE.wireAnalyzing) {
+    const chans = DATA.integrations.filter(i => i.status === 'connected');
+    content.innerHTML = `
+      <div class="wire-analyzing">
+        <div class="wire-scan-orb">${ico(I.zap, 30)}</div>
+        <div class="wire-scan-title">Analyzing your channels…</div>
+        <div class="wire-scan-sub">Reading recent Slack, email, Teams and meeting activity for anything that needs to become an action.</div>
+        <div class="wire-scan-chips">
+          ${['Slack', 'Email', 'MS Teams', 'Meeting notes'].map(c => `<span class="wire-scan-chip">${c}</span>`).join('')}
+        </div>
+      </div>`;
+    setTimeout(() => {
+      if (STATE.currentPage !== 'wire' || !STATE.wireAnalyzing) return;
+      STATE.wireAnalyzing = false;
+      if (DATA.user.settings.wireMode === 'auto') {
+        STATE.wireProposals.forEach(applyWireProposal);
+        renderSidebar();
+      }
+      renderWire();
+    }, 1200);
+    return;
+  }
+  renderWireReview();
+}
+
+function wireCard(p) {
+  const ch = WIRE_CHANNELS[p.channel] || WIRE_CHANNELS.slack;
+  const ent = WIRE_ENTITY[p.entity];
+  const d = wireDescribe(p);
+  const editable = p.status === 'pending';
+
+  const titleHtml = (editable && d.titlePath)
+    ? `<span class="wire-editable wire-card-title" data-wid="${p.id}" data-path="${d.titlePath}">${escapeHtml(d.title)}</span>`
+    : `<span class="wire-card-title">${escapeHtml(d.title)}</span>`;
+
+  const fields = d.fields.map(f => {
+    let val;
+    if (f.enum && editable) {
+      val = `<span class="wire-enum" data-wid="${p.id}" data-path="${f.path}" data-enum="${f.enum.join(',')}">${escapeHtml(f.v)} ${ico(I.chevronRight, 10)}</span>`;
+    } else if (editable && f.path) {
+      val = `<span class="wire-editable wire-field-v" data-wid="${p.id}" data-path="${f.path}">${escapeHtml(f.v)}</span>`;
+    } else {
+      val = `<span class="wire-field-v">${escapeHtml(f.v)}</span>`;
+    }
+    return `<div class="wire-field"><span class="wire-field-k">${f.k}</span>${val}</div>`;
+  }).join('');
+
+  let actions = '';
+  if (p.status === 'pending') {
+    actions = `
+      <button class="btn btn-success btn-sm" data-wire-accept="${p.id}">${ico(I.check, 13)} Accept</button>
+      <button class="btn btn-secondary btn-sm" data-wire-dismiss="${p.id}">Dismiss</button>`;
+  } else if (p.status === 'applied') {
+    actions = `
+      <span class="wire-tag wire-tag-applied">${ico(I.checkCircle, 13)} Applied</span>
+      <button class="btn btn-ghost btn-sm" data-wire-view="${p.id}">View ${ico(I.arrowRight, 12)}</button>
+      <button class="btn btn-secondary btn-sm" data-wire-undo="${p.id}">Undo</button>`;
+  } else {
+    actions = `
+      <span class="wire-tag wire-tag-dismissed">Dismissed</span>
+      <button class="btn btn-secondary btn-sm" data-wire-restore="${p.id}">Restore</button>`;
+  }
+
+  return `
+    <div class="wire-card wire-card--${p.status}" data-wid="${p.id}">
+      <div class="wire-card-head">
+        <span class="wire-op wire-op--${p.op}">${p.op === 'create' ? 'New' : 'Update'}</span>
+        <span class="wire-entity" style="color:${ent.color}">${ico(ent.icon, 13)} ${ent.label}</span>
+        <span class="wire-proj">${ico(I.folder, 12)} ${escapeHtml(p.project)}</span>
+        <span class="wire-conf wire-conf--${p.confidence}">${_cap(p.confidence)} confidence</span>
+      </div>
+      <div class="wire-card-body">
+        ${titleHtml}
+        <div class="wire-fields">${fields}</div>
+      </div>
+      <div class="wire-source">
+        <span class="wire-chan" style="background:${ch.color}"><span class="wire-chan-tag">${ch.tag}</span>${ch.label}</span>
+        <span class="wire-src-meta"><strong style="color:${p.authorColor}">${escapeHtml(p.author)}</strong> · ${p.when}</span>
+        <div class="wire-raw">“${escapeHtml(p.raw)}”</div>
+      </div>
+      <div class="wire-card-actions">${actions}</div>
+    </div>`;
+}
+
+function renderWireReview() {
+  const ps = STATE.wireProposals || [];
+  const pending = ps.filter(p => p.status === 'pending');
+  const applied = ps.filter(p => p.status === 'applied');
+  const dismissed = ps.filter(p => p.status === 'dismissed');
+  const mode = DATA.user.settings.wireMode;
+
+  const order = { pending: 0, applied: 1, dismissed: 2 };
+  const sorted = [...ps].sort((a, b) => order[a.status] - order[b.status]);
+
+  const banner = mode === 'auto'
+    ? `<div class="wire-banner wire-banner--auto">${ico(I.zap, 15)}<div><strong>Automatic mode.</strong> ${applied.length} change${applied.length === 1 ? '' : 's'} ${applied.length ? 'were applied automatically' : 'to apply'}. Review below and undo anything that looks off.</div></div>`
+    : `<div class="wire-banner wire-banner--semi">${ico(I.info, 15)}<div><strong>Semi-automatic mode.</strong> Nothing changes until you approve it. Review each item, edit the details if needed, then Accept or Dismiss.</div></div>`;
+
+  const modeToggle = `
+    <div class="wire-mode">
+      <span class="wire-mode-label">Mode</span>
+      <div class="us-segment" data-segment="wireMode" id="wire-mode-seg">
+        <button class="us-seg-btn ${mode === 'semi-auto' ? 'active' : ''}" data-val="semi-auto">Semi-auto</button>
+        <button class="us-seg-btn ${mode === 'auto' ? 'active' : ''}" data-val="auto">Auto</button>
+      </div>
+    </div>`;
+
+  const bulk = (mode !== 'auto' && pending.length) ? `
+    <div class="wire-bulk">
+      <button class="btn btn-primary btn-sm" id="wire-accept-all">${ico(I.check, 13)} Accept all (${pending.length})</button>
+      <button class="btn btn-secondary btn-sm" id="wire-dismiss-all">Dismiss all</button>
+    </div>` : '';
+
+  const body = ps.length ? `
+    <div class="wire-summary">
+      <span class="wire-stat"><strong>${pending.length}</strong> pending</span>
+      <span class="wire-stat"><strong>${applied.length}</strong> applied</span>
+      <span class="wire-stat"><strong>${dismissed.length}</strong> dismissed</span>
+    </div>
+    ${bulk}
+    <div class="wire-list">${sorted.map(wireCard).join('')}</div>`
+    : `<div class="empty-state"><div class="empty-state-icon">✓</div>
+        <div class="empty-state-title">Nothing to wire</div>
+        <div class="empty-state-desc">No new signals were found across your channels. Check back after the next round of updates.</div></div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Wire Review</div>
+        <div class="page-subtitle">Changes translated from your communication channels</div>
+      </div>
+      <div class="flex items-center gap-3">
+        ${modeToggle}
+        <button class="btn btn-secondary" id="wire-rescan">${ico(I.refreshCw, 14)} Re-scan</button>
+        <button class="btn btn-primary" id="wire-done">Done</button>
+      </div>
+    </div>
+    ${banner}
+    ${body}`;
+
+  bindWireReview();
+}
+
+function bindWireReview() {
+  const root = document.getElementById('content');
+  const find = id => (STATE.wireProposals || []).find(p => p.id === id);
+
+  root.querySelectorAll('[data-wire-accept]').forEach(b => b.addEventListener('click', () => {
+    applyWireProposal(find(b.dataset.wireAccept)); renderSidebar(); toast('Change applied'); renderWireReview();
+  }));
+  root.querySelectorAll('[data-wire-dismiss]').forEach(b => b.addEventListener('click', () => {
+    const p = find(b.dataset.wireDismiss); if (p) p.status = 'dismissed'; renderWireReview();
+  }));
+  root.querySelectorAll('[data-wire-undo]').forEach(b => b.addEventListener('click', () => {
+    undoWireProposal(find(b.dataset.wireUndo)); renderSidebar(); toast('Change reverted'); renderWireReview();
+  }));
+  root.querySelectorAll('[data-wire-restore]').forEach(b => b.addEventListener('click', () => {
+    const p = find(b.dataset.wireRestore); if (p) p.status = 'pending'; renderWireReview();
+  }));
+  root.querySelectorAll('[data-wire-view]').forEach(b => b.addEventListener('click', () => wireView(find(b.dataset.wireView))));
+
+  root.querySelector('#wire-accept-all')?.addEventListener('click', () => {
+    (STATE.wireProposals || []).filter(p => p.status === 'pending').forEach(applyWireProposal);
+    renderSidebar(); toast('All changes applied'); renderWireReview();
+  });
+  root.querySelector('#wire-dismiss-all')?.addEventListener('click', () => {
+    (STATE.wireProposals || []).filter(p => p.status === 'pending').forEach(p => { p.status = 'dismissed'; });
+    renderWireReview();
+  });
+  root.querySelector('#wire-rescan')?.addEventListener('click', launchWire);
+  root.querySelector('#wire-done')?.addEventListener('click', () => navigate('dashboard'));
+
+  // Mode toggle: switching to auto applies any still-pending items.
+  root.querySelector('#wire-mode-seg')?.querySelectorAll('[data-val]').forEach(btn => btn.addEventListener('click', () => {
+    const val = btn.dataset.val;
+    if (DATA.user.settings.wireMode === val) return;
+    DATA.user.settings.wireMode = val;
+    saveUserSettings();
+    if (val === 'auto') {
+      (STATE.wireProposals || []).filter(p => p.status === 'pending').forEach(applyWireProposal);
+      renderSidebar();
+    }
+    toast('Wire mode: ' + (val === 'auto' ? 'Automatic' : 'Semi-automatic'));
+    renderWireReview();
+  }));
+
+  // Enum badges cycle to the next value.
+  root.querySelectorAll('.wire-enum').forEach(el => el.addEventListener('click', () => {
+    const p = find(el.dataset.wid); if (!p) return;
+    const vals = el.dataset.enum.split(',');
+    const cur = wireGet(p, el.dataset.path);
+    wireSet(p, el.dataset.path, vals[(vals.indexOf(cur) + 1) % vals.length]);
+    renderWireReview();
+  }));
+
+  // Click-to-edit text (title, owner, assignee, due, etc.).
+  root.querySelectorAll('.wire-editable').forEach(span => span.addEventListener('click', () => {
+    const p = find(span.dataset.wid); if (!p) return;
+    const path = span.dataset.path;
+    const current = wireGet(p, path) || '';
+    const input = document.createElement('input');
+    input.type = 'text'; input.value = current; input.className = 'wire-edit-input';
+    span.replaceWith(input); input.focus(); input.select();
+    let done = false;
+    const commit = save => {
+      if (done) return; done = true;
+      if (save) { const v = input.value.trim(); if (v) wireSet(p, path, v); }
+      renderWireReview();
+    };
+    input.addEventListener('blur', () => commit(true));
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { done = true; renderWireReview(); }
+    });
+  }));
+}
+
+function wireView(p) {
+  if (!p) return;
+  const proj = DATA.projects.find(x => x.id === p.projectId);
+  if (proj) STATE.currentProject = proj;
+  if (p.entity === 'task') { STATE.currentTab = 'tasks'; navigate('project-detail', p.projectId); return; }
+  const pageMap = { risk: 'risks', issue: 'issues', approval: 'approvals', decision: 'decisions' };
+  navigate(pageMap[p.entity] || 'dashboard');
+}
+
 // --- POLICIES ---
 function policyCard(pol, inherited=false) {
   return `<div class="policy-card">
@@ -1989,7 +2537,7 @@ function renderTeamGrid() {
 
 function renderTeamTable() {
   return `
-    <div class="table-wrapper">
+    <div class="table-wrapper team-table-wrap">
       <table>
         <thead><tr><th>Member</th><th>Role</th><th>Team</th><th>Department</th><th>Email</th><th>Projects</th><th>Capacity</th></tr></thead>
         <tbody>
@@ -2011,6 +2559,259 @@ function renderTeamTable() {
         </tbody>
       </table>
     </div>`;
+}
+
+// --- QUALITY ---
+// Map a test-plan status to a badge class + label.
+function qualityStatusBadge(status) {
+  const map = {
+    'passed':      ['badge-completed', 'Passed'],
+    'failed':      ['badge-critical',  'Failed'],
+    'in-progress': ['badge-active',    'In Progress'],
+    'blocked':     ['badge-on-hold',   'Blocked'],
+    'pending':     ['badge-pending',   'Pending'],
+    'draft':       ['badge-planning',  'Draft']
+  };
+  const [cls, label] = map[status] || ['badge-gray', status];
+  return `<span class="badge ${cls}"><span class="badge-dot"></span>${label}</span>`;
+}
+
+// Representative (capped) test cases + steps generated from a plan's result
+// counts, so every plan can drill down: plan → level-1 cases → level-2 steps.
+const QUALITY_CASE_TITLES = [
+  'Happy path — primary flow completes successfully',
+  'Input validation — invalid values are rejected',
+  'Boundary — edge and limit values are handled',
+  'Authorization — unauthorized access is blocked',
+  'Error handling — graceful failure on server error',
+  'Regression — previously fixed defect stays fixed'
+];
+const QUALITY_STEP_TEMPLATES = [
+  ['Open the feature under a clean session', 'Feature loads with no console errors'],
+  ['Enter the required input data', 'Fields accept and validate the input'],
+  ['Trigger the primary action', 'Request is dispatched and acknowledged'],
+  ['Verify the resulting UI state', 'Outcome matches the expected result'],
+  ['Reload and re-check the record', 'State is persisted correctly']
+];
+
+function buildTestCases(plan) {
+  if (plan._cases) return plan._cases;
+  const t = plan.tests;
+  // Flatten counts into a status bucket, surfacing fails/blocks first.
+  const bucket = [];
+  const push = (status, n) => { for (let i = 0; i < n; i++) bucket.push(status); };
+  push('failed', t.failed); push('blocked', t.blocked);
+  push('pending', t.pending); push('passed', t.passed);
+
+  const CAP = 6;
+  let sample = bucket;
+  if (bucket.length > CAP) {
+    const nonPass = bucket.filter(s => s !== 'passed').slice(0, CAP - 1);
+    sample = nonPass.concat(bucket.filter(s => s === 'passed').slice(0, CAP - nonPass.length));
+  }
+
+  const cases = sample.map((status, idx) => {
+    const nSteps = 3 + (idx % 3); // 3–5 steps
+    const steps = [];
+    for (let s = 0; s < nSteps; s++) {
+      const [action, expected] = QUALITY_STEP_TEMPLATES[s % QUALITY_STEP_TEMPLATES.length];
+      let st = 'passed';
+      if (status === 'pending') st = 'pending';
+      else if (status !== 'passed' && s === nSteps - 1) st = status; // last step carries the fail/block
+      steps.push({ n: s + 1, action, expected, status: st });
+    }
+    return { id: `${plan.id}-${idx + 1}`, code: `TC-${String(idx + 1).padStart(2, '0')}`,
+             title: QUALITY_CASE_TITLES[idx % QUALITY_CASE_TITLES.length], status, steps };
+  });
+
+  plan._cases = { cases, total: t.total };
+  return plan._cases;
+}
+
+// Level-1 cases (each expandable to its level-2 steps) for one plan.
+function qualityCasesMarkup(plan) {
+  const { cases, total } = buildTestCases(plan);
+  return `
+    <div class="quality-cases">
+      <div class="quality-cases-label">Test cases</div>
+      ${cases.map(c => `
+        <div class="quality-case">
+          <div class="quality-case-head" data-case-toggle>
+            <span class="tree-toggle">${I.chevronRight}</span>
+            <span class="quality-case-code">${c.code}</span>
+            <span class="quality-case-title">${escapeHtml(c.title)}</span>
+            ${qualityStatusBadge(c.status)}
+            <span class="text-xs text-muted quality-case-steps-count">${c.steps.length} steps</span>
+          </div>
+          <div class="quality-steps hidden">
+            <table class="quality-steps-table">
+              <thead><tr><th style="width:44px">#</th><th>Step</th><th>Expected result</th><th style="width:110px">Status</th></tr></thead>
+              <tbody>
+                ${c.steps.map(s => `
+                  <tr>
+                    <td class="text-muted">${s.n}</td>
+                    <td>${escapeHtml(s.action)}</td>
+                    <td class="text-secondary">${escapeHtml(s.expected)}</td>
+                    <td>${qualityStatusBadge(s.status)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`).join('')}
+      <div class="quality-cases-footer">Showing ${cases.length} of ${total} test cases</div>
+    </div>`;
+}
+
+// Horizontal pass/fail/blocked/pending distribution bar for a plan's tests.
+function qualityResultBar(t) {
+  const total = t.total || 1;
+  const seg = (n, color) => n > 0 ? `<div style="width:${(n/total)*100}%;background:${color}" title="${n}"></div>` : '';
+  return `<div class="quality-result-bar">
+    ${seg(t.passed, '#10b981')}${seg(t.failed, '#ef4444')}${seg(t.blocked, '#f59e0b')}${seg(t.pending, '#cbd5e1')}
+  </div>`;
+}
+
+// scoped=true → limit to the current project (project-context entry point);
+// otherwise show the full portfolio of test plans.
+function renderQuality(scoped) {
+  const proj = scoped ? STATE.currentProject : null;
+  renderTopbar(proj ? [{ label: proj.name }, { label: 'Quality' }] : [{ label: 'Quality' }]);
+
+  const base = proj ? DATA.testPlans.filter(p => p.projectId === proj.id) : DATA.testPlans;
+  const plans = base.filter(p => p.kind === STATE.qualityTab);
+  const manualCount = base.filter(p => p.kind === 'manual').length;
+  const autoCount = base.filter(p => p.kind === 'automation').length;
+
+  // KPIs computed across the active tab.
+  const agg = plans.reduce((a, p) => {
+    a.passed += p.tests.passed; a.failed += p.tests.failed;
+    a.blocked += p.tests.blocked; a.total += p.tests.total;
+    return a;
+  }, { passed: 0, failed: 0, blocked: 0, total: 0 });
+  const executed = agg.passed + agg.failed;
+  const passRate = executed ? Math.round((agg.passed / executed) * 100) : 0;
+  const failingPlans = plans.filter(p => p.status === 'failed').length;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Quality${proj ? ` · ${proj.name}` : ''}</div>
+        <div class="page-subtitle">${base.length} test plans · ${manualCount} manual · ${autoCount} automation</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary">${I.plus} New Test Plan</button>
+      </div>
+    </div>
+
+    <div class="grid-kpi mb-6">
+      ${kpiTile('Test Plans', String(plans.length), '#eef2ff', '#6366f1', I.checkSquare, `${STATE.qualityTab === 'manual' ? 'manual' : 'automation'} suites`, 'up')}
+      ${kpiTile('Pass Rate', passRate + '%', '#ecfdf5', '#10b981', I.checkCircle, `${agg.passed}/${executed} executed`, passRate >= 80 ? 'up' : 'down')}
+      ${kpiTile('Failing Plans', String(failingPlans), '#fef2f2', '#ef4444', I.alertTriangle, `${agg.failed} tests failed`, 'down')}
+      ${kpiTile('Blocked Tests', String(agg.blocked), '#fffbeb', '#f59e0b', I.lock, 'awaiting unblock', agg.blocked ? 'down' : 'up')}
+    </div>
+
+    <div class="tabs mb-5">
+      <div class="tab-item ${STATE.qualityTab === 'manual' ? 'active' : ''}" data-qtab="manual">Manual Tests (${manualCount})</div>
+      <div class="tab-item ${STATE.qualityTab === 'automation' ? 'active' : ''}" data-qtab="automation">Automation Tests (${autoCount})</div>
+    </div>
+
+    <div id="quality-content"></div>`;
+
+  document.querySelectorAll('[data-qtab]').forEach(el => {
+    el.addEventListener('click', () => {
+      STATE.qualityTab = el.dataset.qtab;
+      renderQuality(scoped);
+    });
+  });
+
+  renderQualityContent(plans, !!proj);
+}
+
+function renderQualityContent(plans, scoped) {
+  const el = document.getElementById('quality-content');
+  const isAuto = STATE.qualityTab === 'automation';
+
+  if (!plans.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✓</div><div class="empty-state-title">No test plans</div><div class="empty-state-desc">No ${STATE.qualityTab} test plans yet. Create one to start tracking coverage.</div></div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Test Plan</th>
+            ${scoped ? '' : '<th>Project</th>'}
+            <th>Owner</th>
+            <th>${isAuto ? 'Framework' : 'Environment'}</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Results</th>
+            <th>${isAuto ? 'Coverage' : 'Progress'}</th>
+            <th>Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${plans.map(p => {
+            const t = p.tests;
+            const done = t.passed + t.failed + t.blocked;
+            const progress = t.total ? Math.round((done / t.total) * 100) : 0;
+            const secondary = isAuto
+              ? `<div class="quality-cov"><div class="progress-bar"><div class="progress-fill ${p.coverage >= 75 ? 'green' : p.coverage >= 50 ? 'amber' : 'red'}" style="width:${p.coverage}%"></div></div><span class="text-xs text-muted">${p.coverage}%</span></div>`
+              : `<div class="quality-cov"><div class="progress-bar"><div class="progress-fill ${progress >= 100 ? 'green' : 'blue'}" style="width:${progress}%"></div></div><span class="text-xs text-muted">${progress}%</span></div>`;
+            return `<tr class="quality-plan-row" data-plan="${p.id}">
+              <td>
+                <div class="flex items-center gap-2">
+                  <span class="tree-toggle">${I.chevronRight}</span>
+                  <div>
+                    <div class="font-semibold">${escapeHtml(p.name)}</div>
+                    ${isAuto ? `<div class="text-xs text-muted">${escapeHtml(p.schedule)}${p.duration && p.duration !== '—' ? ` · ${p.duration}` : ''}</div>` : `<div class="text-xs text-muted">${t.total} test cases</div>`}
+                  </div>
+                </div>
+              </td>
+              ${scoped ? '' : `<td class="text-secondary">${escapeHtml(p.project)}</td>`}
+              <td><div class="flex items-center gap-2">${avatar(p.owner, p.ownerColor, 'sm')}<span class="text-secondary">${p.owner}</span></div></td>
+              <td class="text-secondary">${escapeHtml(isAuto ? p.framework : p.environment)}</td>
+              <td>${priorityBadge(p.priority)}</td>
+              <td>${qualityStatusBadge(p.status)}</td>
+              <td>
+                ${qualityResultBar(t)}
+                <div class="text-xs text-muted mt-1">${t.passed} pass · ${t.failed} fail${t.blocked ? ` · ${t.blocked} blocked` : ''}${t.pending ? ` · ${t.pending} pending` : ''}</div>
+              </td>
+              <td>${secondary}</td>
+              <td class="text-muted">${escapeHtml(p.lastRun)}</td>
+            </tr>
+            <tr class="quality-detail-row hidden" data-detail="${p.id}">
+              <td colspan="${scoped ? 8 : 9}">${qualityCasesMarkup(p)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  bindQualityTree(el);
+}
+
+// Wire up the two-level expand/collapse: plan row → cases, case head → steps.
+function bindQualityTree(root) {
+  root.querySelectorAll('.quality-plan-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const detail = root.querySelector(`.quality-detail-row[data-detail="${row.dataset.plan}"]`);
+      if (!detail) return;
+      const nowVisible = detail.classList.toggle('hidden') === false;
+      row.classList.toggle('open', nowVisible);
+    });
+  });
+  root.querySelectorAll('.quality-case-head').forEach(head => {
+    head.addEventListener('click', e => {
+      e.stopPropagation();
+      const steps = head.parentElement.querySelector('.quality-steps');
+      if (!steps) return;
+      const nowVisible = steps.classList.toggle('hidden') === false;
+      head.classList.toggle('open', nowVisible);
+    });
+  });
 }
 
 // --- ANALYTICS ---
@@ -2075,8 +2876,16 @@ function saveUserSettings() {
 function restoreUserSettings() {
   let saved;
   try { saved = JSON.parse(localStorage.getItem('wiredUserSettings') || 'null'); }
-  catch (e) { return; }
+  catch (e) { saved = null; }
   if (saved && typeof saved === 'object') DATA.user.settings = { ...DATA.user.settings, ...saved };
+  applyTableBorderVars();
+}
+
+function applyTableBorderVars() {
+  const s = DATA.user.settings;
+  const root = document.documentElement;
+  root.style.setProperty('--table-border-width', (s.tableBorderWidth || '1') + 'px');
+  root.style.setProperty('--table-border-color', s.tableBorderColor || '#334155');
 }
 
 const US_TABS = [
@@ -2317,6 +3126,20 @@ function usAppearanceTab() {
       <div class="card us-card">
         ${usSegment('sidebar',[{val:'expanded',label:'Expanded'},{val:'collapsed',label:'Collapsed'}])}
       </div>
+    </div>
+    <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Table borders</div>
+        <div class="us-section-sub">Line thickness and color for data table grid lines.</div></div>
+      <div class="card us-card">
+        <div class="us-row">
+          <div class="us-row-text"><div class="us-row-label">Border width</div><div class="us-row-desc">How thick the grid lines appear.</div></div>
+          ${usSegment('tableBorderWidth',[{val:'1',label:'Thin'},{val:'2',label:'Medium'},{val:'3',label:'Thick'}])}
+        </div>
+        <div class="us-row">
+          <div class="us-row-text"><div class="us-row-label">Border color</div><div class="us-row-desc">Pick any color for the grid lines.</div></div>
+          <input type="color" class="us-color-input" data-tableborder value="${DATA.user.settings.tableBorderColor||'#334155'}">
+        </div>
+      </div>
     </div>`;
 }
 
@@ -2363,6 +3186,20 @@ function usPreferencesTab() {
       </div>
     </div>
     <div class="us-section">
+      <div class="us-section-head"><div class="us-section-title">Wire</div>
+        <div class="us-section-sub">How Wired applies changes it extracts from your communication channels.</div></div>
+      <div class="card us-card">
+        <div class="form-group">
+          <label class="form-label">Apply mode</label>
+          ${usSegment('wireMode',[{val:'semi-auto',label:'Semi-automatic'},{val:'auto',label:'Automatic'}])}
+          <div style="font-size:12px;color:var(--c-text-2);margin-top:8px;line-height:1.55">
+            <strong>Semi-automatic</strong> (default): every change is reviewed and applied only after you approve it, per item.
+            <strong>Automatic</strong>: changes are applied immediately when you Wire, then shown for review with an option to undo.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="us-section">
       <div class="us-section-head"><div class="us-section-title">Navigation</div>
         <div class="us-section-sub">Show or hide global sections in the sidebar.</div></div>
       <div class="card us-card us-card--flush">
@@ -2395,6 +3232,7 @@ function bindUsTab() {
         const key = seg.dataset.segment;
         DATA.user.settings[key] = btn.dataset.val;
         saveUserSettings();
+        if (key === 'tableBorderWidth') applyTableBorderVars();
         seg.querySelectorAll('[data-val]').forEach(b => b.classList.toggle('active', b === btn));
         toast('Preference updated', 'success');
       });
@@ -2407,6 +3245,18 @@ function bindUsTab() {
       DATA.user.settings[sel.dataset.setting] = sel.value;
       saveUserSettings();
       toast('Preference updated', 'success');
+    });
+  });
+
+  // table border color picker
+  body.querySelectorAll('[data-tableborder]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      DATA.user.settings.tableBorderColor = inp.value;
+      applyTableBorderVars();
+    });
+    inp.addEventListener('change', () => {
+      saveUserSettings();
+      toast('Table border color updated', 'success');
     });
   });
 
@@ -2865,7 +3715,7 @@ function renderWalkthroughStep(s, p) {
 // --- DATA SOURCES ---
 function renderDataSources() {
   if (!STATE.dsTab) STATE.dsTab = 'integrations';
-  renderTopbar([{label:'Data Sources'}]);
+  renderTopbar([{label:'Integrations'}]);
   const el = document.getElementById('content');
 
   const tabs = [
@@ -2883,7 +3733,7 @@ function renderDataSources() {
     <div class="page-content">
       <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4)">
         <div>
-          <h1 class="page-title">Data Sources</h1>
+          <h1 class="page-title">Integrations</h1>
           <p class="page-subtitle">${connected} connected · ${totalRecords.toLocaleString()} records synced · ${DATA.customViews.length} custom views · ${DATA.customFields.length} custom fields</p>
         </div>
       </div>
@@ -3430,17 +4280,8 @@ function renderWorkflows() {
   function actionCount(w) { return w.phases.reduce((s,p)=>s+p.actions.length,0); }
   function projectsUsing(w) { return DATA.projects.filter(p=>p.workflowId===w.id); }
 
-  renderTopbar([{label:'Workflows'}]);
-  const el = document.getElementById('content');
-  el.innerHTML = `
-    <div class="page-content">
-      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-6)">
-        <div>
-          <h1 class="page-title">Workflows</h1>
-          <p class="page-subtitle">Define reusable project templates with phases and actions</p>
-        </div>
-        <button class="btn btn-primary" id="new-workflow-btn">${I.plus} New Workflow</button>
-      </div>
+  function workflowGrid() {
+    return `
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--sp-5)">
         ${wflows.map(w => {
           const projs = projectsUsing(w);
@@ -3467,10 +4308,66 @@ function renderWorkflows() {
           <div style="font-size:14px;font-weight:600">Create new workflow</div>
           <div style="font-size:12px;text-align:center;max-width:220px">Define phases and actions to standardize how projects run</div>
         </div>
+      </div>`;
+  }
+
+  function workflowTable() {
+    return `
+      <div class="table-wrapper workflow-table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Phases</th><th>Actions</th><th>Projects</th><th>Phase flow</th></tr></thead>
+          <tbody>
+            ${wflows.map(w => {
+              const projs = projectsUsing(w);
+              return `<tr class="workflow-row" data-wf="${w.id}" style="cursor:pointer">
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span style="width:8px;height:8px;border-radius:2px;background:${w.color};flex:none"></span>
+                    <span class="font-semibold">${w.name}</span>
+                  </div>
+                  <div class="text-xs text-muted mt-1">${w.description}</div>
+                </td>
+                <td><span class="badge" style="background:#f1f5f9;color:#64748b;font-size:11px">${w.projectType}</span></td>
+                <td class="text-secondary">${phaseCount(w)}</td>
+                <td class="text-secondary">${actionCount(w)}</td>
+                <td class="text-secondary">${projs.length}</td>
+                <td>
+                  <div class="flex items-center gap-1" style="flex-wrap:wrap">
+                    ${w.phases.map(ph=>`<span class="workflow-phase-pip" style="background:${ph.color}22;color:${ph.color}">${ph.name}</span>`).join('') || '<span class="text-muted text-xs">No phases</span>'}
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  renderTopbar([{label:'Workflows'}]);
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="page-content">
+      <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-6)">
+        <div>
+          <h1 class="page-title">Workflows</h1>
+          <p class="page-subtitle">Define reusable project templates with phases and actions</p>
+        </div>
+        <div class="page-actions">
+          <div class="view-toggle" id="workflow-view-toggle">
+            <button class="view-toggle-btn ${STATE.workflowView==='table'?'active':''}" data-workflowview="table" title="Table view">${ico(I.list,16)}</button>
+            <button class="view-toggle-btn ${STATE.workflowView==='grid'?'active':''}" data-workflowview="grid" title="Card view">${ico(I.grid,16)}</button>
+          </div>
+          <button class="btn btn-primary" id="new-workflow-btn">${I.plus} New Workflow</button>
+        </div>
       </div>
+      ${STATE.workflowView==='grid' ? workflowGrid() : workflowTable()}
     </div>`;
 
-  el.querySelectorAll('.workflow-card[data-wf]').forEach(card => {
+  document.querySelectorAll('#workflow-view-toggle [data-workflowview]').forEach(btn => {
+    btn.addEventListener('click', () => { STATE.workflowView = btn.dataset.workflowview; renderWorkflows(); });
+  });
+
+  el.querySelectorAll('.workflow-card[data-wf], .workflow-row[data-wf]').forEach(card => {
     card.addEventListener('click', () => {
       const wf = DATA.workflows.find(w=>w.id===+card.dataset.wf);
       STATE.currentWorkflow = wf;
@@ -5058,6 +5955,306 @@ function openRiskModal() {
     toast('Risk added');
     close();
     renderRisks();
+  });
+}
+
+// ============================================================
+// DECISIONS — project decision log / register
+// ============================================================
+const DECISION_STATUSES = ['proposed', 'decided', 'deferred', 'superseded'];
+const DECISION_IMPACTS  = ['low', 'medium', 'high'];
+const DECISION_STATUS_COLOR = { proposed:'#f59e0b', decided:'#10b981', deferred:'#6366f1', superseded:'#94a3b8' };
+const DECISION_IMPACT_COLOR = { low:'#94a3b8', medium:'#6366f1', high:'#ef4444' };
+
+function decisionBadge(value, color) {
+  return `<span class="badge" style="background:${color}1a;color:${color}"><span class="badge-dot" style="background:${color}"></span>${value.charAt(0).toUpperCase()+value.slice(1)}</span>`;
+}
+
+function findDecision(projectId, decisionId) {
+  const p = DATA.projects.find(x => x.id === projectId);
+  if (!p || !p.decisions) return null;
+  return p.decisions.find(d => d.id === decisionId) || null;
+}
+
+function restoreDecisionsFilters() {
+  const key = 'decisionsFilters_' + (STATE.currentProject ? STATE.currentProject.id : 'none');
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  if (saved && Object.keys(saved).length) STATE.decisionsFilter = { impact:'', status:'', ...saved };
+  else STATE.decisionsFilter = { impact:'', status:'' };
+}
+
+function renderDecisions() {
+  const p = STATE.currentProject;
+  if (!p) { navigate('projects'); return; }
+  if (!p.decisions) p.decisions = [];
+  renderTopbar([{ label: p.name, page: 'project-detail' }, { label: 'Decisions' }]);
+  restoreDecisionsFilters();
+  const filterKey = 'decisionsFilters_' + p.id;
+
+  const f = STATE.decisionsFilter;
+  let rows = [...p.decisions];
+  if (f.impact) rows = rows.filter(d => d.impact === f.impact);
+  if (f.status) rows = rows.filter(d => d.status === f.status);
+
+  const all = p.decisions;
+  const decided = all.filter(d => d.status === 'decided').length;
+  const proposed = all.filter(d => d.status === 'proposed').length;
+  const superseded = all.filter(d => d.status === 'superseded').length;
+
+  const stat = (val, label, color) => `
+    <div class="card" style="flex:1;padding:16px 18px">
+      <div style="font-size:28px;font-weight:800;color:${color||'var(--text)'};line-height:1">${val}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${label}</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Decisions</div>
+        <div class="page-subtitle">${p.name} · ${all.length} decision${all.length!==1?'s':''} · ${decided} decided · ${proposed} proposed</div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" id="btn-new-decision">${I.plus} Log Decision</button>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mb-5">
+      ${stat(all.length, 'Total decisions')}
+      ${stat(decided, 'Decided', '#10b981')}
+      ${stat(proposed, 'Proposed', '#f59e0b')}
+      ${stat(superseded, 'Superseded', '#94a3b8')}
+    </div>
+
+    <div class="flex gap-3 mb-4" style="align-items:center">
+      <select class="form-select" id="dec-f-impact" style="max-width:160px">
+        <option value="">All impact</option>
+        ${DECISION_IMPACTS.map(s=>`<option value="${s}" ${f.impact===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      <select class="form-select" id="dec-f-status" style="max-width:160px">
+        <option value="">All statuses</option>
+        ${DECISION_STATUSES.map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      ${(f.impact||f.status)?`<button class="btn btn-secondary btn-sm" id="dec-f-clear">Clear filters</button>`:''}
+      <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">${rows.length} shown</span>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      ${rows.length ? `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid var(--border)">
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Decision</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Context &amp; rationale</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted)">Alternatives considered</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:110px">Impact</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:90px">Owner</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:120px">Date</th>
+            <th style="text-align:left;padding:10px 14px;font-weight:600;color:var(--text-muted);width:130px">Status</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(d => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:10px 14px">
+                <span class="dec-edit" data-pid="${p.id}" data-did="${d.id}" data-field="title"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px;font-weight:600">${d.title||'<span style="color:#bbb">Name the decision…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-edit" data-pid="${p.id}" data-did="${d.id}" data-field="context"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${d.context||'<span style="color:#bbb">Add context…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-edit" data-pid="${p.id}" data-did="${d.id}" data-field="alternatives"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${d.alternatives||'<span style="color:#bbb">Options weighed…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-impact" data-pid="${p.id}" data-did="${d.id}" title="Click to change impact"
+                  style="cursor:pointer">${decisionBadge(d.impact||'medium', DECISION_IMPACT_COLOR[d.impact]||'#6366f1')}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-edit" data-pid="${p.id}" data-did="${d.id}" data-field="owner"
+                  style="cursor:text;display:inline-block;min-width:30px;border-radius:3px;padding:1px 3px">${d.owner||'<span style="color:#bbb">—</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-edit" data-pid="${p.id}" data-did="${d.id}" data-field="date"
+                  style="cursor:text;display:inline-block;min-width:40px;border-radius:3px;padding:1px 3px">${d.date||'<span style="color:#bbb">Set date…</span>'}</span>
+              </td>
+              <td style="padding:10px 14px">
+                <span class="dec-status" data-pid="${p.id}" data-did="${d.id}" title="Click to advance status"
+                  style="cursor:pointer">${decisionBadge(d.status||'proposed', DECISION_STATUS_COLOR[d.status]||'#f59e0b')}</span>
+              </td>
+              <td style="padding:10px 14px;text-align:center">
+                <button class="btn-icon dec-del" data-pid="${p.id}" data-did="${d.id}" title="Delete decision" style="color:#ef4444">${ico(I.trash,15)}</button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>` : `
+        <div style="text-align:center;padding:60px;color:var(--text-muted)">
+          ${(f.impact||f.status)?'No decisions match the current filters.':'No decisions logged yet. Click “Log Decision” to record one.'}
+        </div>`}
+    </div>
+  `;
+
+  // --- filters ---
+  const setFilter = (key, val) => {
+    STATE.decisionsFilter[key] = val;
+    localStorage.setItem(filterKey, JSON.stringify(STATE.decisionsFilter));
+    renderDecisions();
+  };
+  document.getElementById('dec-f-impact').addEventListener('change', e => setFilter('impact', e.target.value));
+  document.getElementById('dec-f-status').addEventListener('change', e => setFilter('status', e.target.value));
+  document.getElementById('dec-f-clear')?.addEventListener('click', () => {
+    STATE.decisionsFilter = { impact:'', status:'' };
+    localStorage.removeItem(filterKey);
+    renderDecisions();
+  });
+
+  document.getElementById('btn-new-decision').addEventListener('click', () => openDecisionModal());
+
+  // --- inline text edit ---
+  document.querySelectorAll('.dec-edit').forEach(span => {
+    span.addEventListener('mouseenter', () => { span.style.background = '#f0f7ff'; });
+    span.addEventListener('mouseleave', () => { span.style.background = ''; });
+    span.addEventListener('click', () => {
+      const dec = findDecision(+span.dataset.pid, +span.dataset.did);
+      if (!dec) return;
+      const field = span.dataset.field;
+      const isDate = field === 'date';
+      const input = document.createElement('input');
+      input.type = isDate ? 'date' : 'text';
+      input.value = dec[field] || '';
+      input.style.cssText = 'border:1px solid #3498db;border-radius:4px;padding:2px 6px;font-size:inherit;width:' + (isDate ? 150 : Math.max(140, ((dec[field]||'').length + 2) * 8)) + 'px;outline:none';
+      span.replaceWith(input);
+      input.focus();
+      input.select();
+      let done = false;
+      const commit = (save) => {
+        if (done) return; done = true;
+        if (save) { dec[field] = input.value.trim(); }
+        renderDecisions();
+      };
+      input.addEventListener('blur', () => commit(true));
+      input.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') { ke.preventDefault(); commit(true); }
+        if (ke.key === 'Escape') { ke.preventDefault(); commit(false); }
+      });
+    });
+  });
+
+  // --- impact badge cycle ---
+  document.querySelectorAll('.dec-impact').forEach(el => {
+    el.addEventListener('click', () => {
+      const dec = findDecision(+el.dataset.pid, +el.dataset.did);
+      if (!dec) return;
+      const i = DECISION_IMPACTS.indexOf(dec.impact);
+      dec.impact = DECISION_IMPACTS[(i + 1) % DECISION_IMPACTS.length];
+      renderDecisions();
+    });
+  });
+
+  // --- status badge cycle ---
+  document.querySelectorAll('.dec-status').forEach(el => {
+    el.addEventListener('click', () => {
+      const dec = findDecision(+el.dataset.pid, +el.dataset.did);
+      if (!dec) return;
+      const i = DECISION_STATUSES.indexOf(dec.status);
+      dec.status = DECISION_STATUSES[(i + 1) % DECISION_STATUSES.length];
+      renderSidebar();
+      renderDecisions();
+    });
+  });
+
+  // --- delete ---
+  document.querySelectorAll('.dec-del').forEach(el => {
+    el.addEventListener('click', () => {
+      if (!confirm('Delete this decision?')) return;
+      const proj = DATA.projects.find(x => x.id === +el.dataset.pid);
+      if (!proj) return;
+      proj.decisions = proj.decisions.filter(d => d.id !== +el.dataset.did);
+      toast('Decision deleted');
+      renderSidebar();
+      renderDecisions();
+    });
+  });
+}
+
+function openDecisionModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+  overlay.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h3>Log Decision</h3>
+      <button class="btn-icon" id="dec-modal-close">${I.x}</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="form-group">
+        <label class="form-label">Decision</label>
+        <input class="form-input" id="dc-title" placeholder="e.g. Use PostgreSQL for the primary datastore"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Context &amp; rationale</label>
+        <input class="form-input" id="dc-context" placeholder="e.g. Need ACID guarantees and strong JSON support"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Alternatives considered</label>
+        <input class="form-input" id="dc-alternatives" placeholder="e.g. MongoDB, DynamoDB"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Impact</label>
+          <select class="form-select" id="dc-impact">
+            ${DECISION_IMPACTS.map(s=>`<option value="${s}" ${s==='medium'?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="dc-status">
+            ${DECISION_STATUSES.map(s=>`<option value="${s}" ${s==='proposed'?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Owner</label>
+          <input class="form-input" id="dc-owner" placeholder="e.g. SR"/>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="dc-date" type="date"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="dec-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="dec-modal-save">Log decision</button>
+    </div>`;
+
+  const close = () => { overlay.classList.add('hidden'); box.innerHTML = ''; };
+  document.getElementById('dec-modal-close').addEventListener('click', close);
+  document.getElementById('dec-modal-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  document.getElementById('dec-modal-save').addEventListener('click', () => {
+    const title = document.getElementById('dc-title').value.trim();
+    if (!title) { toast('Decision title is required', 'warning'); return; }
+    const p = STATE.currentProject;
+    if (!p) { toast('No project selected', 'warning'); return; }
+    if (!p.decisions) p.decisions = [];
+    const maxId = Math.max(0, ...DATA.projects.flatMap(pr => (pr.decisions||[]).map(d => d.id)));
+    p.decisions.push({
+      id: maxId + 1,
+      title,
+      context: document.getElementById('dc-context').value.trim(),
+      alternatives: document.getElementById('dc-alternatives').value.trim(),
+      impact: document.getElementById('dc-impact').value,
+      status: document.getElementById('dc-status').value,
+      owner: document.getElementById('dc-owner').value.trim() || '—',
+      date: document.getElementById('dc-date').value
+    });
+    toast('Decision logged');
+    close();
+    renderSidebar();
+    renderDecisions();
   });
 }
 
