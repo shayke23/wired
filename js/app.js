@@ -357,6 +357,7 @@ const STATE = {
   currentApprovalTab: 'pending',
   selectedApproval: null,
   sidebarCollapsed: false,
+  sidebarHidden: false,
   wizardStep: 1,
   walkthroughStep: 1,
   walkthroughActive: false,
@@ -374,7 +375,8 @@ const STATE = {
   issuesCustomViews: [],
   resourceTab: 'overview',
   commercialTab: 'overview',
-  risksFilter: { severity: '', status: '' }
+  risksFilter: { severity: '', status: '' },
+  teamView: 'table'
 };
 
 // --- ICONS (inline SVG helpers) ---
@@ -615,10 +617,10 @@ function renderSidebar() {
   document.getElementById('sidebar-user')?.addEventListener('click', () => navigate('user-settings'));
 
   document.getElementById('sidebar-toggle').addEventListener('click', () => {
-    const sidebar = document.getElementById('sidebar');
-    STATE.sidebarCollapsed = !STATE.sidebarCollapsed;
-    sidebar.classList.toggle('collapsed', STATE.sidebarCollapsed);
+    setSidebarHidden(true);
   });
+
+  applySidebarHidden();
 
   // Project picker toggle
   const trigger = document.getElementById('nav-project-trigger');
@@ -655,9 +657,29 @@ function renderSidebar() {
   });
 }
 
+// Show/hide the whole sidebar. The topbar hamburger is always visible so the
+// menu can be brought back after it is hidden.
+function setSidebarHidden(hidden) {
+  STATE.sidebarHidden = hidden;
+  try { localStorage.setItem('wiredSidebarHidden', hidden ? '1' : '0'); } catch (e) {}
+  applySidebarHidden();
+}
+
+function applySidebarHidden() {
+  document.getElementById('sidebar')?.classList.toggle('hidden', STATE.sidebarHidden);
+  document.body.classList.toggle('sidebar-hidden', STATE.sidebarHidden);
+  document.querySelectorAll('.menu-toggle-btn').forEach(btn =>
+    btn.classList.toggle('active', !STATE.sidebarHidden));
+}
+
+function restoreSidebarState() {
+  try { STATE.sidebarHidden = localStorage.getItem('wiredSidebarHidden') === '1'; } catch (e) {}
+}
+
 // --- TOPBAR ---
 function renderTopbar(crumbs) {
   document.getElementById('topbar').innerHTML = `
+    <button class="topbar-menu-btn menu-toggle-btn" id="topbar-menu-btn" title="Toggle menu">${I.menu}</button>
     <div class="topbar-breadcrumb">
       ${crumbs.map((c,i)=>`
         ${i>0?`<span class="crumb-sep">${I.chevronRight}</span>`:''}
@@ -676,6 +698,10 @@ function renderTopbar(crumbs) {
   document.querySelectorAll('#topbar [data-page]').forEach(el => {
     el.addEventListener('click', () => navigate(el.dataset.page));
   });
+  document.getElementById('topbar-menu-btn')?.addEventListener('click', () => {
+    setSidebarHidden(!STATE.sidebarHidden);
+  });
+  applySidebarHidden();
 }
 
 // --- ROUTER ---
@@ -1924,8 +1950,23 @@ function renderTeam() {
   document.getElementById('content').innerHTML = `
     <div class="page-header">
       <div><div class="page-title">Team</div><div class="page-subtitle">${DATA.team.length} members</div></div>
-      <div class="page-actions"><button class="btn btn-primary">${I.plus} Invite Member</button></div>
+      <div class="page-actions">
+        <div class="view-toggle" id="team-view-toggle">
+          <button class="view-toggle-btn ${STATE.teamView==='table'?'active':''}" data-teamview="table" title="Table view">${ico(I.list,16)}</button>
+          <button class="view-toggle-btn ${STATE.teamView==='grid'?'active':''}" data-teamview="grid" title="Card view">${ico(I.grid,16)}</button>
+        </div>
+        <button class="btn btn-primary">${I.plus} Invite Member</button>
+      </div>
     </div>
+    ${STATE.teamView==='grid' ? renderTeamGrid() : renderTeamTable()}`;
+
+  document.querySelectorAll('#team-view-toggle [data-teamview]').forEach(btn => {
+    btn.addEventListener('click', () => { STATE.teamView = btn.dataset.teamview; renderTeam(); });
+  });
+}
+
+function renderTeamGrid() {
+  return `
     <div class="grid-projects">
       ${DATA.team.map(m=>`
         <div class="member-card">
@@ -1943,6 +1984,32 @@ function renderTeam() {
           <div class="text-xs text-muted">${m.capacity}% capacity ${m.capacity>100?'⚠':''}</div>
         </div>
       `).join('')}
+    </div>`;
+}
+
+function renderTeamTable() {
+  return `
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Member</th><th>Role</th><th>Team</th><th>Department</th><th>Email</th><th>Projects</th><th>Capacity</th></tr></thead>
+        <tbody>
+          ${DATA.team.map(m=>{
+            const over = m.capacity > 100;
+            return `<tr>
+              <td><div class="flex items-center gap-2">${avatar(m.initials,m.color,'sm')}<span class="font-semibold">${m.name}</span></div></td>
+              <td class="text-secondary">${m.role}</td>
+              <td><span class="member-team-badge" style="--badge-color:${m.color}">${m.team}</span></td>
+              <td class="text-secondary">${m.department}</td>
+              <td class="text-muted">${m.email}</td>
+              <td class="text-secondary">${m.projects}</td>
+              <td>
+                <div class="workload-bar"><div class="workload-fill ${over?'workload-over':m.capacity>75?'workload-high':'workload-normal'}" style="width:${Math.min(100,m.capacity)}%"></div></div>
+                <div class="text-xs text-muted mt-1">${m.capacity}% ${over?'⚠ Over capacity':''}</div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
     </div>`;
 }
 
@@ -3532,6 +3599,7 @@ function renderWorkflowBuilder(wf) {
     shell.innerHTML = `
       <div class="wf-builder-topbar">
         <div class="wf-builder-topbar-left">
+          <button class="topbar-menu-btn menu-toggle-btn" id="wf-menu-btn" title="Toggle menu">${I.menu}</button>
           <button class="btn-icon" id="wf-back-btn" title="Back to workflows">${I.chevronLeft}</button>
           <div>
             <div class="wf-builder-title" id="wf-title-label">${wf.name}</div>
@@ -3559,6 +3627,11 @@ function renderWorkflowBuilder(wf) {
   }
 
   function bindEvents() {
+    // Menu toggle — keep the main menu reachable from inside the builder
+    document.getElementById('wf-menu-btn')?.addEventListener('click', () => {
+      setSidebarHidden(!STATE.sidebarHidden);
+    });
+
     // Back
     document.getElementById('wf-back-btn')?.addEventListener('click', () => {
       shell.remove();
@@ -6311,6 +6384,7 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreNotes();
   restorePRDs();
   restoreLocation();
+  restoreSidebarState();
   renderSidebar();
   render();
 });

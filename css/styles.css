@@ -250,6 +250,15 @@ ul, ol { list-style: none; }
   transform: rotate(180deg);
 }
 
+/* Fully hidden sidebar — slides away entirely; the topbar hamburger brings it back */
+#sidebar.hidden {
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-right: none;
+}
+#sidebar.hidden .sidebar-toggle { display: none; }
+
 .nav-badge {
   margin-left: auto;
   background: var(--c-danger);
@@ -373,6 +382,22 @@ ul, ol { list-style: none; }
 .topbar-search svg { width: 13px; height: 13px; }
 
 .topbar-actions { display: flex; align-items: center; gap: var(--sp-3); }
+
+/* Always-visible menu toggle in the topbar */
+.topbar-menu-btn {
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-text-2);
+  transition: background var(--t), color var(--t);
+  cursor: pointer;
+}
+.topbar-menu-btn:hover { background: var(--c-bg); color: var(--c-text); }
+.topbar-menu-btn.active { color: var(--c-primary); }
+.topbar-menu-btn svg { width: 20px; height: 20px; }
 
 .topbar-icon-btn {
   width: 34px; height: 34px;
@@ -1130,7 +1155,7 @@ tbody tr:hover td { background: #FAFCFF; }
    PAGE: POLICIES
    ============================================================ */
 .policy-card {
-  background: var(--c-surface); border: 1px solid var(--c-border);
+  background: var(--c-surface); border: 1px solid #AEB9C9;
   border-radius: var(--r-lg); padding: var(--sp-5);
   margin-bottom: var(--sp-3);
 }
@@ -1188,6 +1213,23 @@ tbody tr:hover td { background: #FAFCFF; }
 .member-dept { font-size: 11px; color: var(--c-text-3); }
 .member-stat { font-size: 12px; color: var(--c-text-3); display: flex; align-items: center; gap: 4px; }
 .member-stat svg { width: 12px; height: 12px; }
+
+/* View toggle (grid/table) */
+.view-toggle {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 2px; border-radius: var(--r-md);
+  background: var(--c-bg); border: 1px solid var(--c-border);
+}
+.view-toggle-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 28px; padding: 0;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--c-text-3); border-radius: var(--r-sm);
+  transition: background var(--t), color var(--t);
+}
+.view-toggle-btn:hover { color: var(--c-text); }
+.view-toggle-btn.active { background: var(--c-surface); color: var(--c-primary); box-shadow: var(--sh-sm); }
+.view-toggle-btn svg { width: 16px; height: 16px; }
 
 /* Workload bar */
 .workload-bar { height: 6px; background: var(--c-bg); border-radius: var(--r-full); overflow: hidden; margin-top: 4px; }
@@ -1405,10 +1447,13 @@ tbody tr:hover td { background: #FAFCFF; }
 
 /* Workflow Builder */
 .wf-builder-shell {
-  position: fixed; inset: 0; z-index: 200;
+  position: fixed; top: 0; right: 0; bottom: 0;
+  left: var(--sidebar-w); z-index: 90;
   background: #f1f5f9;
   display: flex; flex-direction: column;
+  transition: left var(--t);
 }
+body.sidebar-hidden .wf-builder-shell { left: 0; }
 .wf-builder-topbar {
   height: var(--topbar-h); background: var(--c-surface);
   border-bottom: 1px solid var(--c-border);

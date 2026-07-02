@@ -19,5 +19,3 @@ when we get to implementation phase I wish to use full CI/CD workflow including
 - unit testing - AI generated, and test execution as pre-gate to each PR
 - automated tests as gate to code merge (PR)
 - docker deployment
-
-
