@@ -637,6 +637,7 @@ function toast(msg, type='success') {
 function renderSidebar() {
   const globalNav = [
     { id:'dashboard', label:'Dashboard', icon:I.dashboard },
+    { id:'wire', label:'Wire', icon:I.zap, badge: wireBadgeCount() || null, badgeClass:'nav-badge--wire wire-signal-badge' },
     { id:'portfolio', label:'1 Pager', icon:I.fileText },
     { id:'commercial', label:'Commercial', icon:I.trendUp },
     { id:'quality', label:'Quality', icon:I.checkSquare },
@@ -666,7 +667,7 @@ function renderSidebar() {
   const navItem = n => `
     <div class="nav-item ${STATE.currentPage===n.id?'active':''}" data-page="${n.id}">
       ${n.icon}<span>${n.label}</span>
-      ${n.badge ? `<span class="nav-badge">${n.badge}</span>` : ''}
+      ${n.badge ? `<span class="nav-badge ${n.badgeClass||''}">${n.badge}</span>` : ''}
     </div>`;
 
   const isProjectPage = STATE.currentPage === 'project-detail' || STATE.currentPage === 'projects';
@@ -801,6 +802,7 @@ function renderTopbar(crumbs) {
     <div class="topbar-actions">
       <button class="wire-btn" id="topbar-wire-btn" title="Wire — turn channel updates into action items">
         ${ico(I.zap,15)}<span>Wire!</span>
+        <span class="wire-signal-badge" style="${wireBadgeCount()?'':'display:none'}">${wireBadgeCount()}</span>
       </button>
       <div class="topbar-icon-btn" title="Notifications">
         ${I.bell}
@@ -1206,6 +1208,16 @@ function renderDashboard() {
       </div>
     </div>
 
+    ${wireBadgeCount() ? `
+    <div class="wire-signal-strip" id="wire-signal-strip">
+      <div class="wire-signal-orb">${ico(I.zap,18)}</div>
+      <div class="wire-signal-copy">
+        <div class="wire-signal-title">${wireBadgeCount()} new signal${wireBadgeCount()===1?'':'s'} waiting to be wired</div>
+        <div class="wire-signal-sub">Recent activity across Slack, email, Teams and meeting notes can be turned into action items.</div>
+      </div>
+      <button class="btn btn-primary" id="wire-signal-cta">${ico(I.zap,14)} Wire now</button>
+    </div>` : ''}
+
     <div class="grid-kpi mb-6">
       ${kpiTile('Active Projects', active, '#eef2ff', '#6366f1', I.folder, '+2 this month', 'up')}
       ${kpiTile('Pending Approvals', DATA.approvals.length, '#fef2f2', '#ef4444', I.check, '2 critical', 'down')}
@@ -1285,6 +1297,7 @@ function renderDashboard() {
     el.addEventListener('click', () => navigate(el.dataset.page));
   });
   document.getElementById('btn-new-project')?.addEventListener('click', launchWizard);
+  document.getElementById('wire-signal-cta')?.addEventListener('click', launchWire);
   document.querySelectorAll('.approve-btn').forEach(btn => {
     btn.addEventListener('click', e => { e.stopPropagation(); handleApprove(+btn.dataset.id); });
   });
@@ -2392,6 +2405,9 @@ function bindWireReview() {
     wireSet(p, el.dataset.path, vals[(vals.indexOf(cur) + 1) % vals.length]);
     renderWireReview();
   }));
+
+  // Keep the topbar-button and sidebar signal badges in sync with pending count.
+  updateWireBadges();
 
   // Click-to-edit text (title, owner, assignee, due, etc.).
   root.querySelectorAll('.wire-editable').forEach(span => span.addEventListener('click', () => {
