@@ -6290,24 +6290,58 @@ function prdBadge(value, color) {
   return `<span class="badge" style="background:${color}1a;color:${color}"><span class="badge-dot" style="background:${color}"></span>${value}</span>`;
 }
 
+// Pre-authored PRD content for specific projects (keyed by project id).
+const PRD_SEED = {
+  1: {
+    status: 'In Review',
+    version: '1.2',
+    author: 'AM',
+    updatedAt: '2026-06-24',
+    overview: 'Alpha Launch delivers the first production release of the Wired platform for Q3, spanning the public REST API, the customer-facing web dashboard, and the DevOps deployment pipeline. Today prospects have no self-serve way to evaluate the product, and internal teams manage delivery through spreadsheets. This release establishes a single, reliable platform that external developers can build against and that internal teams can operate with confidence.',
+    goals: '1. Ship a stable, documented public API that external developers can integrate against.\n2. Launch the redesigned web dashboard with real-time project data.\n3. Stand up an automated CI/CD pipeline with zero-downtime deploys.\n4. Onboard 50 design-partner customers during the beta window.\n5. Achieve production readiness sign-off from Security and SRE.',
+    metrics: 'API uptime ≥ 99.9% over the launch month · API p95 latency < 200ms · Beta activation rate > 60% · < 5 critical bugs in the first 30 days · Zero critical or high security findings at go-live · Deploy lead time < 15 minutes.',
+    scopeIn: '• Public REST API v1 (auth, projects, tasks, webhooks)\n• Web dashboard: projects, tasks, analytics views\n• OAuth2 + API-key authentication\n• CI/CD pipeline with automated tests and staged rollout\n• API reference docs and quickstart guide\n• Basic role-based access control (Admin, Member, Viewer)',
+    scopeOut: '• Native iOS / Android apps\n• On-prem / self-hosted deployment\n• SSO / SAML enterprise integrations\n• Billing and metered usage\n• Multi-region data residency\n• GraphQL API (deferred to a later release)',
+    assumptions: 'Assumptions:\n• The third-party identity provider (Auth0) is available for OAuth2.\n• Design-partner customers are recruited by the GTM team before beta.\n• Cloud infrastructure budget is approved for the launch quarter.\n\nConstraints:\n• Hard launch date of 2026-08-15 driven by the customer conference.\n• Team capacity is fixed at 4 engineers plus 1 PM.\n• Must reuse the existing Postgres data store — no new datastore this release.\n\nDependencies:\n• Security penetration test must complete before go-live.\n• Load-testing environment provisioned by the Platform team.',
+    requirements: [
+      { id: 101, code: 'REQ-001', title: 'Users can sign in via OAuth2 (Google, GitHub) and receive a scoped access token', type: 'Functional', priority: 'Must', status: 'Approved', owner: 'AM' },
+      { id: 102, code: 'REQ-002', title: 'Public REST API exposes CRUD endpoints for projects, tasks, and webhooks', type: 'Functional', priority: 'Must', status: 'In Progress', owner: 'SR' },
+      { id: 103, code: 'REQ-003', title: 'API responses stay under 200ms at p95 under expected launch load', type: 'Non-Functional', priority: 'Must', status: 'In Progress', owner: 'SR' },
+      { id: 104, code: 'REQ-004', title: 'Web dashboard renders live project health, progress, and budget widgets', type: 'Functional', priority: 'Should', status: 'In Progress', owner: 'TK' },
+      { id: 105, code: 'REQ-005', title: 'Role-based access control enforces Admin / Member / Viewer permissions', type: 'Functional', priority: 'Should', status: 'Proposed', owner: 'AM' },
+      { id: 106, code: 'REQ-006', title: 'CI/CD pipeline runs the full test suite and blocks merges on failure', type: 'Non-Functional', priority: 'Must', status: 'Done', owner: 'SR' },
+      { id: 107, code: 'REQ-007', title: 'Zero-downtime production deploys via blue-green rollout', type: 'Non-Functional', priority: 'Should', status: 'Proposed', owner: 'TK' },
+      { id: 108, code: 'REQ-008', title: 'Every admin action is captured in an immutable audit log', type: 'Functional', priority: 'Could', status: 'Proposed', owner: 'JD' },
+      { id: 109, code: 'REQ-009', title: 'API reference docs and a 5-minute quickstart are published', type: 'Functional', priority: 'Should', status: 'Proposed', owner: 'JD' },
+      { id: 110, code: 'REQ-010', title: 'Webhook delivery retries with exponential backoff on failure', type: 'Non-Functional', priority: 'Could', status: 'Proposed', owner: 'SR' },
+      { id: 111, code: 'REQ-011', title: 'Localized date/number formatting is deferred to a future release', type: 'Functional', priority: "Won't", status: 'Proposed', owner: 'TK' }
+    ]
+  }
+};
+
 // Lazily create (and seed) the PRD document for a project.
 function getPRD(projectId) {
   if (!DATA.prds) DATA.prds = {};
   if (!DATA.prds[projectId]) {
     const p = DATA.projects.find(x => x.id === projectId);
-    DATA.prds[projectId] = {
-      status: 'Draft',
-      version: '0.1',
-      author: p ? p.pm : '',
-      updatedAt: todayStr(),
-      overview: p ? p.description : '',
-      goals: '',
-      metrics: '',
-      scopeIn: '',
-      scopeOut: '',
-      assumptions: '',
-      requirements: []
-    };
+    if (PRD_SEED[projectId]) {
+      // Deep-clone so edits don't mutate the seed template.
+      DATA.prds[projectId] = JSON.parse(JSON.stringify(PRD_SEED[projectId]));
+    } else {
+      DATA.prds[projectId] = {
+        status: 'Draft',
+        version: '0.1',
+        author: p ? p.pm : '',
+        updatedAt: todayStr(),
+        overview: p ? p.description : '',
+        goals: '',
+        metrics: '',
+        scopeIn: '',
+        scopeOut: '',
+        assumptions: '',
+        requirements: []
+      };
+    }
   }
   return DATA.prds[projectId];
 }
